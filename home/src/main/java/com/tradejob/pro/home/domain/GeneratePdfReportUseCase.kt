@@ -80,6 +80,7 @@ class GeneratePdfReportUseCase @Inject constructor() {
             canvas.drawText("Programado para: ${scheduleFormat.format(Date(it))}", margin, currentY, paint)
         }
         
+        val description = job.description
         if (!description.isNullOrBlank()) {
             currentY += 30f
             paint.isFakeBoldText = true
