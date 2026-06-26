@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tradejob.pro.database.data.dao.ClientDao
 import com.tradejob.pro.database.data.dao.JobDao
+import com.tradejob.pro.database.data.dao.JobPhotoDao
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
@@ -18,7 +19,8 @@ class SyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val clientDao: ClientDao,
-    private val jobDao: JobDao
+    private val jobDao: JobDao,
+    private val jobPhotoDao: JobPhotoDao
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -34,6 +36,8 @@ class SyncWorker @AssistedInject constructor(
             syncClients(userId, db)
             Log.d("SyncWorker", "Sincronizando trabajos...")
             syncJobs(userId, db)
+            Log.d("SyncWorker", "Sincronizando fotos...")
+            syncPhotos(userId, db)
             Log.i("SyncWorker", "Sincronización completada con éxito.")
             Result.success()
         } catch (e: Exception) {
@@ -70,5 +74,23 @@ class SyncWorker @AssistedInject constructor(
 
         batch.commit().await()
         jobDao.markJobsAsSynced(unsyncedJobs.map { it.id })
+    }
+
+    private suspend fun syncPhotos(userId: String, db: FirebaseFirestore) {
+        val unsyncedPhotos = jobPhotoDao.getUnsyncedPhotos()
+        if (unsyncedPhotos.isEmpty()) return
+
+        val batch = db.batch()
+        unsyncedPhotos.forEach { photo ->
+            val photoRef = db.collection("users").document(userId)
+                .collection("jobs").document(photo.jobId.toString())
+                .collection("photos").document(photo.id.toString())
+            batch.set(photoRef, photo.copy(isSynced = true))
+        }
+
+        batch.commit().await()
+        unsyncedPhotos.forEach { photo ->
+            jobPhotoDao.markPhotoAsSynced(photo.id, null)
+        }
     }
 }
