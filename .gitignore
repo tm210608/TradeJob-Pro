@@ -1,0 +1,21 @@
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+.DS_Store
+
+# Kotlin
+.kotlin/
+.agent-work/
+.agentbridge/
+
+# App specific
+app/google-services.json
+
+# Build results
+*/build/
