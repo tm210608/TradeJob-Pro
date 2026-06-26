@@ -17,4 +17,10 @@ interface JobPhotoDao {
 
     @Delete
     suspend fun delete(photo: JobPhotoEntity)
+
+    @Query("SELECT * FROM job_photos WHERE isSynced = 0")
+    suspend fun getUnsyncedPhotos(): List<JobPhotoEntity>
+
+    @Query("UPDATE job_photos SET isSynced = 1, remoteUrl = :remoteUrl WHERE id = :id")
+    suspend fun markPhotoAsSynced(id: Long, remoteUrl: String?)
 }

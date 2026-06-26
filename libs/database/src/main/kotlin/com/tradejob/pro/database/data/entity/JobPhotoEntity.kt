@@ -23,5 +23,7 @@ data class JobPhotoEntity(
     val photoPath: String,
     val description: String? = null,
     val type: String = "BEFORE", // BEFORE, AFTER, PROGRESS
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val isSynced: Boolean = false,
+    val remoteUrl: String? = null
 )
