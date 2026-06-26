@@ -19,11 +19,18 @@
 - [x] **Shield (QA):** Tests de UI iniciados para el módulo de login.
 - [x] **Exportación Avanzada:** Generación de PDF profesional para reportes de trabajo.
 
-## 🚀 Próximos Pasos (Fase 3: Conectividad - Restante)
+## 🚀 Próximos Pasos (Estrategia de Micro-Features)
 
-### Integración Cloud
-1. **Atlas (Backend):** Configurar Firebase Auth para el módulo `:login` (Completado registro/login básico, pendiente pulido de errores de red).
-2. **UX - Fotos:** Implementar galería interactiva con zoom y borrado de fotos en `JobFormScreen`.
+> [!IMPORTANT]
+> **Nueva Política de Desarrollo:** Cada mejora debe realizarse en una rama de git independiente (`feature/nombre-mejora`), ser pequeña y autocontenida, e incluir (siempre que sea posible) sus respectivos tests. No se permiten cambios grandes directamente en `main` o `develop`.
+
+### 🧪 QA & Testing (Prioridad Actual)
+1. **Módulo :home:** Implementar tests unitarios para `JobListViewModel` y `JobFormViewModel`.
+2. **Módulo :login:** Ampliar cobertura de tests de UI para `LoginScreen`.
+
+### 🛠️ Refactorizaciones y Mejoras UI
+1. **MitoTextField:** Refactorizar para validaciones genéricas (micro-feature en rama propia).
+2. **Sync:** Implementar descarga de imágenes desde Cloud Storage si faltan localmente.
 
 ## 🚀 Flujo Actual de Navegación
 
