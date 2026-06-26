@@ -1,18 +1,21 @@
 package com.tradejob.pro.database.sync
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.tradejob.pro.database.data.dao.ClientDao
 import com.tradejob.pro.database.data.dao.JobDao
 import com.tradejob.pro.database.data.dao.JobPhotoDao
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
+import java.io.File
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
@@ -80,17 +83,34 @@ class SyncWorker @AssistedInject constructor(
         val unsyncedPhotos = jobPhotoDao.getUnsyncedPhotos()
         if (unsyncedPhotos.isEmpty()) return
 
-        val batch = db.batch()
-        unsyncedPhotos.forEach { photo ->
-            val photoRef = db.collection("users").document(userId)
-                .collection("jobs").document(photo.jobId.toString())
-                .collection("photos").document(photo.id.toString())
-            batch.set(photoRef, photo.copy(isSynced = true))
-        }
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
 
-        batch.commit().await()
         unsyncedPhotos.forEach { photo ->
-            jobPhotoDao.markPhotoAsSynced(photo.id, null)
+            try {
+                val file = File(photo.photoPath)
+                if (file.exists()) {
+                    // 1. Subir archivo físico a Firebase Storage
+                    val fileRef = storageRef.child("users/$userId/jobs/${photo.jobId}/photos/${photo.id}.jpg")
+                    fileRef.putFile(Uri.fromFile(file)).await()
+                    val downloadUrl = fileRef.downloadUrl.await().toString()
+
+                    // 2. Actualizar metadatos en Firestore con la URL remota
+                    val firestoreRef = db.collection("users").document(userId)
+                        .collection("jobs").document(photo.jobId.toString())
+                        .collection("photos").document(photo.id.toString())
+                    
+                    firestoreRef.set(photo.copy(isSynced = true, remoteUrl = downloadUrl)).await()
+
+                    // 3. Marcar como sincronizado en la base de datos local
+                    jobPhotoDao.markPhotoAsSynced(photo.id, downloadUrl)
+                    Log.d("SyncWorker", "Foto ${photo.id} sincronizada físicamente con éxito.")
+                } else {
+                    Log.e("SyncWorker", "Archivo físico no encontrado: ${photo.photoPath}")
+                }
+            } catch (e: Exception) {
+                Log.e("SyncWorker", "Error al sincronizar foto física ${photo.id}", e)
+            }
         }
     }
 }
