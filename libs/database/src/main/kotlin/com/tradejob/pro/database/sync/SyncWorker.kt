@@ -41,6 +41,8 @@ class SyncWorker @AssistedInject constructor(
             syncJobs(userId, db)
             Log.d("SyncWorker", "Sincronizando fotos...")
             syncPhotos(userId, db)
+            Log.d("SyncWorker", "Recuperando fotos faltantes...")
+            downloadMissingPhotos()
             Log.i("SyncWorker", "Sincronización completada con éxito.")
             Result.success()
         } catch (e: Exception) {
@@ -110,6 +112,28 @@ class SyncWorker @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("SyncWorker", "Error al sincronizar foto física ${photo.id}", e)
+            }
+        }
+    }
+
+    private suspend fun downloadMissingPhotos() {
+        val syncedPhotos = jobPhotoDao.getSyncedPhotos()
+        val storage = FirebaseStorage.getInstance()
+
+        syncedPhotos.forEach { photo ->
+            val file = File(photo.photoPath)
+            if (!file.exists()) {
+                photo.remoteUrl?.let { remoteUrl ->
+                    try {
+                        val fileRef = storage.getReferenceFromUrl(remoteUrl)
+                        // Asegurar que el directorio padre existe
+                        file.parentFile?.mkdirs()
+                        fileRef.getFile(file).await()
+                        Log.d("SyncWorker", "Foto ${photo.id} recuperada de la nube.")
+                    } catch (e: Exception) {
+                        Log.e("SyncWorker", "Error al descargar foto ${photo.id} desde $remoteUrl", e)
+                    }
+                }
             }
         }
     }
