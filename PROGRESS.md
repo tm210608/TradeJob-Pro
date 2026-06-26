@@ -19,6 +19,13 @@
 - [x] **Shield (QA):** Tests de UI iniciados para el módulo de login.
 - [x] **Exportación Avanzada:** Generación de PDF profesional para reportes de trabajo.
 
+## ✅ Completado (26 Junio 2026)
+
+### Micro-Features y Calidad
+- [x] **QA - Unit Testing:** Implementados tests unitarios para `JobListViewModel` verificado con `UnconfinedTestDispatcher`.
+- [x] **Refactorización Componentes:** `MitoTextField` actualizado con API de `errorText` para validaciones más limpias.
+- [x] **Sincronización:** Subida física de fotos a Firebase Storage operativa en `SyncWorker`.
+
 ## 🚀 Próximos Pasos (Estrategia de Micro-Features)
 
 > [!IMPORTANT]
