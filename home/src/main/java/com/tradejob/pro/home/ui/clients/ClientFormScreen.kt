@@ -163,8 +163,7 @@ fun ClientFormContent(
             label = "Email",
             placeholder = "email@ejemplo.com",
             leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) },
-            isError = emailError != null,
-            supportingText = emailError ?: "",
+            errorText = emailError,
             modifier = Modifier.fillMaxWidth()
         )
 
