@@ -20,10 +20,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PendingActions
 import androidx.compose.material.icons.filled.Person
@@ -100,7 +99,7 @@ class HomeScreen : Screen {
                                     viewModel.dismissMenu()
                                     navController.navigate("client_list")
                                 },
-                                leadingIcon = { Icon(Icons.Default.Contacts, contentDescription = null) }
+                                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
                             )
                             DropdownMenuItem(
                                 text = { Text("Perfil") },
@@ -119,7 +118,7 @@ class HomeScreen : Screen {
                                         popUpTo("home") { inclusive = true }
                                     }
                                 },
-                                leadingIcon = { Icon(Icons.Default.Logout, contentDescription = null) }
+                                leadingIcon = { Icon(Icons.Default.ExitToApp, contentDescription = null) }
                             )
                         }
                     }
