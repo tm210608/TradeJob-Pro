@@ -1,10 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.google.services)
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.kotlin.compose)
+}
+
+if (project.file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {

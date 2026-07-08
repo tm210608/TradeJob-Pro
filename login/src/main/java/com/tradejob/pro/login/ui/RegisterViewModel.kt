@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.login.domain.RegisterUserUseCase
-import com.tradejob.pro.network.dummy_login.domain.User
+import com.tradejob.pro.login.domain.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

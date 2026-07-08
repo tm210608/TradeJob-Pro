@@ -3,7 +3,7 @@ package com.tradejob.pro.login.data
 import com.tradejob.pro.database.data.dao.UserDao
 import com.tradejob.pro.database.data.entity.UserEntity
 import com.tradejob.pro.login.domain.UserDataSource
-import com.tradejob.pro.network.dummy_login.domain.User
+import com.tradejob.pro.login.domain.User
 import org.mindrot.jbcrypt.BCrypt
 import javax.inject.Inject
 

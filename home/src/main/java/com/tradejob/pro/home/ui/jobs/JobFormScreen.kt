@@ -142,8 +142,8 @@ fun PhotoItem(
                 contentDescription = "Foto del trabajo",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
-                error = painterResource(id = android.R.drawable.ic_menu_report_image)
+                placeholder = painterResource(id = com.tradejob.pro.home.R.drawable.ic_photo_placeholder),
+                error = painterResource(id = com.tradejob.pro.home.R.drawable.ic_photo_error)
             )
             
             Surface(

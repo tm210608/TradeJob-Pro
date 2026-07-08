@@ -1,6 +1,6 @@
 package com.tradejob.pro.login.domain
 
-import com.tradejob.pro.network.dummy_login.domain.User
+import com.tradejob.pro.login.domain.User
 
 interface UserDataSource {
     suspend fun registerUser(user: User): Long

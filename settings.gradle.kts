@@ -28,7 +28,6 @@ include(
     ":login",
     ":home",
     ":libs:database",
-    ":libs:network",
     ":libs:common",
     ":libs:navigation",
     ":libs:core",

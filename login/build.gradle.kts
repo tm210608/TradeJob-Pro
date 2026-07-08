@@ -29,13 +29,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":libs:network"))
     implementation(project(":libs:common"))
     implementation(project(":libs:navigation"))
     implementation(project(":libs:core"))
     implementation(project(":libs:database"))
     implementation(project(":libs:components"))
 
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.material3)

@@ -1,7 +1,7 @@
 package com.tradejob.pro.login.domain
 
 import com.tradejob.pro.common.usecase.Result
-import com.tradejob.pro.network.dummy_login.domain.User
+import com.tradejob.pro.login.domain.User
 import com.tradejob.pro.login.data.FirebaseAuthDataSource
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
