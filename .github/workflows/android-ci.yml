@@ -1,5 +1,8 @@
 name: Android CI
 
+env:
+  GRADLE_CACHE_KEY: v1
+
 on:
   push:
     branches: [main, develop, fix/*, feat/*, chore/*, test/*]
