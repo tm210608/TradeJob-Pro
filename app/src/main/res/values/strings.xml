@@ -1,4 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TradeJob Pro</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_clients">Mis Clientes</string>
+    <string name="nav_profile">Mi Perfil</string>
+    <string name="nav_logout">Cerrar sesión</string>
+    <string name="nav_back">Volver</string>
+
+    <!-- Home Screen -->
+    <string name="home_welcome">¡Hola, %1$s!</string>
+    <string name="home_subtitle">Hoy es un buen día para trabajar</string>
+    <string name="home_stats_title">Resumen de actividad</string>
+    <string name="home_recent_jobs">Trabajos recientes</string>
+    <string name="home_quick_actions">Acciones rápidas</string>
+    <string name="home_new_client">Nuevo Cliente</string>
+    <string name="home_view_agenda">Ver Agenda</string>
+    <string name="home_error_stats">Error al cargar estadísticas</string>
+    <string name="home_stat_clients">Clientes</string>
+    <string name="home_stat_pending">Pendientes</string>
+    <string name="home_stat_in_progress">En curso</string>
+    <string name="home_stat_completed">Completados</string>
+
+    <!-- Client List -->
+    <string name="client_list_title">Mis Clientes</string>
+    <string name="client_list_search">Buscar cliente...</string>
+    <string name="client_list_empty">No tienes clientes aún</string>
+    <string name="client_list_empty_hint">Pulsa + para añadir tu primer cliente</string>
+    <string name="client_view_jobs">Ver trabajos</string>
+    <string name="client_delete_title">Eliminar cliente</string>
+    <string name="client_delete_msg">¿Estás seguro de que deseas eliminar a %1$s? Esta acción no se puede deshacer y eliminará todos sus trabajos asociados.</string>
+
+    <!-- Client Form -->
+    <string name="client_form_new">Nuevo Cliente</string>
+    <string name="client_form_edit">Editar Cliente</string>
+    <string name="client_form_section_data">Datos del cliente</string>
+    <string name="client_label_name">Nombre *</string>
+    <string name="client_placeholder_name">Nombre completo del cliente</string>
+    <string name="client_label_phone">Teléfono *</string>
+    <string name="client_placeholder_phone">Número de teléfono</string>
+    <string name="client_label_email">Email</string>
+    <string name="client_placeholder_email">email@ejemplo.com</string>
+    <string name="client_label_address">Dirección</string>
+    <string name="client_placeholder_address">Dirección del cliente</string>
+    <string name="client_label_notes">Notas</string>
+    <string name="client_placeholder_notes">Notas adicionales sobre el cliente</string>
+    <string name="client_btn_create">Crear Cliente</string>
+    <string name="client_btn_save">Guardar Cambios</string>
+    <string name="client_error_email">El formato del correo electrónico no es válido (ej: usuario@empresa.com)</string>
+    <string name="client_error_required">Nombre y teléfono son obligatorios</string>
+    <string name="client_success_created">Cliente creado</string>
+    <string name="client_success_updated">Cliente actualizado</string>
+
+    <!-- Job Form -->
+    <string name="job_form_new">Nuevo Trabajo</string>
+    <string name="job_form_edit">Editar Trabajo</string>
+    <string name="job_label_title">Título *</string>
+    <string name="job_label_description">Descripción</string>
+    <string name="job_label_budget">Presupuesto</string>
+    <string name="job_label_final_amount">Importe final</string>
+    <string name="job_label_status">Estado</string>
+    <string name="job_label_priority">Prioridad</string>
+    <string name="job_label_date">Fecha programada</string>
+    <string name="job_section_photos">Fotos</string>
+    <string name="job_btn_add_photo">Añadir foto</string>
+    <string name="job_error_title_required">El título es obligatorio</string>
+    <string name="job_success_created">Trabajo creado</string>
+    <string name="job_success_updated">Trabajo actualizado</string>
+    <string name="job_delete_title">Eliminar trabajo</string>
+    <string name="job_delete_msg">¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.</string>
+
+    <!-- Generic -->
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="btn_save">Guardar</string>
+    <string name="loading">Cargando...</string>
 </resources>

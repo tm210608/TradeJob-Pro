@@ -10,6 +10,15 @@ data class UserEntity(
     val email: String,
     val password: String,
     val phone: String? = null,
-    val specialty: String? = null, // Ej: Fontanería, Electricidad
-    val firebaseUid: String? = null
+    val specialty: String? = null,
+    val firebaseUid: String? = null,
+    val nif: String? = null,
+    val businessName: String? = null,
+    val businessAddress: String? = null,
+    val businessCity: String? = null,
+    val businessPhone: String? = null,
+    val irpfRate: Double? = null,
+    val verifactuEnabled: Boolean = false,
+    val invoiceSeries: String? = null,
+    val invoiceNumber: Int = 0
 )
