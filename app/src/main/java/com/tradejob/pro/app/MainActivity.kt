@@ -18,6 +18,9 @@ import com.tradejob.pro.home.ui.clients.ClientDetailScreen
 import com.tradejob.pro.home.ui.jobs.JobListScreen
 import com.tradejob.pro.home.ui.jobs.JobFormScreen
 import com.tradejob.pro.home.ui.profile.ProfileScreen
+import com.tradejob.pro.home.ui.quotes.QuoteListScreen
+import com.tradejob.pro.home.ui.quotes.QuoteFormScreen
+import com.tradejob.pro.home.ui.invoices.InvoiceListScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +43,10 @@ class MainActivity : ComponentActivity() {
                         ClientDetailScreen(),
                         JobListScreen(),
                         JobFormScreen(),
-                        ProfileScreen()
+                        ProfileScreen(),
+                        QuoteListScreen(),
+                        QuoteFormScreen(),
+                        InvoiceListScreen()
                     )
                     AppNavigation(
                         navController = navController,
