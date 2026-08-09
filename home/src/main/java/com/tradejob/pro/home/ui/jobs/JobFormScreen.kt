@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -47,6 +48,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,10 +77,19 @@ import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.core.navigation.Screen
 import com.tradejob.pro.database.data.entity.JobPhotoEntity
+import com.tradejob.pro.common.validation.ValidationResult
+import com.tradejob.pro.components.extensions.asString
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.io.File
+
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.common.camera.CameraUtils
+import com.tradejob.pro.home.R
 
 class JobFormScreen : Screen {
     override val route: String = "job_form/{clientId}/{jobId}"
@@ -96,16 +107,17 @@ class JobFormScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: JobFormViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val context = androidx.compose.ui.platform.LocalContext.current
 
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(if (viewModel.isEditMode) "Editar Trabajo" else "Nuevo Trabajo")
+                        Text(if (viewModel.isEditMode) stringResource(R.string.job_form_edit) else stringResource(R.string.job_form_new))
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     }
                 )
@@ -139,7 +151,7 @@ fun PhotoItem(
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = photo.photoPath,
-                contentDescription = "Foto del trabajo",
+                contentDescription = stringResource(R.string.job_photo_description),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
@@ -171,7 +183,7 @@ fun PhotoItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar foto",
+                    contentDescription = stringResource(R.string.job_photo_delete),
                     tint = Color.White,
                     modifier = Modifier.size(16.dp)
                 )
@@ -196,7 +208,7 @@ fun FullScreenPhotoViewer(
         ) {
             AsyncImage(
                 model = photoPath,
-                contentDescription = "Vista completa",
+                contentDescription = stringResource(R.string.job_photo_fullview),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
@@ -210,7 +222,7 @@ fun FullScreenPhotoViewer(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Cerrar",
+                    contentDescription = stringResource(R.string.job_photo_close),
                     tint = Color.White
                 )
             }
@@ -226,11 +238,14 @@ fun JobFormContent(
     modifier: Modifier = Modifier
 ) {
     val title by viewModel.title.collectAsState()
+    val titleError by viewModel.titleError.collectAsState()
     val description by viewModel.description.collectAsState()
     val status by viewModel.status.collectAsState()
     val priority by viewModel.priority.collectAsState()
     val budgetAmount by viewModel.budgetAmount.collectAsState()
+    val budgetError by viewModel.budgetError.collectAsState()
     val finalAmount by viewModel.finalAmount.collectAsState()
+    val finalAmountError by viewModel.finalAmountError.collectAsState()
     val scheduledAt by viewModel.scheduledAt.collectAsState()
     val photos by viewModel.photos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -238,8 +253,94 @@ fun JobFormContent(
     val context = androidx.compose.ui.platform.LocalContext.current
 
     var selectedPhotoPath by remember { mutableStateOf<String?>(null) }
+    var showPhotoTypeDialog by remember { mutableStateOf(false) }
+    var pendingPhotoType by remember { mutableStateOf("BEFORE") }
+    var tempPhotoUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
     val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempPhotoUri?.let { uri ->
+                val photoFile = File(uri.path ?: return@let)
+                val compressedFile = CameraUtils.compressImage(photoFile)
+                viewModel.addPhoto(compressedFile.absolutePath, pendingPhotoType)
+            }
+        }
+        tempPhotoUri = null
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            showPhotoTypeDialog = true
+        }
+    }
+
+    if (showPhotoTypeDialog) {
+        AlertDialog(
+            onDismissRequest = { showPhotoTypeDialog = false },
+            title = { Text(stringResource(R.string.camera_photo_type_title)) },
+            text = {
+                Column {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.camera_photo_before)) },
+                        onClick = {
+                            pendingPhotoType = "BEFORE"
+                            showPhotoTypeDialog = false
+                            val photoFile = CameraUtils.createImageFile(context, viewModel.jobId ?: 0L)
+                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileprovider",
+                                photoFile
+                            )
+                            tempPhotoUri = uri
+                            cameraLauncher.launch(uri)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.camera_photo_after)) },
+                        onClick = {
+                            pendingPhotoType = "AFTER"
+                            showPhotoTypeDialog = false
+                            val photoFile = CameraUtils.createImageFile(context, viewModel.jobId ?: 0L)
+                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileprovider",
+                                photoFile
+                            )
+                            tempPhotoUri = uri
+                            cameraLauncher.launch(uri)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.camera_photo_progress)) },
+                        onClick = {
+                            pendingPhotoType = "PROGRESS"
+                            showPhotoTypeDialog = false
+                            val photoFile = CameraUtils.createImageFile(context, viewModel.jobId ?: 0L)
+                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileprovider",
+                                photoFile
+                            )
+                            tempPhotoUri = uri
+                            cameraLauncher.launch(uri)
+                        }
+                    )
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showPhotoTypeDialog = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
+            }
+        )
+    }
 
     if (selectedPhotoPath != null) {
         FullScreenPhotoViewer(
@@ -279,7 +380,7 @@ fun JobFormContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Detalles del trabajo",
+            text = stringResource(R.string.job_form_edit), // Reusing a title but should be more generic like "Detalles"
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -288,8 +389,9 @@ fun JobFormContent(
         MitoTextField(
             value = title,
             onValueChange = { viewModel.onTitleChanged(it) },
-            label = "Título *",
+            label = stringResource(R.string.job_label_title),
             placeholder = "Ej: Reparación de fuga en baño",
+            errorText = titleError.asString(),
             leadingIcon = { Icon(Icons.Default.Build, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -301,8 +403,9 @@ fun JobFormContent(
             MitoNumberField(
                 value = budgetAmount,
                 onValueChange = { viewModel.onBudgetAmountChanged(it) },
-                label = "Presupuesto",
+                label = stringResource(R.string.job_label_budget),
                 placeholder = "0.00",
+                errorText = budgetError.asString(),
                 leadingIcon = { Icon(Icons.Default.AttachMoney, contentDescription = null) },
                 modifier = Modifier.weight(1f)
             )
@@ -310,8 +413,9 @@ fun JobFormContent(
             MitoNumberField(
                 value = finalAmount,
                 onValueChange = { viewModel.onFinalAmountChanged(it) },
-                label = "Importe Final",
+                label = stringResource(R.string.job_label_final_amount),
                 placeholder = "0.00",
+                errorText = finalAmountError.asString(),
                 leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null) },
                 modifier = Modifier.weight(1f)
             )
@@ -321,7 +425,7 @@ fun JobFormContent(
             value = if (scheduledAt != null) dateFormatter.format(Date(scheduledAt!!)) else "",
             onValueChange = {},
             readOnly = true,
-            label = "Fecha programada",
+            label = stringResource(R.string.job_label_date),
             placeholder = "Seleccionar fecha",
             leadingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null) },
             modifier = Modifier
@@ -341,13 +445,13 @@ fun JobFormContent(
                         calendar.get(Calendar.DAY_OF_MONTH)
                     ).show()
                 },
-            enabled = true // Note: MitoTextField handles enabled, but clickable needs to work
+            enabled = true
         )
 
         MitoTextField(
             value = description,
             onValueChange = { viewModel.onDescriptionChanged(it) },
-            label = "Descripción",
+            label = stringResource(R.string.job_label_description),
             placeholder = "Detalles sobre el trabajo a realizar...",
             leadingIcon = { Icon(Icons.Default.Description, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
@@ -366,7 +470,7 @@ fun JobFormContent(
                 value = status.displayName,
                 onValueChange = {},
                 readOnly = true,
-                label = "Estado",
+                label = stringResource(R.string.job_label_status),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusExpanded) },
                 modifier = Modifier.menuAnchor()
             )
@@ -397,7 +501,7 @@ fun JobFormContent(
                 value = priority.displayName,
                 onValueChange = {},
                 readOnly = true,
-                label = "Prioridad",
+                label = stringResource(R.string.job_label_priority),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = priorityExpanded) },
                 modifier = Modifier.menuAnchor()
             )
@@ -428,16 +532,15 @@ fun JobFormContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Fotos del trabajo",
+                text = stringResource(R.string.job_section_photos),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             
-            IconButton(onClick = { 
-                // Simulación de añadir foto (en un caso real abriría cámara/galería)
-                viewModel.addPhoto("fake_path_${System.currentTimeMillis()}.jpg") 
+            IconButton(onClick = {
+                permissionLauncher.launch(android.Manifest.permission.CAMERA)
             }) {
-                Icon(Icons.Default.AddAPhoto, contentDescription = "Añadir foto")
+                Icon(Icons.Default.AddAPhoto, contentDescription = stringResource(R.string.job_btn_add_photo))
             }
         }
 
@@ -449,7 +552,7 @@ fun JobFormContent(
                     .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Sin fotos aún", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(text = stringResource(R.string.job_photos_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else {
             LazyRow(
@@ -469,9 +572,9 @@ fun JobFormContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (viewModel.isEditMode) "Guardar Cambios" else "Crear Trabajo",
+            text = if (viewModel.isEditMode) stringResource(R.string.client_btn_save) else stringResource(R.string.btn_save),
             onClick = { viewModel.save() },
-            enabled = title.isNotBlank() && !isLoading,
+            enabled = !isLoading,
             modifier = Modifier.fillMaxWidth()
         )
     }

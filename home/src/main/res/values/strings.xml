@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TradeJob Pro</string>
+    <!-- Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_clients">Mis Clientes</string>
+    <string name="nav_profile">Mi Perfil</string>
+    <string name="nav_logout">Cerrar sesión</string>
+    <string name="nav_back">Volver</string>
+
+    <!-- Home Screen -->
+    <string name="home_welcome">¡Hola, %1$s!</string>
+    <string name="home_subtitle">Hoy es un buen día para trabajar</string>
+    <string name="home_stats_title">Resumen de actividad</string>
+    <string name="home_recent_jobs">Trabajos recientes</string>
+    <string name="home_quick_actions">Acciones rápidas</string>
+    <string name="home_new_client">Nuevo Cliente</string>
+    <string name="home_view_agenda">Ver Agenda</string>
+    <string name="home_error_stats">Error al cargar estadísticas</string>
+    <string name="home_stat_clients">Clientes</string>
+    <string name="home_stat_pending">Pendientes</string>
+    <string name="home_stat_in_progress">En curso</string>
+    <string name="home_stat_completed">Completados</string>
+
+    <!-- Client List -->
+    <string name="client_list_title">Mis Clientes</string>
+    <string name="client_list_search">Buscar cliente&#8230;</string>
+    <string name="client_list_empty">No tienes clientes aún</string>
+    <string name="client_list_empty_hint">Pulsa + para añadir tu primer cliente</string>
+    <string name="client_view_jobs">Ver trabajos</string>
+    <string name="client_delete_title">Eliminar cliente</string>
+    <string name="client_delete_msg">¿Estás seguro de que deseas eliminar a %1$s? Esta acción no se puede deshacer y eliminará todos sus trabajos asociados.</string>
+
+    <!-- Client Form -->
+    <string name="client_form_new">Nuevo Cliente</string>
+    <string name="client_form_edit">Editar Cliente</string>
+    <string name="client_form_section_data">Datos del cliente</string>
+    <string name="client_label_name">Nombre *</string>
+    <string name="client_placeholder_name">Nombre completo del cliente</string>
+    <string name="client_label_phone">Teléfono *</string>
+    <string name="client_placeholder_phone">Número de teléfono</string>
+    <string name="client_label_email">Email</string>
+    <string name="client_placeholder_email">email@ejemplo.com</string>
+    <string name="client_label_address">Dirección</string>
+    <string name="client_placeholder_address">Dirección del cliente</string>
+    <string name="client_label_notes">Notas</string>
+    <string name="client_placeholder_notes">Notas adicionales sobre el cliente</string>
+    <string name="client_btn_create">Crear Cliente</string>
+    <string name="client_btn_save">Guardar Cambios</string>
+    <string name="client_error_email">El formato del correo electrónico no es válido (ej: usuario@empresa.com)</string>
+    <string name="client_error_required">Nombre y teléfono son obligatorios</string>
+    <string name="client_success_created">Cliente creado</string>
+    <string name="client_success_updated">Cliente actualizado</string>
+
+    <!-- Job Form -->
+    <string name="job_form_new">Nuevo Trabajo</string>
+    <string name="job_form_edit">Editar Trabajo</string>
+    <string name="job_label_title">Título *</string>
+    <string name="job_label_description">Descripción</string>
+    <string name="job_label_budget">Presupuesto</string>
+    <string name="job_label_final_amount">Importe final</string>
+    <string name="job_label_status">Estado</string>
+    <string name="job_label_priority">Prioridad</string>
+    <string name="job_label_date">Fecha programada</string>
+    <string name="job_section_photos">Fotos</string>
+    <string name="job_btn_add_photo">Añadir foto</string>
+    <string name="job_error_title_required">El título es obligatorio</string>
+    <string name="job_success_created">Trabajo creado</string>
+    <string name="job_success_updated">Trabajo actualizado</string>
+    <string name="job_delete_title">Eliminar trabajo</string>
+    <string name="job_delete_msg">¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.</string>
+    <string name="job_error_invalid_amount">Ingrese un monto válido</string>
+    <string name="job_error_fix_amounts">Por favor, corrija los errores en los montos</string>
+
+    <!-- Generic -->
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="btn_save">Guardar</string>
+    <string name="loading">Cargando&#8230;</string>
+    <!-- Profile -->
+    <string name="profile_title">Mi Perfil</string>
+    <string name="profile_section_pro">Información profesional</string>
+    <string name="profile_label_name">Nombre completo</string>
+    <string name="profile_label_email_readonly">Email (No editable)</string>
+    <string name="profile_label_phone">Teléfono</string>
+    <string name="profile_label_specialty">Especialidad</string>
+    <string name="profile_placeholder_specialty">Ej: Fontanería, Albañilería&#8230;</string>
+    <string name="profile_btn_save">Guardar cambios</string>
+    <string name="profile_success_updated">Perfil actualizado con éxito</string>
+    <string name="profile_error_updated">Error al actualizar perfil</string>
+
+    <!-- Quotes -->
+    <string name="quote_list_title">Presupuestos</string>
+    <string name="quote_form_new">Nuevo Presupuesto</string>
+    <string name="quote_form_edit">Editar Presupuesto</string>
+    <string name="quote_section_items">Partidas del presupuesto</string>
+    <string name="quote_empty_items">Sin partidas. Toca + para anadir.</string>
+    <string name="quote_btn_add_item">Anadir partida</string>
+    <string name="quote_dialog_new_item">Nueva partida</string>
+    <string name="quote_item_description">Descripcion</string>
+    <string name="quote_item_quantity">Cantidad</string>
+    <string name="quote_item_unit_price">Precio unitario</string>
+    <string name="quote_label_vat">IVA (%)</string>
+    <string name="quote_label_notes">Notas</string>
+    <string name="quote_label_subtotal">Subtotal</string>
+    <string name="quote_label_vat_amount">IVA</string>
+    <string name="quote_label_total">Total</string>
+    <string name="quote_btn_create">Crear presupuesto</string>
+    <string name="quote_btn_save">Guardar</string>
+    <string name="quote_empty_list">Sin presupuestos aun</string>
+    <string name="quote_error_no_items">Anade al menos una partida al presupuesto</string>
+    <string name="quote_success_created">Presupuesto creado</string>
+    <string name="quote_success_updated">Presupuesto actualizado</string>
+    <string name="quote_error_save">Error al guardar presupuesto</string>
+    <string name="quote_error_load">Error al cargar presupuesto</string>
+    <string name="quote_status_draft">Borrador</string>
+    <string name="quote_status_sent">Enviado</string>
+    <string name="quote_status_accepted">Aceptado</string>
+    <string name="quote_status_rejected">Rechazado</string>
+    <string name="quote_nav_quotes">Presupuestos</string>
+
+    <!-- Invoices -->
+    <string name="invoice_list_title">Facturas</string>
+    <string name="invoice_empty_list">Sin facturas aun</string>
+    <string name="invoice_filter_all">Todas</string>
+    <string name="invoice_status_pending">Pendiente</string>
+    <string name="invoice_status_paid">Pagada</string>
+    <string name="invoice_status_overdue">Vencida</string>
+    <string name="invoice_status_cancelled">Anulada</string>
+    <string name="invoice_label_total">Total</string>
+    <string name="invoice_nav_invoices">Facturas</string>
+
+    <!-- Signature -->
+    <string name="signature_pad_hint">Firme aqui</string>
+    <string name="signature_btn_clear">Limpiar</string>
+    <string name="signature_btn_save">Guardar firma</string>
+    <string name="signature_dialog_title">Firma del cliente</string>
+    <string name="signature_btn_request">Solicitar firma del cliente</string>
+    <string name="signature_btn_change">Firma guardada - cambiar</string>
+    <string name="signature_saved">Firma guardada</string>
+
+    <!-- Camera -->
+    <string name="camera_photo_type_title">Tipo de foto</string>
+    <string name="camera_photo_before">Antes</string>
+    <string name="camera_photo_after">Despues</string>
+    <string name="camera_photo_progress">Progreso</string>
+
+    <!-- Fiscal Data -->
+    <string name="fiscal_section_title">Datos fiscales (para presupuestos y facturas)</string>
+    <string name="fiscal_label_nif">NIF</string>
+    <string name="fiscal_placeholder_nif">12345678A</string>
+    <string name="fiscal_label_business_name">Nombre comercial</string>
+    <string name="fiscal_placeholder_business_name">Tu empresa o nombre profesional</string>
+    <string name="fiscal_label_address">Direccion fiscal</string>
+    <string name="fiscal_label_city">Ciudad</string>
+    <string name="fiscal_label_irpf">Retencion IRPF (%)</string>
+    <string name="fiscal_placeholder_irpf">15</string>
+
+    <!-- Generic extras -->
+    <string name="btn_add">Anadir</string>
+    <string name="btn_delete_item">Eliminar partida</string>
+    <string name="job_photos_empty">Sin fotos aun</string>
+    <string name="job_photo_description">Foto del trabajo</string>
+    <string name="job_photo_delete">Eliminar foto</string>
+    <string name="job_photo_fullview">Vista completa</string>
+    <string name="job_photo_close">Cerrar</string>
+</resources>
