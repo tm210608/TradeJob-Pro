@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.content.Context
+import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.QuoteEntity
@@ -34,6 +35,7 @@ class QuoteFormViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val generateQuotePdfUseCase: GenerateQuotePdfUseCase,
     private val createInvoiceFromQuoteUseCase: CreateInvoiceFromQuoteUseCase,
+    private val analyticsHelper: AnalyticsHelper,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -235,6 +237,7 @@ class QuoteFormViewModel @Inject constructor(
             }
             val file = generateQuotePdfUseCase(context, client, quote, items, loadedProfessional, signaturePath)
             if (file != null) {
+                analyticsHelper.logEvent("quote_pdf_exported", mapOf("quoteId" to quote.id.toString()))
                 _pdfFile.value = file
                 _event.value = QuoteFormEvent.Success("PDF generado correctamente")
             } else {
@@ -250,10 +253,12 @@ class QuoteFormViewModel @Inject constructor(
             _isConverting.value = true
             when (val result = createInvoiceFromQuoteUseCase(quote)) {
                 is Result.Success -> {
+                    analyticsHelper.logEvent("quote_converted_to_invoice", mapOf("quoteId" to quote.id.toString()))
                     _event.value = QuoteFormEvent.Success("Factura creada desde presupuesto")
                     _isConverting.value = false
                 }
                 is Result.Error -> {
+                    analyticsHelper.logError(result.exception, "Failed to convert quote ${quote.id} to invoice")
                     _event.value = QuoteFormEvent.Error("Error al crear factura")
                     _isConverting.value = false
                 }

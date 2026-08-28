@@ -1,4 +1,4 @@
-package com.tradejob.pro.app.analytics
+package com.tradejob.pro.common.analytics
 
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.InvoiceEntity
@@ -29,6 +30,7 @@ class InvoiceFormViewModel @Inject constructor(
     private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase,
     private val clientRepository: ClientRepository,
     private val userRepository: UserRepository,
+    private val analyticsHelper: AnalyticsHelper,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -129,14 +131,16 @@ class InvoiceFormViewModel @Inject constructor(
                 paymentMethod = _paymentMethod.value ?: current.paymentMethod,
                 notes = _notes.value.trim().ifBlank { null }
             )
-            when (saveInvoiceUseCase(updated, isNew = false)) {
+            when (val res = saveInvoiceUseCase(updated, isNew = false)) {
                 is Result.Success -> {
+                    analyticsHelper.logEvent("invoice_marked_paid", mapOf("invoiceId" to updated.id.toString()))
                     _invoice.value = updated
                     _status.value = InvoiceStatus.PAID
                     _event.value = InvoiceFormEvent.Success("Factura marcada como pagada")
                     _isLoading.value = false
                 }
                 is Result.Error -> {
+                    analyticsHelper.logError(res.exception, "Failed to mark invoice ${current.id} as paid")
                     _event.value = InvoiceFormEvent.Error("Error al actualizar factura")
                     _isLoading.value = false
                 }
@@ -186,6 +190,7 @@ class InvoiceFormViewModel @Inject constructor(
         viewModelScope.launch {
             val file = generateInvoicePdfUseCase(context, client, invoice, professional)
             if (file != null) {
+                analyticsHelper.logEvent("invoice_pdf_exported", mapOf("invoiceId" to invoice.id.toString()))
                 _pdfFile.value = file
                 _event.value = InvoiceFormEvent.Success("PDF generado correctamente")
             } else {

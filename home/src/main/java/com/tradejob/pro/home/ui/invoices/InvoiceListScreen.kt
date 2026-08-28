@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.core.navigation.Screen
 import com.tradejob.pro.database.data.entity.ClientEntity
@@ -114,7 +115,8 @@ class InvoiceListViewModel @Inject constructor(
     private val getAllInvoicesUseCase: GetAllInvoicesUseCase,
     private val clientRepository: ClientRepository,
     private val userRepository: UserRepository,
-    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase
+    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase,
+    private val analyticsHelper: AnalyticsHelper
 ) : ViewModel() {
 
     private val _allInvoices = MutableStateFlow<List<InvoiceEntity>>(emptyList())
@@ -184,7 +186,10 @@ class InvoiceListViewModel @Inject constructor(
                 return@launch
             }
             val file = generateInvoicePdfUseCase(context, client, invoice, professional)
-            _pdfMessage.value = if (file != null) "PDF generado: ${file.name}" else "Error al generar PDF"
+            _pdfMessage.value = if (file != null) {
+                analyticsHelper.logEvent("invoice_pdf_exported", mapOf("invoiceId" to invoice.id.toString()))
+                "PDF generado: ${file.name}"
+            } else "Error al generar PDF"
         }
     }
 
