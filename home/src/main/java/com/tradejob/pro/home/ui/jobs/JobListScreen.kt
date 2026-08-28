@@ -61,6 +61,9 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.core.content.FileProvider
 import java.io.File
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.home.R
+
 class JobListScreen : Screen {
     override val route: String = "job_list/{clientId}"
     
@@ -79,10 +82,10 @@ class JobListScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Trabajos del Cliente") },
+                    title = { Text(stringResource(R.string.home_stats_title)) }, // Reusing or specific
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     }
                 )
@@ -90,12 +93,11 @@ class JobListScreen : Screen {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { 
-                        // Obtener clientId de los argumentos de navegación
                         val clientId = navController.currentBackStackEntry?.arguments?.getString("clientId") ?: "0"
                         navController.navigate("job_form/$clientId/0") 
                     }
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Añadir trabajo")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.job_form_new))
                 }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }

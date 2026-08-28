@@ -32,6 +32,9 @@ import com.tradejob.pro.components.resources.PrimaryColor
 import com.tradejob.pro.components.resources.PrimaryDarkColor
 import com.tradejob.pro.core.navigation.Screen
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.login.R
+
 class NewUserScreen : Screen {
     override val route: String = "register"
 
@@ -43,10 +46,10 @@ class NewUserScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Crear Cuenta", color = Color.White) },
+                    title = { Text(stringResource(R.string.register_title), color = Color.White) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back_login), tint = Color.White)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -96,14 +99,14 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Crea tu Cuenta",
+                text = stringResource(R.string.register_title_main),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White
             )
 
             Text(
-                text = "Únete a la comunidad de profesionales",
+                text = stringResource(R.string.register_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.8f)
             )
@@ -124,7 +127,7 @@ fun RegisterContent(
                     MitoTextField(
                         value = status.name,
                         onValueChange = { viewModel.onNameChanged(it) },
-                        label = "Nombre completo",
+                        label = stringResource(R.string.register_label_name),
                         placeholder = "Tu nombre",
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "Nombre")
@@ -135,7 +138,7 @@ fun RegisterContent(
                     MitoEmailField(
                         value = status.email,
                         onValueChange = { viewModel.onEmailChanged(it) },
-                        label = "Email",
+                        label = stringResource(R.string.register_label_email),
                         placeholder = "tu@email.com",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -143,7 +146,7 @@ fun RegisterContent(
                     MitoPasswordField(
                         value = status.password,
                         onValueChange = { viewModel.onPasswordChanged(it) },
-                        label = "Contraseña",
+                        label = stringResource(R.string.register_label_password),
                         placeholder = "Mínimo 6 caracteres",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -151,7 +154,7 @@ fun RegisterContent(
                     MitoPasswordField(
                         value = status.confirmPassword,
                         onValueChange = { viewModel.onConfirmPasswordChanged(it) },
-                        label = "Confirmar contraseña",
+                        label = stringResource(R.string.register_label_confirm_password),
                         placeholder = "Repite tu contraseña",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -159,7 +162,7 @@ fun RegisterContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     PrimaryButton(
-                        text = "REGISTRARME",
+                        text = stringResource(R.string.register_btn_create),
                         onClick = { viewModel.register() },
                         enabled = status.isValid && !status.isLoading,
                         modifier = Modifier.fillMaxWidth()
@@ -173,7 +176,7 @@ fun RegisterContent(
                 onClick = { navController.popBackStack() }
             ) {
                 Text(
-                    text = "¿Ya tienes cuenta? Inicia sesión",
+                    text = stringResource(R.string.register_btn_back),
                     color = Color.White,
                     fontWeight = FontWeight.Medium
                 )

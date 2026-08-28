@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="validation_required">Este campo es obligatorio</string>
+    <string name="validation_invalid_email">Correo electrónico no válido</string>
+    <string name="validation_invalid_phone">Número de teléfono no válido</string>
+    <string name="validation_invalid_number">Ingrese un número válido</string>
+</resources>

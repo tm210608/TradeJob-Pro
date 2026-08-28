@@ -43,6 +43,9 @@ import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.core.navigation.Screen
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.home.R
+
 class ClientFormScreen : Screen {
     override val route: String = "client_form/{clientId}"
     
@@ -62,11 +65,11 @@ class ClientFormScreen : Screen {
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(if (viewModel.isEditMode) "Editar Cliente" else "Nuevo Cliente")
+                        Text(if (viewModel.isEditMode) stringResource(R.string.client_form_edit) else stringResource(R.string.client_form_new))
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     }
                 )
@@ -130,7 +133,7 @@ fun ClientFormContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Datos del cliente",
+            text = stringResource(R.string.client_form_section_data),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -140,8 +143,8 @@ fun ClientFormContent(
         MitoTextField(
             value = name,
             onValueChange = { viewModel.onNameChanged(it) },
-            label = "Nombre *",
-            placeholder = "Nombre completo del cliente",
+            label = stringResource(R.string.client_label_name),
+            placeholder = stringResource(R.string.client_placeholder_name),
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -150,8 +153,8 @@ fun ClientFormContent(
         MitoTextField(
             value = phone,
             onValueChange = { viewModel.onPhoneChanged(it) },
-            label = "Teléfono *",
-            placeholder = "Número de teléfono",
+            label = stringResource(R.string.client_label_phone),
+            placeholder = stringResource(R.string.client_placeholder_phone),
             leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -160,8 +163,8 @@ fun ClientFormContent(
         MitoTextField(
             value = email,
             onValueChange = { viewModel.onEmailChanged(it) },
-            label = "Email",
-            placeholder = "email@ejemplo.com",
+            label = stringResource(R.string.client_label_email),
+            placeholder = stringResource(R.string.client_placeholder_email),
             leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) },
             errorText = emailError,
             modifier = Modifier.fillMaxWidth()
@@ -171,8 +174,8 @@ fun ClientFormContent(
         MitoTextField(
             value = address,
             onValueChange = { viewModel.onAddressChanged(it) },
-            label = "Dirección",
-            placeholder = "Dirección del cliente",
+            label = stringResource(R.string.client_label_address),
+            placeholder = stringResource(R.string.client_placeholder_address),
             leadingIcon = { Icon(Icons.Default.Home, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -181,15 +184,15 @@ fun ClientFormContent(
         MitoTextField(
             value = notes,
             onValueChange = { viewModel.onNotesChanged(it) },
-            label = "Notas",
-            placeholder = "Notas adicionales sobre el cliente",
+            label = stringResource(R.string.client_label_notes),
+            placeholder = stringResource(R.string.client_placeholder_notes),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (viewModel.isEditMode) "Guardar Cambios" else "Crear Cliente",
+            text = if (viewModel.isEditMode) stringResource(R.string.client_btn_save) else stringResource(R.string.client_btn_create),
             onClick = { viewModel.save() },
             enabled = isValid && !isLoading,
             modifier = Modifier.fillMaxWidth()

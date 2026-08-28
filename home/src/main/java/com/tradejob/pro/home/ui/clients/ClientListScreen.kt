@@ -54,6 +54,9 @@ import com.tradejob.pro.components.MitoButtonSheet
 import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.core.navigation.Screen
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.home.R
+
 class ClientListScreen : Screen {
     override val route: String = "client_list"
 
@@ -73,7 +76,7 @@ override fun Content(navController: NavHostController) {
                         TextField(
                             value = searchQuery,
                             onValueChange = { viewModel.onSearchQueryChanged(it) },
-                            placeholder = { Text("Buscar cliente...") },
+                            placeholder = { Text(stringResource(R.string.client_list_search)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
@@ -90,21 +93,21 @@ override fun Content(navController: NavHostController) {
                             isSearching = false
                             viewModel.onSearchQueryChanged("")
                         }) {
-                            Icon(Icons.Default.Close, contentDescription = "Cerrar búsqueda")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.btn_cancel))
                         }
                     }
                 )
             } else {
                 TopAppBar(
-                    title = { Text("Mis Clientes") },
+                    title = { Text(stringResource(R.string.client_list_title)) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     },
                     actions = {
                         IconButton(onClick = { isSearching = true }) {
-                            Icon(Icons.Default.Search, contentDescription = "Buscar")
+                            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.client_list_search))
                         }
                     }
                 )
@@ -114,7 +117,7 @@ override fun Content(navController: NavHostController) {
                 FloatingActionButton(
                     onClick = { navController.navigate("client_form/0") }
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Añadir cliente")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.client_form_new))
                 }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -158,10 +161,10 @@ fun ClientListContent(
     if (clientToDelete != null) {
         MitoBottomSheet(
             mitoButtonSheet = MitoButtonSheet.ConfirmMitoButtonSheet(
-                title = "Eliminar cliente",
-                message = "¿Estás seguro de que deseas eliminar a ${clientToDelete?.name}? Esta acción no se puede deshacer y eliminará todos sus trabajos asociados.",
-                confirmText = "Eliminar",
-                dismissText = "Cancelar",
+                title = stringResource(R.string.client_delete_title),
+                message = stringResource(R.string.client_delete_msg, clientToDelete?.name ?: ""),
+                confirmText = stringResource(R.string.btn_delete),
+                dismissText = stringResource(R.string.btn_cancel),
                 onConfirm = {
                     clientToDelete?.let { viewModel.deleteClient(it) }
                     clientToDelete = null
@@ -190,12 +193,12 @@ fun ClientListContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No tienes clientes aún",
+                        text = stringResource(R.string.client_list_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.outline
                     )
                     Text(
-                        text = "Pulsa + para añadir tu primer cliente",
+                        text = stringResource(R.string.client_list_empty_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.outlineVariant
                     )
@@ -287,7 +290,7 @@ fun ClientCard(
             
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Ver trabajos",
+                text = stringResource(R.string.client_view_jobs),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium

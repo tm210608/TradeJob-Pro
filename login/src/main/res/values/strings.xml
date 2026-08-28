@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Screen -->
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="login_label_email">Email</string>
+    <string name="login_label_password">Contraseña</string>
+    <string name="login_btn_enter">ENTRAR</string>
+    <string name="login_btn_register">¿No tienes cuenta? Regístrate aquí</string>
+    <string name="login_error_invalid">Credenciales inválidas</string>
+    <string name="login_success">Bienvenido</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Nueva Cuenta</string>
+    <string name="register_title_main">Crea tu Cuenta</string>
+    <string name="register_subtitle">Únete a la comunidad de profesionales</string>
+    <string name="register_label_name">Nombre completo</string>
+    <string name="register_label_email">Email</string>
+    <string name="register_label_password">Contraseña</string>
+    <string name="register_label_confirm_password">Confirmar contraseña</string>
+    <string name="register_btn_create">REGISTRARME</string>
+    <string name="register_btn_back">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="register_error_passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="register_error_generic">Error al crear cuenta</string>
+    <string name="register_success">Cuenta creada con éxito</string>
+    <string name="nav_back_login">Volver</string>
+</resources>

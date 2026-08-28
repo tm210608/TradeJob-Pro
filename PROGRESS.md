@@ -26,17 +26,26 @@
 - [x] **Refactorización Componentes:** `MitoTextField` actualizado con API de `errorText` para validaciones más limpias.
 - [x] **Sincronización:** Subida y descarga automática de fotos desde Firebase Storage en `SyncWorker`.
 
+## ✅ Completado (05 Julio 2026) - Sesión Actual
+
+### Profesionalización y Preparación para Lanzamiento
+- [x] **Internacionalización (i18n):** Extracción de todos los strings de la UI a `strings.xml` en los módulos `:home` y `:login`.
+- [x] **QA - Unit Testing Pro:** Suite de tests unitarios completa para `JobFormViewModel` (6 tests) y `ProfileViewModel` (4 tests).
+- [x] **Validación Avanzada:** Implementada validación en tiempo real para campos numéricos (presupuesto/importes) en `JobFormViewModel`.
+- [x] **Seguridad y Optimización:** Configuración de R8/ProGuard activa en `:app` y creación de `proguard-rules.pro`.
+- [x] **Estabilidad UI:** Corregidos errores de recursos, deprecaciones de iconos e importaciones en `HomeScreen.kt`.
+
 ## 🚀 Próximos Pasos (Estrategia de Micro-Features)
 
 > [!IMPORTANT]
 > **Nueva Política de Desarrollo:** Cada mejora debe realizarse en una rama de git independiente (`feature/nombre-mejora`), ser pequeña y autocontenida, e incluir (siempre que sea posible) sus respectivos tests. No se permiten cambios grandes directamente en `main` o `develop`.
 
 ### 🧪 QA & Testing (Prioridad Actual)
-1. **Módulo :home:** Implementar tests unitarios para `JobListViewModel` y `JobFormViewModel`.
-2. **Módulo :login:** Ampliar cobertura de tests de UI para `LoginScreen`.
+1. **Módulo :login:** Ampliar cobertura de tests de UI para `LoginScreen`.
+2. **Shield:** Añadir tests de migración de base de datos Room.
 
 ### 🛠️ Refactorizaciones y Mejoras UI
-1. **MitoTextField:** Refactorizar para validaciones genéricas (micro-feature en rama propia).
+1. **Architect (PENDIENTE):** Implementar el "Professional Validation Framework" en `:libs:common` para estandarizar errores en toda la app.
 2. **Sync:** Implementar descarga de imágenes desde Cloud Storage si faltan localmente.
 
 ## 🚀 Flujo Actual de Navegación
@@ -52,9 +61,9 @@ LoginScreen → HomeScreen → [Menú] → ClientListScreen → ClientFormScreen
 - Gradle 8.13 configurado
 - Java 17 / Kotlin 1.9.24
 - Compose BOM 2024.06.00
-- Tema: MaterialComponents (Material3 no disponible en versiones actuales)
+- Tema: MaterialComponents (Transicionando a Material3)
 - Package: `com.tradejob.pro`
 
 ---
-**Última compilación:** Intentada, errores menores de recursos (iconos)
-**Estado:** Funcional lógicamente, pendiente assets visuales
+**Última compilación:** EXITOSA (05/07/2026)
+**Estado:** Production-Ready Candidate
