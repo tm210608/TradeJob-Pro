@@ -165,4 +165,39 @@
     <string name="job_photo_delete">Eliminar foto</string>
     <string name="job_photo_fullview">Vista completa</string>
     <string name="job_photo_close">Cerrar</string>
+
+    <!-- PDF Export -->
+    <string name="btn_export_pdf">Exportar PDF</string>
+    <string name="btn_convert_invoice">Convertir en factura</string>
+    <string name="pdf_export_success">PDF generado correctamente</string>
+    <string name="pdf_export_error">Error al generar PDF</string>
+    <string name="invoice_created_from_quote">Factura creada desde presupuesto</string>
+    <string name="invoice_create_error">Error al crear factura</string>
+
+    <!-- Invoice Form -->
+    <string name="invoice_form_title">Detalle de Factura</string>
+    <string name="invoice_label_number">Numero</string>
+    <string name="invoice_label_status">Estado</string>
+    <string name="invoice_label_payment_method">Metodo de pago</string>
+    <string name="invoice_label_issued">Fecha emision</string>
+    <string name="invoice_label_due">Vencimiento</string>
+    <string name="invoice_label_subtotal">Subtotal</string>
+    <string name="invoice_label_vat">IVA</string>
+    <string name="invoice_label_irpf">IRPF</string>
+    <string name="invoice_label_paid">Pagado</string>
+    <string name="invoice_label_pending">Pendiente</string>
+    <string name="invoice_label_notes">Notas</string>
+    <string name="invoice_btn_mark_paid">Marcar como pagada</string>
+    <string name="invoice_btn_save">Guardar cambios</string>
+    <string name="invoice_btn_delete">Eliminar factura</string>
+    <string name="invoice_delete_title">Eliminar factura</string>
+    <string name="invoice_delete_msg">¿Estas seguro de que deseas eliminar esta factura?</string>
+    <string name="invoice_success_updated">Factura actualizada</string>
+    <string name="invoice_success_deleted">Factura eliminada</string>
+    <string name="invoice_error_load">Error al cargar factura</string>
+    <string name="invoice_error_save">Error al guardar factura</string>
+    <string name="payment_cash">Efectivo</string>
+    <string name="payment_card">Tarjeta</string>
+    <string name="payment_transfer">Transferencia</string>
+    <string name="payment_bizum">Bizum</string>
 </resources>

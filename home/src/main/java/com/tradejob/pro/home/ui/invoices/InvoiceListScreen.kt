@@ -2,6 +2,7 @@
 
 package com.tradejob.pro.home.ui.invoices
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,6 +26,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -37,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,8 +49,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.core.navigation.Screen
+import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.InvoiceEntity
+import com.tradejob.pro.database.data.entity.UserEntity
+import com.tradejob.pro.home.domain.ClientRepository
+import com.tradejob.pro.home.domain.GenerateInvoicePdfUseCase
 import com.tradejob.pro.home.domain.GetAllInvoicesUseCase
+import com.tradejob.pro.home.domain.UserRepository
 import androidx.compose.ui.res.stringResource
 import com.tradejob.pro.home.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +65,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 enum class InvoiceStatus(val value: String, val displayRes: Int) {
@@ -92,6 +102,7 @@ class InvoiceListScreen : Screen {
         ) { paddingValues ->
             InvoiceListContent(
                 viewModel = viewModel,
+                navController = navController,
                 modifier = Modifier.padding(paddingValues)
             )
         }
@@ -100,7 +111,10 @@ class InvoiceListScreen : Screen {
 
 @HiltViewModel
 class InvoiceListViewModel @Inject constructor(
-    private val getAllInvoicesUseCase: GetAllInvoicesUseCase
+    private val getAllInvoicesUseCase: GetAllInvoicesUseCase,
+    private val clientRepository: ClientRepository,
+    private val userRepository: UserRepository,
+    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase
 ) : ViewModel() {
 
     private val _allInvoices = MutableStateFlow<List<InvoiceEntity>>(emptyList())
@@ -133,16 +147,71 @@ class InvoiceListViewModel @Inject constructor(
     fun onFilterSelected(status: InvoiceStatus?) {
         _selectedFilter.value = status
     }
+
+    private val _clients = MutableStateFlow<Map<Long, ClientEntity>>(emptyMap())
+    private var professional: UserEntity? = null
+
+    private val _pdfMessage = MutableStateFlow<String?>(null)
+    val pdfMessage: StateFlow<String?> = _pdfMessage
+
+    init {
+        loadProfessional()
+    }
+
+    private fun loadProfessional() {
+        viewModelScope.launch {
+            userRepository.getUserProfile().collect { user ->
+                professional = user
+            }
+        }
+    }
+
+    fun exportInvoicePdf(context: Context, invoice: InvoiceEntity) {
+        viewModelScope.launch {
+            val client = _clients.value[invoice.clientId] ?: run {
+                when (val r = clientRepository.getClientById(invoice.clientId)) {
+                    is Result.Success -> {
+                        r.data?.let { c ->
+                            _clients.value = _clients.value + (c.id to c)
+                            c
+                        }
+                    }
+                    else -> null
+                }
+            }
+            if (client == null) {
+                _pdfMessage.value = "Error: cliente no encontrado"
+                return@launch
+            }
+            val file = generateInvoicePdfUseCase(context, client, invoice, professional)
+            _pdfMessage.value = if (file != null) "PDF generado: ${file.name}" else "Error al generar PDF"
+        }
+    }
+
+    fun clearPdfMessage() {
+        _pdfMessage.value = null
+    }
 }
 
 @Composable
 fun InvoiceListContent(
     viewModel: InvoiceListViewModel,
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     val invoices by viewModel.invoices.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
+    val pdfMessage by viewModel.pdfMessage.collectAsState()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(pdfMessage) {
+        pdfMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearPdfMessage()
+        }
+    }
 
     Column(modifier = modifier.fillMaxSize()) {
         LazyRow(
@@ -199,7 +268,11 @@ fun InvoiceListContent(
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 80.dp)
                     ) {
                         items(invoices, key = { it.id }) { invoice ->
-                            InvoiceCard(invoice = invoice)
+                            InvoiceCard(
+                                invoice = invoice,
+                                onExportPdf = { viewModel.exportInvoicePdf(context, invoice) },
+                                onClick = { navController.navigate("invoice_form/${invoice.id}") }
+                            )
                         }
                     }
                 }
@@ -209,12 +282,13 @@ fun InvoiceListContent(
 }
 
 @Composable
-fun InvoiceCard(invoice: InvoiceEntity) {
+fun InvoiceCard(invoice: InvoiceEntity, onExportPdf: () -> Unit = {}, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = onClick
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(
@@ -253,6 +327,14 @@ fun InvoiceCard(invoice: InvoiceEntity) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = onExportPdf,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.PictureAsPdf, contentDescription = null)
+                Text("  ${stringResource(R.string.btn_export_pdf)}")
             }
         }
     }

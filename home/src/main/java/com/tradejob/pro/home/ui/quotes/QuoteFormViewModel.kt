@@ -3,18 +3,25 @@ package com.tradejob.pro.home.ui.quotes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.QuoteEntity
 import com.tradejob.pro.database.data.entity.QuoteItemEntity
+import com.tradejob.pro.database.data.entity.UserEntity
 import com.tradejob.pro.home.domain.ClientRepository
+import com.tradejob.pro.home.domain.CreateInvoiceFromQuoteUseCase
 import com.tradejob.pro.home.domain.DeleteQuoteUseCase
+import com.tradejob.pro.home.domain.GenerateQuotePdfUseCase
 import com.tradejob.pro.home.domain.GetQuoteByIdUseCase
 import com.tradejob.pro.home.domain.GetQuoteItemsSyncUseCase
 import com.tradejob.pro.home.domain.SaveQuoteUseCase
+import com.tradejob.pro.home.domain.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +31,9 @@ class QuoteFormViewModel @Inject constructor(
     private val getQuoteItemsSyncUseCase: GetQuoteItemsSyncUseCase,
     private val deleteQuoteUseCase: DeleteQuoteUseCase,
     private val clientRepository: ClientRepository,
+    private val userRepository: UserRepository,
+    private val generateQuotePdfUseCase: GenerateQuotePdfUseCase,
+    private val createInvoiceFromQuoteUseCase: CreateInvoiceFromQuoteUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -49,12 +59,39 @@ class QuoteFormViewModel @Inject constructor(
     val event: StateFlow<QuoteFormEvent> = _event
 
     private var loadedQuote: QuoteEntity? = null
+    private var loadedClient: ClientEntity? = null
+    private var loadedProfessional: UserEntity? = null
+
+    private val _pdfFile = MutableStateFlow<File?>(null)
+    val pdfFile: StateFlow<File?> = _pdfFile
+
+    private val _isConverting = MutableStateFlow(false)
+    val isConverting: StateFlow<Boolean> = _isConverting
 
     val isEditMode: Boolean get() = quoteId != null && quoteId != 0L
 
     init {
+        loadClient()
+        loadProfessional()
         if (isEditMode) {
             quoteId?.let { loadQuote(it) }
+        }
+    }
+
+    private fun loadClient() {
+        viewModelScope.launch {
+            when (val result = clientRepository.getClientById(clientId)) {
+                is Result.Success -> loadedClient = result.data
+                else -> {}
+            }
+        }
+    }
+
+    private fun loadProfessional() {
+        viewModelScope.launch {
+            userRepository.getUserProfile().collect { user ->
+                loadedProfessional = user
+            }
         }
     }
 
@@ -184,6 +221,49 @@ class QuoteFormViewModel @Inject constructor(
                 else -> {}
             }
         }
+    }
+
+    fun exportPdf(context: Context, signaturePath: String? = null) {
+        val quote = loadedQuote ?: return
+        val client = loadedClient ?: return
+        viewModelScope.launch {
+            val items = if (_items.value.isNotEmpty()) _items.value else {
+                when (val r = getQuoteItemsSyncUseCase(quote.id)) {
+                    is Result.Success -> r.data
+                    else -> emptyList()
+                }
+            }
+            val file = generateQuotePdfUseCase(context, client, quote, items, loadedProfessional, signaturePath)
+            if (file != null) {
+                _pdfFile.value = file
+                _event.value = QuoteFormEvent.Success("PDF generado correctamente")
+            } else {
+                _event.value = QuoteFormEvent.Error("Error al generar PDF")
+            }
+        }
+    }
+
+    fun convertToInvoice() {
+        val quote = loadedQuote ?: return
+        if (quote.status != QuoteStatus.ACCEPTED.value) return
+        viewModelScope.launch {
+            _isConverting.value = true
+            when (val result = createInvoiceFromQuoteUseCase(quote)) {
+                is Result.Success -> {
+                    _event.value = QuoteFormEvent.Success("Factura creada desde presupuesto")
+                    _isConverting.value = false
+                }
+                is Result.Error -> {
+                    _event.value = QuoteFormEvent.Error("Error al crear factura")
+                    _isConverting.value = false
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun clearPdfFile() {
+        _pdfFile.value = null
     }
 
     fun clearEvent() {

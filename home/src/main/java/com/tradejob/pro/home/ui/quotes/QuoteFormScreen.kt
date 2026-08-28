@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -109,6 +112,9 @@ fun QuoteFormContent(
     val notes by viewModel.notes.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val event by viewModel.event.collectAsState()
+    val isConverting by viewModel.isConverting.collectAsState()
+    val pdfFile by viewModel.pdfFile.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(event) {
         when (val currentEvent = event) {
@@ -295,6 +301,32 @@ fun QuoteFormContent(
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (viewModel.isEditMode) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = { viewModel.exportPdf(context, signaturePath) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.PictureAsPdf, contentDescription = null)
+                Spacer(modifier = Modifier.height(0.dp))
+                Text("  ${stringResource(R.string.btn_export_pdf)}")
+            }
+
+            if (status == QuoteStatus.ACCEPTED) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = { viewModel.convertToInvoice() },
+                    enabled = !isConverting,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Receipt, contentDescription = null)
+                    Text("  ${stringResource(R.string.btn_convert_invoice)}")
+                }
+            }
+        }
     }
 
     if (isLoading) {
