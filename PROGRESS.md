@@ -11,12 +11,24 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       `login.domain`, `SessionManager.getUserId(): Long?` (sin sentinel -1L).
       17/17 tests verdes, app verificada en emulador.
 
+- [x] **SPEC-002 Base M3 Expressive** (`feature/spec-002-ui-base` → main): BOM 2026.09,
+      material3 1.5.0-beta02, compileSdk 37/targetSdk 36, `TradeJobTheme` petróleo+lima
+      ("Técnico premium", marca fija light/dark) con `MaterialExpressiveTheme` +
+      `MotionScheme.expressive()`. Shim `resources/Colors.kt` → paleta de marca.
+      17/17 tests verdes, evidencia en dispositivo físico.
+
 ### 🔭 Cola de specs detectadas
+- `ui-login`: migrar LoginScreen/NewUserScreen a `colorScheme` (ahora usan el shim
+  hardcodeado — por eso el dark mode aún no les afecta) + rediseño Expressive.
+- `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
+  con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
 - `login-tests`: el módulo `:login` no tiene tests unitarios.
-- `ui-*`: rediseño Material 3 Expressive por flujo (home, clients, jobs, quotes, invoices, login).
 - `journey-login`: UI test e2e del flujo de autenticación.
+- `cleanup-deps`: `libs.material` (Views)/`appcompat` probablemente huérfanos;
+  `kotlinOptions` → `compilerOptions` DSL; icons-extended → material-symbols.
+- `ui-typography`: fuentes de marca vía Google Fonts downloadable.
 
 ## ✅ Completado (02 Junio 2026)
 
