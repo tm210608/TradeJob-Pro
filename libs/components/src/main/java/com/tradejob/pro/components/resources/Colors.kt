@@ -2,40 +2,44 @@ package com.tradejob.pro.components.resources
 
 import androidx.compose.ui.graphics.Color
 
-// Primary Colors
-val PrimaryColor = Color(0xFF2196F3)
-val PrimaryDarkColor = Color(0xFF1976D2)
-val PrimaryLightColor = Color(0xFFBBDEFB)
+// Shim de compatibilidad (SPEC-002): esta paleta apunta ahora a los colores de
+// marca "Técnico premium" (ver theme/Color.kt). Las pantallas deben migrar a
+// MaterialTheme.colorScheme en las specs ui-*. No añadir nuevos usos.
 
-// Secondary/Accent Colors
-val SecondaryColor = Color(0xFFFF9800)
-val SecondaryDarkColor = Color(0xFFF57C00)
-val SecondaryLightColor = Color(0xFFFFE0B2)
+// Primary Colors → petróleo
+val PrimaryColor = Color(0xFF0C4A52)
+val PrimaryDarkColor = Color(0xFF0A3B40)
+val PrimaryLightColor = Color(0xFFB9EBF0)
+
+// Secondary/Accent Colors → lima
+val SecondaryColor = Color(0xFF617D00)
+val SecondaryDarkColor = Color(0xFF425900)
+val SecondaryLightColor = Color(0xFFD5F28C)
 
 // Background Colors
-val BackgroundLight = Color(0xFFFFFFFF)
-val BackgroundDark = Color(0xFF121212)
-val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceDark = Color(0xFF1E1E1E)
+val BackgroundLight = Color(0xFFF4F9F8)
+val BackgroundDark = Color(0xFF0A191B)
+val SurfaceLight = Color(0xFFF4F9F8)
+val SurfaceDark = Color(0xFF26494C)
 
 // Text Colors
-val TextPrimaryLight = Color(0xFF212121)
-val TextSecondaryLight = Color(0xFF757575)
-val TextPrimaryDark = Color(0xFFFFFFFF)
-val TextSecondaryDark = Color(0xFFB0B0B0)
+val TextPrimaryLight = Color(0xFF10282A)
+val TextSecondaryLight = Color(0xFF3F5557)
+val TextPrimaryDark = Color(0xFFD9E8E8)
+val TextSecondaryDark = Color(0xFFA9C4C5)
 
 // Error Colors
-val ErrorColor = Color(0xFFB00020)
-val ErrorLightColor = Color(0xFFFFCDD2)
+val ErrorColor = Color(0xFFBA1A1A)
+val ErrorLightColor = Color(0xFFFFDAD6)
 
-// Success Colors
-val SuccessColor = Color(0xFF4CAF50)
-val SuccessLightColor = Color(0xFFC8E6C9)
+// Success Colors → lima de marca (estados OK/pagado)
+val SuccessColor = Color(0xFF617D00)
+val SuccessLightColor = Color(0xFFD5F28C)
 
 // Warning Colors
 val WarningColor = Color(0xFFFFC107)
 val WarningLightColor = Color(0xFFFFE082)
 
 // Divider and Border
-val DividerColor = Color(0xFFE0E0E0)
-val BorderColor = Color(0xFFBDBDBD)
+val DividerColor = Color(0xFFDCE7E7)
+val BorderColor = Color(0xFF6F8B8C)
