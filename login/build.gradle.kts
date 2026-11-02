@@ -29,7 +29,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":libs:network"))
     implementation(project(":libs:common"))
     implementation(project(":libs:navigation"))
     implementation(project(":libs:core"))

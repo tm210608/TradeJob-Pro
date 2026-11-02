@@ -16,8 +16,8 @@ class SessionManager @Inject constructor(
         prefs.edit().putLong(KEY_USER_ID, userId).apply()
     }
 
-    fun getUserId(): Long {
-        return prefs.getLong(KEY_USER_ID, -1L)
+    fun getUserId(): Long? {
+        return if (prefs.contains(KEY_USER_ID)) prefs.getLong(KEY_USER_ID, 0L) else null
     }
 
     fun logout() {

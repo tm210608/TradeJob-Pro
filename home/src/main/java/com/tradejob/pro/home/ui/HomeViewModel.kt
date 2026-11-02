@@ -20,7 +20,7 @@ class HomeViewModel @Inject constructor(
 
     val userName: StateFlow<String> = flow {
         val userId = sessionManager.getUserId()
-        if (userId != -1L) {
+        if (userId != null) {
             emitAll(userRepository.getUserProfileById(userId))
         } else {
             emitAll(userRepository.getUserProfile())

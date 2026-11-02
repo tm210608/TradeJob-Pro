@@ -160,7 +160,11 @@ class JobFormViewModelTest {
 
         // Then
         assertTrue(viewModel.event.value is JobFormEvent.Error)
-        assertEquals("El título es obligatorio", (viewModel.event.value as JobFormEvent.Error).message)
+        assertEquals(
+            "Por favor, corrija los errores en el formulario",
+            (viewModel.event.value as JobFormEvent.Error).message
+        )
+        assertTrue(viewModel.titleError.value is com.tradejob.pro.common.validation.ValidationResult.Error)
     }
 
     @Test

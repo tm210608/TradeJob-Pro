@@ -1,4 +1,4 @@
-package com.tradejob.pro.network.dummy_login.domain
+package com.tradejob.pro.login.domain
 
 data class User(
     val id: Long = 0,

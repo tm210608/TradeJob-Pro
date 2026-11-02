@@ -59,7 +59,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadProfile() {
         viewModelScope.launch {
             val userId = sessionManager.getUserId()
-            val profileFlow = if (userId != -1L) {
+            val profileFlow = if (userId != null) {
                 userRepository.getUserProfileById(userId)
             } else {
                 userRepository.getUserProfile()
