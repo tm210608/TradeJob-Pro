@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.tradejob.pro.app"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.tradejob.pro.app"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":login"))
     implementation(project(":home"))
     implementation(project(":libs:common"))
+    implementation(project(":libs:components"))
     implementation(project(":libs:navigation"))
     implementation(project(":libs:core"))
     implementation(project(":libs:database"))
@@ -71,7 +72,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.material.icons.extended)
 

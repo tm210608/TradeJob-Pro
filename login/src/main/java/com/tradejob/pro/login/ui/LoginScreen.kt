@@ -33,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tradejob.pro.components.MitoEmailField
 import com.tradejob.pro.components.MitoPasswordField
+import com.tradejob.pro.components.theme.TradeJobTheme
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.components.resources.PrimaryColor
 import com.tradejob.pro.components.resources.PrimaryDarkColor
@@ -236,7 +237,7 @@ fun LoginContent(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    MaterialTheme {
+    TradeJobTheme {
         LoginContent(
             status = Status(email = "test@example.com"),
             event = Event.None,

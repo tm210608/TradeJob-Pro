@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.tradejob.pro.login"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
