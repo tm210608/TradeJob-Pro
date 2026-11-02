@@ -1,5 +1,23 @@
 # TradeJob Pro - Progreso y Pendientes
 
+## ✅ Completado (02 Noviembre 2026) — Adopción SDMD
+
+**Metodología:** El proyecto adopta **SDMD (Spec-Driven Mobile Development)**.
+Cada cambio = `specs/NNN/SPEC.md` + rama `feature/spec-NNN` + build + tests +
+ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
+
+- [x] **SPEC-001 Estabilidad** (`feature/spec-001-estabilidad`): test roto corregido,
+      módulo muerto `:libs:network` eliminado, `User`/`LoginResponse` reubicados a
+      `login.domain`, `SessionManager.getUserId(): Long?` (sin sentinel -1L).
+      17/17 tests verdes, app verificada en emulador.
+
+### 🔭 Cola de specs detectadas
+- `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
+- `i18n-domain`: strings hardcodeados en ViewModels.
+- `login-tests`: el módulo `:login` no tiene tests unitarios.
+- `ui-*`: rediseño Material 3 Expressive por flujo (home, clients, jobs, quotes, invoices, login).
+- `journey-login`: UI test e2e del flujo de autenticación.
+
 ## ✅ Completado (02 Junio 2026)
 
 ### Arquitectura y Calidad (Fase 2)
