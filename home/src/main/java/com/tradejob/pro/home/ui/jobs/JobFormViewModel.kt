@@ -4,8 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.common.validation.NumberValidator
+import com.tradejob.pro.common.validation.RequiredValidator
+import com.tradejob.pro.common.validation.ValidationResult
 import com.tradejob.pro.database.data.entity.JobEntity
 import com.tradejob.pro.database.data.entity.JobPhotoEntity
+import com.tradejob.pro.home.R
 import com.tradejob.pro.home.domain.AddJobPhotoUseCase
 import com.tradejob.pro.home.domain.DeleteJobPhotoUseCase
 import com.tradejob.pro.home.domain.GetJobByIdUseCase
@@ -28,7 +32,7 @@ class JobFormViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val clientId: Long = savedStateHandle.get<String>("clientId")?.toLongOrNull() ?: 0L
-    private val jobId: Long? = savedStateHandle.get<String>("jobId")?.toLongOrNull()
+    val jobId: Long? = savedStateHandle.get<String>("jobId")?.toLongOrNull()
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title
@@ -42,11 +46,20 @@ class JobFormViewModel @Inject constructor(
     private val _priority = MutableStateFlow(JobPriority.MEDIUM)
     val priority: StateFlow<JobPriority> = _priority
 
+    private val _titleError = MutableStateFlow<ValidationResult>(ValidationResult.Success)
+    val titleError: StateFlow<ValidationResult> = _titleError
+
     private val _budgetAmount = MutableStateFlow("")
     val budgetAmount: StateFlow<String> = _budgetAmount
 
+    private val _budgetError = MutableStateFlow<ValidationResult>(ValidationResult.Success)
+    val budgetError: StateFlow<ValidationResult> = _budgetError
+
     private val _finalAmount = MutableStateFlow("")
     val finalAmount: StateFlow<String> = _finalAmount
+
+    private val _finalAmountError = MutableStateFlow<ValidationResult>(ValidationResult.Success)
+    val finalAmountError: StateFlow<ValidationResult> = _finalAmountError
 
     private val _scheduledAt = MutableStateFlow<Long?>(null)
     val scheduledAt: StateFlow<Long?> = _scheduledAt
@@ -64,6 +77,9 @@ class JobFormViewModel @Inject constructor(
     private val _tempPhotos = MutableStateFlow<List<String>>(emptyList())
 
     val isEditMode: Boolean get() = jobId != null && jobId != 0L
+
+    private val titleValidator = RequiredValidator(com.tradejob.pro.common.R.string.validation_required)
+    private val amountValidator = NumberValidator(com.tradejob.pro.common.R.string.validation_invalid_number)
 
     init {
         if (isEditMode) {
@@ -112,6 +128,7 @@ class JobFormViewModel @Inject constructor(
 
     fun onTitleChanged(value: String) {
         _title.value = value
+        _titleError.value = titleValidator.validate(value)
     }
 
     fun onDescriptionChanged(value: String) {
@@ -128,10 +145,12 @@ class JobFormViewModel @Inject constructor(
 
     fun onBudgetAmountChanged(value: String) {
         _budgetAmount.value = value
+        _budgetError.value = amountValidator.validate(value)
     }
 
     fun onFinalAmountChanged(value: String) {
         _finalAmount.value = value
+        _finalAmountError.value = amountValidator.validate(value)
     }
 
     fun onScheduledAtChanged(value: Long?) {
@@ -184,8 +203,15 @@ class JobFormViewModel @Inject constructor(
     }
 
     fun save() {
-        if (_title.value.isBlank()) {
-            _event.value = JobFormEvent.Error("El título es obligatorio")
+        _titleError.value = titleValidator.validate(_title.value)
+        _budgetError.value = amountValidator.validate(_budgetAmount.value)
+        _finalAmountError.value = amountValidator.validate(_finalAmount.value)
+
+        if (_titleError.value is ValidationResult.Error ||
+            _budgetError.value is ValidationResult.Error ||
+            _finalAmountError.value is ValidationResult.Error
+        ) {
+            _event.value = JobFormEvent.Error("Por favor, corrija los errores en el formulario")
             return
         }
 

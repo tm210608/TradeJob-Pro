@@ -34,7 +34,7 @@ fun MitoTextField(
     label: String,
     modifier: Modifier = Modifier,
     placeholder: String = "",
-    isError: Boolean = false,
+    errorText: String? = null,
     supportingText: String? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -45,14 +45,17 @@ fun MitoTextField(
     singleLine: Boolean = true,
     maxLines: Int = 1
 ) {
+    val isError = errorText != null
+    val finalSupportingText = errorText ?: supportingText
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier, // Quitamos el fillMaxWidth forzado
+        modifier = modifier,
         label = { Text(text = label) },
         placeholder = { if (placeholder.isNotEmpty()) Text(text = placeholder) },
         isError = isError,
-        supportingText = supportingText?.let {
+        supportingText = finalSupportingText?.let {
             {
                 Text(
                     text = it,
@@ -87,8 +90,8 @@ fun MitoPasswordField(
     label: String,
     modifier: Modifier = Modifier,
     placeholder: String = "",
-    isError: Boolean = false,
-    supportingText: String = "",
+    errorText: String? = null,
+    supportingText: String? = null,
     enabled: Boolean = true
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
@@ -99,7 +102,7 @@ fun MitoPasswordField(
         label = label,
         modifier = modifier,
         placeholder = placeholder,
-        isError = isError,
+        errorText = errorText,
         supportingText = supportingText,
         leadingIcon = {
             Icon(
@@ -128,8 +131,8 @@ fun MitoEmailField(
     label: String,
     modifier: Modifier = Modifier,
     placeholder: String = "",
-    isError: Boolean = false,
-    supportingText: String = "",
+    errorText: String? = null,
+    supportingText: String? = null,
     enabled: Boolean = true
 ) {
     MitoTextField(
@@ -138,7 +141,7 @@ fun MitoEmailField(
         label = label,
         modifier = modifier,
         placeholder = placeholder,
-        isError = isError,
+        errorText = errorText,
         supportingText = supportingText,
         leadingIcon = {
             Icon(
@@ -158,8 +161,8 @@ fun MitoNumberField(
     label: String,
     modifier: Modifier = Modifier,
     placeholder: String = "",
-    isError: Boolean = false,
-    supportingText: String = "",
+    errorText: String? = null,
+    supportingText: String? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     isDecimal: Boolean = true
@@ -170,7 +173,7 @@ fun MitoNumberField(
         label = label,
         modifier = modifier,
         placeholder = placeholder,
-        isError = isError,
+        errorText = errorText,
         supportingText = supportingText,
         leadingIcon = leadingIcon,
         keyboardType = if (isDecimal) KeyboardType.Decimal else KeyboardType.Number,

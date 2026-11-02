@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import com.tradejob.pro.network.dummy_login.data.response.LoginResponse
+import com.tradejob.pro.login.domain.LoginResponse
 
 class LoginRepositoryImpl @Inject constructor(
     private val firebaseAuthDataSource: FirebaseAuthDataSource,

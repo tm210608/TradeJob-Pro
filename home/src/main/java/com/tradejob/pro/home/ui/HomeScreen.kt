@@ -19,14 +19,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PendingActions
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,7 +59,7 @@ import com.tradejob.pro.components.resources.PrimaryColor
 import com.tradejob.pro.components.resources.PrimaryDarkColor
 import com.tradejob.pro.components.resources.SecondaryColor
 import com.tradejob.pro.core.navigation.Screen
-import com.tradejob.pro.database.data.entity.JobEntity
+import com.tradejob.pro.home.R
 import com.tradejob.pro.home.domain.HomeStats
 import com.tradejob.pro.home.ui.jobs.JobCard
 
@@ -78,7 +79,7 @@ class HomeScreen : Screen {
                 TopAppBar(
                     title = { 
                         Text(
-                            text = "TradeJob Pro",
+                            text = stringResource(R.string.app_name),
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         ) 
@@ -88,38 +89,46 @@ class HomeScreen : Screen {
                     ),
                     actions = {
                         IconButton(onClick = { viewModel.onMenuClick() }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menú", tint = Color.White)
+                            Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.nav_home), tint = Color.White)
                         }
                         DropdownMenu(
                             expanded = menuExpanded,
                             onDismissRequest = { viewModel.dismissMenu() }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Mis Clientes") },
+                                text = { Text(stringResource(R.string.nav_clients)) },
                                 onClick = {
                                     viewModel.dismissMenu()
                                     navController.navigate("client_list")
                                 },
-                                leadingIcon = { Icon(Icons.Default.Contacts, contentDescription = null) }
+                                leadingIcon = { Icon(Icons.Default.Group, contentDescription = null) }
                             )
                             DropdownMenuItem(
-                                text = { Text("Perfil") },
+                                text = { Text(stringResource(R.string.nav_profile)) },
                                 onClick = { 
                                     viewModel.dismissMenu()
                                     navController.navigate("profile")
                                 },
                                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
                             )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.invoice_nav_invoices)) },
+                                onClick = {
+                                    viewModel.dismissMenu()
+                                    navController.navigate("invoice_list")
+                                },
+                                leadingIcon = { Icon(Icons.Default.Receipt, contentDescription = null) }
+                            )
                             HorizontalDivider()
                             DropdownMenuItem(
-                                text = { Text("Cerrar sesión") },
+                                text = { Text(stringResource(R.string.nav_logout)) },
                                 onClick = {
                                     viewModel.logout()
                                     navController.navigate("login") {
                                         popUpTo("home") { inclusive = true }
                                     }
                                 },
-                                leadingIcon = { Icon(Icons.Default.Logout, contentDescription = null) }
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null) }
                             )
                         }
                     }
@@ -164,13 +173,13 @@ class HomeScreen : Screen {
                         }
                         Column {
                             Text(
-                                text = "¡Hola, $userName!",
+                                text = stringResource(R.string.home_welcome, userName),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
                             Text(
-                                text = "Hoy es un buen día para trabajar",
+                                text = stringResource(R.string.home_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White.copy(alpha = 0.8f)
                             )
@@ -185,7 +194,7 @@ class HomeScreen : Screen {
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     Text(
-                        text = "Resumen de actividad",
+                        text = stringResource(R.string.home_stats_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.DarkGray
@@ -203,7 +212,7 @@ class HomeScreen : Screen {
                             if (result.data.recentJobs.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Text(
-                                    text = "Trabajos recientes",
+                                    text = stringResource(R.string.home_recent_jobs),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.DarkGray
@@ -222,12 +231,12 @@ class HomeScreen : Screen {
                             }
                         }
                         is Result.Error -> {
-                            Text(text = "Error al cargar estadísticas", color = MaterialTheme.colorScheme.error)
+                            Text(text = stringResource(R.string.home_error_stats), color = MaterialTheme.colorScheme.error)
                         }
                     }
 
                     Text(
-                        text = "Acciones rápidas",
+                        text = stringResource(R.string.home_quick_actions),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.DarkGray
@@ -238,14 +247,14 @@ class HomeScreen : Screen {
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         QuickActionCard(
-                            title = "Nuevo Cliente",
+                            title = stringResource(R.string.home_new_client),
                             icon = Icons.Default.Group,
                             color = PrimaryColor,
                             onClick = { navController.navigate("client_form/0") },
                             modifier = Modifier.weight(1f)
                         )
                         QuickActionCard(
-                            title = "Ver Agenda",
+                            title = stringResource(R.string.home_view_agenda),
                             icon = Icons.Default.PendingActions,
                             color = SecondaryColor,
                             onClick = { navController.navigate("client_list") },
@@ -277,7 +286,7 @@ fun DashboardStats(stats: HomeStats) {
     ) {
         item {
             StatCard(
-                title = "Clientes",
+                title = stringResource(R.string.home_stat_clients),
                 value = stats.totalClients.toString(),
                 icon = Icons.Default.Group,
                 color = PrimaryColor
@@ -285,7 +294,7 @@ fun DashboardStats(stats: HomeStats) {
         }
         item {
             StatCard(
-                title = "Pendientes",
+                title = stringResource(R.string.home_stat_pending),
                 value = stats.pendingJobs.toString(),
                 icon = Icons.Default.PendingActions,
                 color = Color.Red
@@ -293,7 +302,7 @@ fun DashboardStats(stats: HomeStats) {
         }
         item {
             StatCard(
-                title = "En curso",
+                title = stringResource(R.string.home_stat_in_progress),
                 value = stats.inProgressJobs.toString(),
                 icon = Icons.Default.History,
                 color = SecondaryColor
@@ -301,7 +310,7 @@ fun DashboardStats(stats: HomeStats) {
         }
         item {
             StatCard(
-                title = "Completados",
+                title = stringResource(R.string.home_stat_completed),
                 value = stats.completedJobs.toString(),
                 icon = Icons.Default.CheckCircle,
                 color = Color(0xFF4CAF50)

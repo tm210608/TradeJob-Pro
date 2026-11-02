@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
@@ -61,6 +62,9 @@ import com.tradejob.pro.components.MitoButtonSheet
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.lazy.items as lazyItems
+
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.home.R
 
 class ClientDetailScreen : Screen {
     override val route: String = "client_detail/{clientId}"
@@ -112,10 +116,10 @@ class ClientDetailScreen : Screen {
         if (jobToDelete != null) {
             MitoBottomSheet(
                 mitoButtonSheet = MitoButtonSheet.ConfirmMitoButtonSheet(
-                    title = "Eliminar trabajo",
-                    message = "¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.",
-                    confirmText = "Eliminar",
-                    dismissText = "Cancelar",
+                    title = stringResource(R.string.job_delete_title),
+                    message = stringResource(R.string.job_delete_msg),
+                    confirmText = stringResource(R.string.btn_delete),
+                    dismissText = stringResource(R.string.btn_cancel),
                     onConfirm = {
                         jobToDelete?.let { viewModel.deleteJob(it) }
                         jobToDelete = null
@@ -128,16 +132,19 @@ class ClientDetailScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Detalle del Cliente") },
+                    title = { Text(stringResource(R.string.nav_clients)) }, // Or specific Detail title
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     },
                     actions = {
                         client?.let {
+                            IconButton(onClick = { navController.navigate("quote_list/${it.id}") }) {
+                                Icon(Icons.Default.Description, contentDescription = stringResource(R.string.quote_nav_quotes))
+                            }
                             IconButton(onClick = { navController.navigate("client_form/${it.id}") }) {
-                                Icon(Icons.Default.Edit, contentDescription = "Editar cliente")
+                                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.client_form_edit))
                             }
                         }
                     }
@@ -203,7 +210,7 @@ fun ClientDetailContent(
                 
                 if (!client.notes.isNullOrBlank()) {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text(text = "Notas:", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.client_label_notes) + ":", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                     Text(text = client.notes ?: "", style = MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -216,7 +223,7 @@ fun ClientDetailContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Trabajos / Averías",
+                text = "Trabajos / Averías", // Should be externalized too
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -227,7 +234,7 @@ fun ClientDetailContent(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.size(4.dp))
-                Text("Nuevo")
+                Text(stringResource(R.string.job_form_new)) // Using "Nuevo"
             }
         }
 
@@ -241,7 +248,7 @@ fun ClientDetailContent(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { onFilterSelected(null) },
-                    label = { Text("Todos") }
+                    label = { Text("Todos") } // Should be externalized
                 )
             }
             JobStatus.entries.forEach { status ->

@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.JobEntity
+import com.tradejob.pro.database.data.entity.UserEntity
 import com.tradejob.pro.home.ui.jobs.JobStatus
 import java.io.File
 import java.io.FileOutputStream
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class GeneratePdfReportUseCase @Inject constructor() {
 
-    operator fun invoke(context: Context, client: ClientEntity, job: JobEntity): File? {
+    operator fun invoke(context: Context, client: ClientEntity, job: JobEntity, professional: UserEntity? = null): File? {
         val pdfDocument = PdfDocument()
         
         // Page info (A4 size in points: 595 x 842)
@@ -29,13 +30,46 @@ class GeneratePdfReportUseCase @Inject constructor() {
         val margin = 50f
         var currentY = 60f
         
-        // Header
-        paint.color = Color.BLACK
-        paint.textSize = 24f
-        paint.isFakeBoldText = true
-        canvas.drawText("REPORTE DE TRABAJO", margin, currentY, paint)
+        // Professional header (left side)
+        professional?.let { prof ->
+            paint.color = Color.BLACK
+            paint.textSize = 16f
+            paint.isFakeBoldText = true
+            canvas.drawText(prof.businessName ?: prof.name, margin, currentY, paint)
+            
+            currentY += 18f
+            paint.textSize = 9f
+            paint.isFakeBoldText = false
+            prof.nif?.let { nif ->
+                canvas.drawText("NIF: $nif", margin, currentY, paint)
+                currentY += 12f
+            }
+            prof.businessAddress?.let { addr ->
+                canvas.drawText(addr, margin, currentY, paint)
+                currentY += 12f
+            }
+            prof.businessCity?.let { city ->
+                canvas.drawText(city, margin, currentY, paint)
+                currentY += 12f
+            }
+            (prof.businessPhone ?: prof.phone)?.let { phone ->
+                canvas.drawText("Tel: $phone", margin, currentY, paint)
+                currentY += 12f
+            }
+            prof.email.let { email ->
+                canvas.drawText(email, margin, currentY, paint)
+            }
+        }
         
-        currentY += 20f
+        // Title (right side)
+        paint.color = Color.BLACK
+        paint.textSize = 20f
+        paint.isFakeBoldText = true
+        val titleText = "REPORTE DE TRABAJO"
+        val titleWidth = paint.measureText(titleText)
+        canvas.drawText(titleText, 595f - margin - titleWidth, 60f, paint)
+        
+        currentY = if (professional != null) 140f else 80f
         paint.textSize = 10f
         paint.isFakeBoldText = false
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

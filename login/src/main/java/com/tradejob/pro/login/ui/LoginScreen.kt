@@ -38,6 +38,9 @@ import com.tradejob.pro.components.resources.PrimaryColor
 import com.tradejob.pro.components.resources.PrimaryDarkColor
 import com.tradejob.pro.core.navigation.Screen
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.login.R
+
 class LoginScreen : Screen {
     override val route: String = "login"
 
@@ -148,7 +151,7 @@ fun LoginContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Iniciar Sesión",
+                        text = stringResource(R.string.login_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryColor
@@ -157,7 +160,7 @@ fun LoginContent(
                     MitoEmailField(
                         value = status.email,
                         onValueChange = { onLoginChanged(it, status.password) },
-                        label = "Email",
+                        label = stringResource(R.string.login_label_email),
                         placeholder = "tu@email.com",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -165,7 +168,7 @@ fun LoginContent(
                     MitoPasswordField(
                         value = status.password,
                         onValueChange = { onLoginChanged(status.email, it) },
-                        label = "Contraseña",
+                        label = stringResource(R.string.login_label_password),
                         placeholder = "Tu contraseña",
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -173,7 +176,7 @@ fun LoginContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     PrimaryButton(
-                        text = "ENTRAR",
+                        text = stringResource(R.string.login_btn_enter),
                         onClick = onLoginClick,
                         enabled = status.loginEnable && !status.isLoading,
                         modifier = Modifier.fillMaxWidth()
@@ -188,7 +191,7 @@ fun LoginContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "¿No tienes cuenta? Regístrate aquí",
+                    text = stringResource(R.string.login_btn_register),
                     color = Color.White,
                     fontWeight = FontWeight.Medium
                 )

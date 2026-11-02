@@ -41,6 +41,9 @@ import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.core.navigation.Screen
 
+import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.home.R
+
 class ProfileScreen : Screen {
     override val route: String = "profile"
 
@@ -52,6 +55,11 @@ class ProfileScreen : Screen {
         val name by viewModel.name.collectAsState()
         val phone by viewModel.phone.collectAsState()
         val specialty by viewModel.specialty.collectAsState()
+        val nif by viewModel.nif.collectAsState()
+        val businessName by viewModel.businessName.collectAsState()
+        val businessAddress by viewModel.businessAddress.collectAsState()
+        val businessCity by viewModel.businessCity.collectAsState()
+        val irpfRate by viewModel.irpfRate.collectAsState()
         val user by viewModel.user.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
         val event by viewModel.event.collectAsState()
@@ -74,10 +82,10 @@ class ProfileScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Mi Perfil") },
+                    title = { Text(stringResource(R.string.profile_title)) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
                         }
                     }
                 )
@@ -98,7 +106,7 @@ class ProfileScreen : Screen {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Información profesional",
+                        text = stringResource(R.string.profile_section_pro),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -107,7 +115,7 @@ class ProfileScreen : Screen {
                     MitoTextField(
                         value = name,
                         onValueChange = { viewModel.onNameChanged(it) },
-                        label = "Nombre completo",
+                        label = stringResource(R.string.profile_label_name),
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -115,7 +123,7 @@ class ProfileScreen : Screen {
                     MitoTextField(
                         value = user?.email ?: "",
                         onValueChange = {},
-                        label = "Email (No editable)",
+                        label = stringResource(R.string.profile_label_email_readonly),
                         enabled = false,
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth()
@@ -124,7 +132,7 @@ class ProfileScreen : Screen {
                     MitoTextField(
                         value = phone,
                         onValueChange = { viewModel.onPhoneChanged(it) },
-                        label = "Teléfono",
+                        label = stringResource(R.string.profile_label_phone),
                         leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -132,16 +140,63 @@ class ProfileScreen : Screen {
                     MitoTextField(
                         value = specialty,
                         onValueChange = { viewModel.onSpecialtyChanged(it) },
-                        label = "Especialidad",
-                        placeholder = "Ej: Fontanería, Albañilería...",
+                        label = stringResource(R.string.profile_label_specialty),
+                        placeholder = stringResource(R.string.profile_placeholder_specialty),
                         leadingIcon = { Icon(Icons.Default.Work, contentDescription = null) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = stringResource(R.string.fiscal_section_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    MitoTextField(
+                        value = nif,
+                        onValueChange = { viewModel.onNifChanged(it) },
+                        label = stringResource(R.string.fiscal_label_nif),
+                        placeholder = stringResource(R.string.fiscal_placeholder_nif),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    MitoTextField(
+                        value = businessName,
+                        onValueChange = { viewModel.onBusinessNameChanged(it) },
+                        label = stringResource(R.string.fiscal_label_business_name),
+                        placeholder = stringResource(R.string.fiscal_placeholder_business_name),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    MitoTextField(
+                        value = businessAddress,
+                        onValueChange = { viewModel.onBusinessAddressChanged(it) },
+                        label = stringResource(R.string.fiscal_label_address),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    MitoTextField(
+                        value = businessCity,
+                        onValueChange = { viewModel.onBusinessCityChanged(it) },
+                        label = stringResource(R.string.fiscal_label_city),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    MitoTextField(
+                        value = irpfRate,
+                        onValueChange = { viewModel.onIrpfRateChanged(it) },
+                        label = stringResource(R.string.fiscal_label_irpf),
+                        placeholder = stringResource(R.string.fiscal_placeholder_irpf),
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     PrimaryButton(
-                        text = "Guardar cambios",
+                        text = stringResource(R.string.profile_btn_save),
                         onClick = { viewModel.saveProfile() },
                         enabled = !isLoading && name.isNotBlank(),
                         modifier = Modifier.fillMaxWidth()

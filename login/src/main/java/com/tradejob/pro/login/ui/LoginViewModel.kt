@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
 import com.tradejob.pro.login.domain.LoginUseCase
 import com.tradejob.pro.login.domain.Input
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val sessionManager: SessionManager,
-    private val syncManager: SyncManager
+    private val syncManager: SyncManager,
+    private val analyticsHelper: AnalyticsHelper
 ) : ViewModel() {
 
     private val _status: MutableStateFlow<Status> = MutableStateFlow(Status())
@@ -44,10 +46,15 @@ class LoginViewModel @Inject constructor(
                     _status.value = _status.value.copy(isLoading = false)
                     when (result) {
                         is Result.Error -> {
+                            analyticsHelper.logError(result.exception, "Login failed for ${status.value.email}")
                             _event.emit(Event.Error(result.exception.message ?: "Unknown error"))
                         }
                         is Result.Success<LoginUIModel> -> {
-                            result.data.userId?.let { sessionManager.saveUserId(it) }
+                            analyticsHelper.logEvent("login_success", mapOf("email" to status.value.email))
+                            result.data.userId?.let { 
+                                sessionManager.saveUserId(it)
+                                analyticsHelper.setUserId(it.toString())
+                            }
                             _status.value = status.value.copy(userId = result.data.userId)
                             syncManager.scheduleSync()
                             _event.emit(Event.Success(result.data.message))

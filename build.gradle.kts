@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.devtools.ksp) apply false
     id("androidx.room") version "2.7.2" apply false
     alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }
