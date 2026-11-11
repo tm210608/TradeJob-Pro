@@ -1,6 +1,6 @@
 # SPEC-004: ui-login — Login/Registro sobre colorScheme + toques Expressive
 
-**Estado:** en curso
+**Estado:** verificada
 **Rama:** `feature/spec-004-ui-login`
 **Fecha:** 2026-11-11
 
@@ -36,9 +36,9 @@ botón deshabilitado usa grises fuera de escala.
       blancos), en vez de `PrimaryDarkColor` opaco
 - [x] Loading overlay usa `LoadingIndicator` (M3 Expressive) en vez de
       `CircularProgressIndicator`, en ambas pantallas
-- [ ] Capturas en **light y dark**: login y registro con card legible, bordes
-      de campo visibles, CTA con contraste correcto — verificado en emulador;
-      capturas en físico pendientes (Xiaomi `rodin` desconectado, ver EVIDENCE)
+- [x] Capturas en **light y dark** en emulador y físico (Xiaomi `rodin`):
+      login y registro con card legible, bordes de campo visibles, CTA con
+      contraste correcto
 - [x] Build compila + tests verdes
 
 ## Fuera de alcance
@@ -92,7 +92,8 @@ botón deshabilitado usa grises fuera de escala.
 - [x] `gradlew.bat :app:assembleDebug` compila
 - [x] `gradlew.bat :home:testDebugUnitTest :login:testDebugUnitTest` verdes
 - [x] Flujo en emulador: login → registro → atrás, en light y dark
-- [ ] Flujo en dispositivo físico al reconectar el Xiaomi
+- [x] Flujo en dispositivo físico (Xiaomi `rodin`): login → registro → atrás,
+      en light y dark
 - [x] Screenshots light + dark en `EVIDENCE.md` con verificación de píxeles
       (bordes de campo visibles sobre surface en dark)
 

@@ -25,9 +25,14 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       con barra opaca (MIUI/HyperOS). Evidencia en emulador y Xiaomi rodin.
       17/17 tests verdes.
 
+- [x] **SPEC-004 ui-login** (`feature/spec-004-ui-login` → main): Login/Registro
+      migrados a `colorScheme` (cero imports del shim en `:login`); gradiente
+      petróleo fijo en light/dark vía tokens `theme/Color.kt`; `MitoTextField` y
+      `Primary`/`SecondaryButton` migrados (foco/botón dark correctos en toda la
+      app); TopAppBar de registro transparente; `LoadingIndicator` M3 Expressive.
+      17/17 tests verdes, evidencia emulador + Xiaomi `rodin` en light y dark.
+
 ### 🔭 Cola de specs detectadas
-- `ui-login`: migrar LoginScreen/NewUserScreen a `colorScheme` (ahora usan el shim
-  hardcodeado — por eso el dark mode aún no les afecta) + rediseño Expressive.
 - `nav-bar-oem`: resto de pantallas con nav bar opaca gris en MIUI — ya hay
   `navigationBarColor` en `SystemBarIconStyle` para repetir el patrón; a largo
   plazo `Theme.TradeJobPro` debería ser `DayNight`/M3.

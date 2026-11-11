@@ -2,7 +2,8 @@
 
 **Fecha:** 2026-11-11
 **Rama:** `feature/spec-004-ui-login`
-**Dispositivo:** emulador `sdk_gphone64_x86_64` (API 36.1, 1080x2400)
+**Dispositivos:** emulador `sdk_gphone64_x86_64` (API 36.1, 1080x2400) y
+**físico Xiaomi `rodin`** (2412DPC0AG, 1220x2712, adb inalámbrico)
 **APK:** `app/build/outputs/apk/debug/app-debug.apk`
 
 ## BUILD
@@ -51,12 +52,18 @@ BUILD SUCCESSFUL in 13s
 - Nav bar sigue petróleo (`navigationBarColor = Petrol30`, no
   `colorScheme.primary` que en dark sería Petrol80).
 
-## Pendiente — dispositivo físico
+## DEVICE — físico Xiaomi `rodin` / HyperOS
 
-El Xiaomi `rodin` se desconectó a mitad de sesión; repetir capturas
-light/dark al reconectarlo. El cambio es de theming (no OEM-dependiente):
-el comportamiento MIUI de la nav bar ya se resolvió en SPEC-003 y aquí se
-mantiene el patrón (`navigationBarColor` explícito).
+Light: `evidence-physical-login-light.png`, `evidence-physical-register-light.png`
+Dark: `evidence-physical-login-dark.png`, `evidence-physical-register-dark.png`
+
+- Light: idéntico al emulador — gradiente a sangre, nav bar petróleo
+  (patrón MIUI de SPEC-003 intacto con `navigationBarColor = Petrol30`),
+  card clara, disabled M3.
+- Dark: card `Slate900`, título e icono del logo `Petrol80`, bordes de
+  campo claramente visibles, gradiente y nav bar petróleo a sangre.
+- Flujo ejecutado: login → "Regístrate aquí" → registro → atrás, en ambos
+  modos.
 
 ## Checklist de criterios
 
@@ -71,7 +78,7 @@ mantiene el patrón (`navigationBarColor` explícito).
       (verificado por compilación e inspección; el estado isLoading
       requiere credenciales reales para dispararse)
 - [x] Build compila + tests verdes
-- [x] Capturas en emulador light + dark; físico pendiente (ver arriba)
+- [x] Capturas light + dark en emulador **y físico** (Xiaomi `rodin`)
 
 ## Notas
 
