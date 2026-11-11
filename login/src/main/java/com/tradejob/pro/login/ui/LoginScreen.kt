@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package com.tradejob.pro.login.ui
 
@@ -36,8 +36,8 @@ import com.tradejob.pro.components.MitoPasswordField
 import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.components.theme.TradeJobTheme
 import com.tradejob.pro.components.PrimaryButton
-import com.tradejob.pro.components.resources.PrimaryColor
-import com.tradejob.pro.components.resources.PrimaryDarkColor
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
 import com.tradejob.pro.core.navigation.Screen
 
 import androidx.compose.ui.res.stringResource
@@ -93,11 +93,11 @@ fun LoginContent(
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(PrimaryDarkColor, PrimaryColor)
+                    colors = listOf(Petrol20, Petrol30)
                 )
             )
     ) {
-        SystemBarIconStyle(darkIcons = false, navigationBarColor = PrimaryColor)
+        SystemBarIconStyle(darkIcons = false, navigationBarColor = Petrol30)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -121,7 +121,7 @@ fun LoginContent(
                         imageVector = Icons.Default.Engineering,
                         contentDescription = "TradeJob Pro Logo",
                         modifier = Modifier.size(80.dp),
-                        tint = PrimaryColor
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -159,7 +159,7 @@ fun LoginContent(
                         text = stringResource(R.string.login_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = PrimaryColor
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     MitoEmailField(
@@ -213,7 +213,7 @@ fun LoginContent(
                     .background(Color.Black.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.White)
+                LoadingIndicator(color = Color.White)
             }
         }
     }

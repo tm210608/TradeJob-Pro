@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
-import com.tradejob.pro.components.resources.PrimaryColor
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -74,10 +73,10 @@ fun MitoTextField(
         maxLines = maxLines,
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryColor,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
             errorBorderColor = MaterialTheme.colorScheme.error,
-            focusedLabelColor = PrimaryColor,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
             errorLabelColor = MaterialTheme.colorScheme.error
         )
     )
