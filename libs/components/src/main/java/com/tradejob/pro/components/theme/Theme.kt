@@ -1,10 +1,16 @@
 package com.tradejob.pro.components.theme
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -17,4 +23,35 @@ fun TradeJobTheme(
         motionScheme = MotionScheme.expressive(),
         content = content
     )
+}
+
+// Estilo de iconos de las barras del sistema por pantalla (edge-to-edge).
+// darkIcons = true → iconos oscuros para fondos claros; false → claros para
+// fondos oscuros (p. ej. el petróleo del login). Se restaura al salir.
+@Composable
+fun SystemBarIconStyle(darkIcons: Boolean, navigationBarColor: Color? = null) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        DisposableEffect(darkIcons, navigationBarColor) {
+            val window = (view.context as? Activity)?.window
+                ?: return@DisposableEffect onDispose {}
+            val controller = WindowCompat.getInsetsController(window, view)
+            val prevStatus = controller.isAppearanceLightStatusBars
+            val prevNav = controller.isAppearanceLightNavigationBars
+            val prevNavColor = window.navigationBarColor
+            controller.isAppearanceLightStatusBars = darkIcons
+            controller.isAppearanceLightNavigationBars = darkIcons
+            if (navigationBarColor != null) {
+                // OEMs como MIUI/HyperOS dibujan la nav bar opaca ignorando la
+                // transparencia de edge-to-edge: se pinta del color de fondo.
+                window.isNavigationBarContrastEnforced = false
+                window.navigationBarColor = navigationBarColor.toArgb()
+            }
+            onDispose {
+                controller.isAppearanceLightStatusBars = prevStatus
+                controller.isAppearanceLightNavigationBars = prevNav
+                window.navigationBarColor = prevNavColor
+            }
+        }
+    }
 }
