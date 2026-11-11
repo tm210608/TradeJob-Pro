@@ -42,11 +42,13 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       Xiaomi: `user_version 3→7`, datos preservados (corrida con fila sembrada
       visible en dashboard), cero crash. Tests verdes.
 
-- [~] **SPEC-005 nav-bar-oem** (`feature/spec-005-nav-bar-oem`, implementada):
-      color de nav bar global en `TradeJobTheme` (fondo del tema) para MIUI y
-      OEMs con barra opaca; login/registro conservan override petróleo.
-      Evidencia de pantallas internas bloqueada por el crash de SPEC-006 —
-      se completa tras su merge (físico Xiaomi pendiente de disponibilidad).
+- [x] **SPEC-005 nav-bar-oem** (`feature/spec-005-nav-bar-oem` → main):
+      color de nav bar global en `TradeJobTheme` (`colorScheme.background`)
+      para MIUI y OEMs con barra opaca; `DisposableEffect` re-aplica el
+      override por pantalla al conmutar light↔dark; login/registro conservan
+      petróleo (verificado en emulador dark). Evidencia de pantallas
+      internas en emulador tras el fix de SPEC-006; captura en el Xiaomi
+      físico pendiente (dispositivo ocupado por otros agentes).
 
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: `SyncWorker` no puede instanciarse
