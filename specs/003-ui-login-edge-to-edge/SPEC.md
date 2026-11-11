@@ -12,14 +12,14 @@ franjas (se ve blanco del sistema).
 
 ## Criterios de aceptación
 
-- [ ] `enableEdgeToEdge()` en `MainActivity` antes de `setContent`
-- [ ] `windowSoftInputMode="adjustResize"` en el manifest (login tiene TextFields)
-- [ ] Fondo petróleo a sangre en `LoginScreen` (bg sin inset; contenido protegido
+- [x] `enableEdgeToEdge()` en `MainActivity` antes de `setContent`
+- [x] `windowSoftInputMode="adjustResize"` en el manifest (login tiene TextFields)
+- [x] Fondo petróleo a sangre en `LoginScreen` (bg sin inset; contenido protegido
       con `safeDrawingPadding` + `imePadding` antes del scroll, sin doble padding)
-- [ ] Iconos de status/nav bar legibles sobre petróleo (oscuro) → iconos claros
+- [x] Iconos de status/nav bar legibles sobre petróleo (oscuro) → iconos claros
       en login y registro; restaurado al salir
-- [ ] Build compila + tests verdes + captura en dispositivo físico con el
-      petróleo llegando a los bordes
+- [x] Build compila + tests verdes + captura en dispositivo con el
+      petróleo llegando a los bordes (emulador; físico pendiente, ver EVIDENCE)
 
 ## Fuera de alcance
 
