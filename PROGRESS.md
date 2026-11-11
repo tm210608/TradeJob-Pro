@@ -17,9 +17,20 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       `MotionScheme.expressive()`. Shim `resources/Colors.kt` → paleta de marca.
       17/17 tests verdes, evidencia en dispositivo físico.
 
+- [x] **SPEC-003 Login edge-to-edge** (`feature/spec-003-e2e-login` → main):
+      `enableEdgeToEdge()` + `adjustResize`, fondo petróleo a sangre bajo status
+      y nav bar en Login/NewUser, contenido con `safeDrawingPadding` +
+      `imePadding`. `SystemBarIconStyle(darkIcons, navigationBarColor)` en
+      `:libs:components` — iconos claros por pantalla + nav bar petróleo en OEMs
+      con barra opaca (MIUI/HyperOS). Evidencia en emulador y Xiaomi rodin.
+      17/17 tests verdes.
+
 ### 🔭 Cola de specs detectadas
 - `ui-login`: migrar LoginScreen/NewUserScreen a `colorScheme` (ahora usan el shim
   hardcodeado — por eso el dark mode aún no les afecta) + rediseño Expressive.
+- `nav-bar-oem`: resto de pantallas con nav bar opaca gris en MIUI — ya hay
+  `navigationBarColor` en `SystemBarIconStyle` para repetir el patrón; a largo
+  plazo `Theme.TradeJobPro` debería ser `DayNight`/M3.
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
