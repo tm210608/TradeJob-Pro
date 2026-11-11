@@ -75,6 +75,18 @@ PETICIÓN → PREGUNTAS → SPEC → AGENTE → BUILD → TESTS → DEVICE → E
 - Si descubres un bug fuera de scope, documéntalo en la spec (sección "Hallazgos")
   o crea una spec nueva — no lo arregles de tapadillo.
 
+## Comunicación con el usuario
+
+El usuario tiene **poco conocimiento técnico**. Al trabajar con él:
+
+- Al explicar una spec (o cualquier decisión), usa lenguaje llano: qué verá el
+  usuario en la app y por qué importa, antes que detalles de implementación.
+- En preguntas/cuestionarios con opciones, incluye siempre una opción marcada
+  como **recomendada** y di por qué en una frase.
+- Todo paso que requiera su aprobación (aprobar una spec, mergear, instalar
+  algo, conectar el dispositivo) se pide con una explicación clara de qué se
+  va a hacer y qué cambia para él.
+
 ## Documentos de referencia
 
 - `PROGRESS.md` — historial y roadmap (fuente de verdad de estado).
