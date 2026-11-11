@@ -33,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tradejob.pro.components.MitoEmailField
 import com.tradejob.pro.components.MitoPasswordField
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.components.theme.TradeJobTheme
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.components.resources.PrimaryColor
@@ -59,8 +60,8 @@ class LoginScreen : Screen {
 
         Scaffold(
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-        ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
+        ) {
+            Box {
                 LoginContent(
                     status = status,
                     event = event,
@@ -96,9 +97,12 @@ fun LoginContent(
                 )
             )
     ) {
+        SystemBarIconStyle(darkIcons = false)
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .safeDrawingPadding()
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally

@@ -31,6 +31,7 @@ import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.components.resources.PrimaryColor
 import com.tradejob.pro.components.resources.PrimaryDarkColor
 import com.tradejob.pro.core.navigation.Screen
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 
 import androidx.compose.ui.res.stringResource
 import com.tradejob.pro.login.R
@@ -58,8 +59,8 @@ class NewUserScreen : Screen {
                 )
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-        ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
+        ) {
+            Box {
                 RegisterContent(
                     viewModel = viewModel,
                     navController = navController,
@@ -89,9 +90,12 @@ fun RegisterContent(
                 )
             )
     ) {
+        SystemBarIconStyle(darkIcons = false)
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .safeDrawingPadding()
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
