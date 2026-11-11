@@ -29,7 +29,7 @@ import com.tradejob.pro.database.data.entity.UserEntity
         QuoteItemEntity::class,
         InvoiceEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class TradeJobDatabase : RoomDatabase() {
@@ -141,6 +141,57 @@ abstract class TradeJobDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE users ADD COLUMN verifactuEnabled INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE users ADD COLUMN invoiceSeries TEXT")
                 db.execSQL("ALTER TABLE users ADD COLUMN invoiceNumber INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        // SPEC-006: job_photos podía quedar sin isSynced/remoteUrl (u otras
+        // columnas) en BDs antiguas — ninguna migración de la cadena las
+        // añadía y la validación TableInfo crasheaba al abrir la app.
+        // Rebuild con el esquema esperado copiando solo columnas presentes.
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                val tableExists = db.query(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='job_photos'"
+                ).use { it.moveToFirst() }
+
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS job_photos_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        jobId INTEGER NOT NULL,
+                        photoPath TEXT NOT NULL,
+                        description TEXT,
+                        type TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL,
+                        isSynced INTEGER NOT NULL,
+                        remoteUrl TEXT,
+                        FOREIGN KEY(jobId) REFERENCES jobs(id)
+                            ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+
+                if (tableExists) {
+                    val existing = db.query("PRAGMA table_info(job_photos)").use { c ->
+                        val nameIdx = c.getColumnIndex("name")
+                        buildSet {
+                            while (c.moveToNext()) add(c.getString(nameIdx))
+                        }
+                    }
+                    fun col(name: String, fallback: String) =
+                        if (name in existing) "`$name`" else "$fallback AS `$name`"
+                    db.execSQL("""
+                        INSERT INTO job_photos_new
+                            (id, jobId, photoPath, description, type, createdAt, isSynced, remoteUrl)
+                        SELECT ${col("id", "0")}, ${col("jobId", "0")},
+                               ${col("photoPath", "''")}, ${col("description", "NULL")},
+                               ${col("type", "'BEFORE'")}, ${col("createdAt", "0")},
+                               ${col("isSynced", "0")}, ${col("remoteUrl", "NULL")}
+                        FROM job_photos
+                    """.trimIndent())
+                    db.execSQL("DROP TABLE job_photos")
+                }
+
+                db.execSQL("ALTER TABLE job_photos_new RENAME TO job_photos")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_job_photos_jobId ON job_photos(jobId)")
             }
         }
     }
