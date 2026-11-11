@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package com.tradejob.pro.login.ui
 
@@ -28,9 +28,9 @@ import com.tradejob.pro.components.MitoEmailField
 import com.tradejob.pro.components.MitoPasswordField
 import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
-import com.tradejob.pro.components.resources.PrimaryColor
-import com.tradejob.pro.components.resources.PrimaryDarkColor
 import com.tradejob.pro.core.navigation.Screen
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
 import com.tradejob.pro.components.theme.SystemBarIconStyle
 
 import androidx.compose.ui.res.stringResource
@@ -54,7 +54,7 @@ class NewUserScreen : Screen {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = PrimaryDarkColor
+                        containerColor = Color.Transparent
                     )
                 )
             },
@@ -86,11 +86,11 @@ fun RegisterContent(
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(PrimaryDarkColor, PrimaryColor)
+                    colors = listOf(Petrol20, Petrol30)
                 )
             )
     ) {
-        SystemBarIconStyle(darkIcons = false, navigationBarColor = PrimaryColor)
+        SystemBarIconStyle(darkIcons = false, navigationBarColor = Petrol30)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -196,7 +196,7 @@ fun RegisterContent(
                     .background(Color.Black.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.White)
+                LoadingIndicator(color = Color.White)
             }
         }
     }
