@@ -66,14 +66,23 @@ Nota: el dashboard no cambia a dark con `ui_night_mode=2` porque
 `HomeScreen` hardcodea `Color(0xFFF5F5F5)` y colores literales — la migración
 de `:home` al `colorScheme` es la spec `ui-home` (fuera de alcance).
 
-## DEVICE — físico Xiaomi `rodin`
+## DEVICE — físico Xiaomi `rodin` (verificación final, 20:37)
 
-- Login: nav bar petróleo verificada en SPEC-003/004 (regresión OK).
-- Pantallas internas: **pendiente** — requiere sesión real en el móvil
-  (credenciales del usuario) y el dispositivo estaba ocupado por otros
-  agentes durante esta sesión. Con SPEC-006 ya mergeado el login físico ya
-  no crashea; cuando el móvil quede libre basta login → captura de
-  dashboard/clientes para cerrar el criterio literal.
+Tras liberarse el móvil y con SPEC-006 ya mergeado (la BD v3 del móvil
+migra sin crash — ver su EVIDENCE), se llegó al dashboard y se capturaron
+pantallas internas en light y dark:
+
+- `screenshots/dashboard_navbar_miui.png` (light):
+  `nav px = (244,249,248) = Slate50` — el fondo del tema, **sin franja gris MIUI**.
+- `screenshots/clients_list_miui.png` (light, "Mis Clientes"):
+  `nav px = (244,249,248)` — idéntico criterio en segunda pantalla.
+- `screenshots/clients_list_miui_dark.png` (dark, "Mis Clientes"):
+  `nav px = (10,25,27) = Slate900` — la pantalla sigue el tema dark y la
+  nav bar continúa el mismo color hasta el borde.
+
+Conclusión física: en MIUI la nav bar opaca ahora toma
+`colorScheme.background` en pantallas internas (light y dark) — el gris
+MIUI desaparece. Regresión login petróleo ya cubierta arriba.
 
 ## Checklist de criterios
 
@@ -85,8 +94,9 @@ de `:home` al `colorScheme` es la spec `ui-home` (fuera de alcance).
 - [x] Login/registro conservan nav bar petróleo (regresión emulador dark)
 - [x] Pantallas internas en emulador: dashboard + lista clientes, nav bar
       = `colorScheme.background` verificado por píxeles en light y dark
-- [ ] Xiaomi físico pantallas internas: pendiente (otros agentes lo usan;
-      bug de migración que lo bloqueaba ya resuelto en SPEC-006)
+- [x] **Xiaomi físico: dashboard + Mis Clientes en light y dark, nav bar =
+      fondo del tema (sin gris MIUI)** — verificado 20:37 tras liberar el
+      dispositivo
 - [x] Build compila; tests verdes (sin tests nuevos — cambio de sistema de
       barras, se verifica en dispositivo)
 
@@ -98,5 +108,5 @@ de `:home` al `colorScheme` es la spec `ui-home` (fuera de alcance).
   el dashboard quedará contraste fondo-claro/nav-oscura en MIUI hasta que
   `ui-home` migre esas pantallas. No es regresión: antes era gris en ambos.
 - La app de otros agentes (`com.example.traveldiary`) robaba el foco del
-  móvil durante la sesión — evidencia física pospuesta, se completó en
-  emulador con la BD real del Xiaomi migrada.
+  móvil durante la sesión — evidencia física pospuesta y completada después
+  con el móvil libre (capturas `*_miui.png`).

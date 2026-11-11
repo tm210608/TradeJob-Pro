@@ -1,6 +1,6 @@
 # SPEC-006: Hotfix — migración Room `job_photos` (crash al actualizar)
 
-**Estado:** verificada (emulador + BD real del Xiaomi; físico pendiente libre)
+**Estado:** verificada (emulador + físico Xiaomi `rodin` con su BD real)
 **Rama:** `feature/spec-006-migration-job-photos`
 **Fecha:** 2026-11-11
 **Prioridad:** alta — la app crashea al hacer login en dispositivos con BD
@@ -39,10 +39,10 @@ de migraciones; solo `job_photos` desajusta.
       copiar solo columnas existentes (idempotente y segura para BD v1–v6)
 - [x] Conserva las filas de `job_photos` (`isSynced=0`, `remoteUrl=NULL`
       para datos previos) y funciona si la tabla no existe (BD muy vieja)
-- [x] BD v3 real (extraída del Xiaomi): la app abre, login posible,
-      navegación a `:home` sin crash — verificado en emulador con copia
-      byte a byte de su BD (el físico estaba ocupado); capturas en
-      `EVIDENCE.md`
+- [x] BD v3 real: la app abre, login posible, navegación a `:home` sin
+      crash — verificado en emulador con copia byte a byte de la BD del
+      Xiaomi **y en el propio Xiaomi físico** (`install -r` sobre su BD,
+      migración 3→7, dashboard operativo); capturas en `EVIDENCE.md`
 - [x] Build compila + tests verdes
 
 ## Fuera de alcance
@@ -78,8 +78,8 @@ de migraciones; solo `job_photos` desajusta.
 
 - [x] `gradlew.bat :app:assembleDebug` compila
 - [x] `gradlew.bat :home:testDebugUnitTest :login:testDebugUnitTest` verdes
-- [x] BD v3 real del físico en emulador: app abre tras `install -r`,
-      login OK, dashboard visible con datos preservados
+- [x] BD v3 real: app abre tras `install -r` en emulador **y en el Xiaomi
+      físico**, login OK, dashboard visible
 - [x] `PRAGMA table_info(job_photos)` post-migración muestra las 8 columnas
       y `user_version = 7`
 - [x] Screenshots en `EVIDENCE.md`
@@ -95,6 +95,6 @@ de migraciones; solo `job_photos` desajusta.
   nunca ha corrido realmente. Candidato a spec `sync-worker-hilt`.
 - ANR en primer arranque del emulador frío (init Firebase lento) — no es
   un crash; observar.
-- Pendiente opcional: repetir `install -r` + login en el Xiaomi físico
-  cuando quede libre de otros agentes (la verificación se hizo con copia
-  byte a byte de su BD real en emulador).
+- En MIUI el input remoto es frágil: `adb input text` dispara el popup de
+  "Traductor de Google" y el foco cambia de campo al abrirse el teclado
+  (`adjustResize`). Secuencia fiable documentada en EVIDENCE.

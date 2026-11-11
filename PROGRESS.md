@@ -39,16 +39,17 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       reconstruye la tabla con el esquema exacto esperado copiando solo columnas
       presentes (idempotente, cubre v1–v6), versión 6→7, `schemas/7.json`
       exportado. Verificado en emulador con copia byte a byte de la BD real del
-      Xiaomi: `user_version 3→7`, datos preservados (corrida con fila sembrada
-      visible en dashboard), cero crash. Tests verdes.
+      Xiaomi **y en el propio Xiaomi físico**: `user_version 3→7`, datos
+      preservados (fila sembrada visible en dashboard), cero crash.
+      Tests verdes.
 
 - [x] **SPEC-005 nav-bar-oem** (`feature/spec-005-nav-bar-oem` → main):
       color de nav bar global en `TradeJobTheme` (`colorScheme.background`)
       para MIUI y OEMs con barra opaca; `DisposableEffect` re-aplica el
       override por pantalla al conmutar light↔dark; login/registro conservan
-      petróleo (verificado en emulador dark). Evidencia de pantallas
-      internas en emulador tras el fix de SPEC-006; captura en el Xiaomi
-      físico pendiente (dispositivo ocupado por otros agentes).
+      petróleo. Verificado en emulador **y en el Xiaomi `rodin` físico**:
+      dashboard + Mis Clientes con nav bar `Slate50`/`Slate900` en light y
+      dark — el gris MIUI desaparece.
 
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: `SyncWorker` no puede instanciarse

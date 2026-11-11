@@ -2,10 +2,10 @@
 
 **Fecha:** 2026-11-11
 **Rama:** `feature/spec-006-migration-job-photos`
-**Dispositivo:** emulador `Medium_Phone_API_36.1` (`emulator-5554`,
+**Dispositivos:** emulador `Medium_Phone_API_36.1` (`emulator-5554`,
 sdk_gphone64_x86_64, 1080x2400) con la **BD real v3 del Xiaomi `rodin`**
-sembrada en sus datos (el físico estaba ocupado por otros agentes; la BD
-usada es una copia byte a byte extraída de él con `run-as`).
+sembrada en sus datos, **y el propio Xiaomi físico** (2412DPC0AG,
+1220x2712, HyperOS) con su BD original una vez liberado.
 **APK:** `app/build/outputs/apk/debug/app-debug.apk`
 
 ## BUILD
@@ -104,16 +104,32 @@ datos sobrevivieron la migración y son visibles en UI**.
 - Solo `6.json` estaba exportado; desde v7 los schemas quedan guardados
   (`7.json` commiteado).
 
+## DEVICE — físico Xiaomi `rodin` (verificación final, 20:37)
+
+Con el móvil liberado se repitió la prueba real: `install -r` sobre la BD
+v3 existente (sin desinstalar), arranque, login con credenciales de prueba
+→ la app navegó al dashboard sin crash. Pull de la BD post-login:
+
+```
+user_version: 7            (era 3)
+job_photos: [id, jobId, photoPath, description, type, createdAt, isSynced, remoteUrl]
+fks: [jobs(jobId→id) ON DELETE CASCADE]
+indices: ['index_job_photos_jobId']
+```
+
+`screenshots/dashboard_xiaomi_after_migration.png`: dashboard funcional en
+el Xiaomi tras migrar su propia BD — `Mis Clientes` también accesible.
+Nota de input: en MIUI el texto por `adb input text` disparaba el popup de
+"Traductor de Google" y el foco se movía por `adjustResize`; la secuencia
+fiable fue tap → `input text` → keyevents por carácter para password.
+
 ## Checklist de criterios
 
 - [x] `version = 7` + `MIGRATION_6_7` registrada en `DatabaseModule`
 - [x] `TableInfo` exacto tras migrar (columnas, FK CASCADE, índice) —
       verificado sobre BD real
 - [x] Conserva filas (`isSynced=0`, `remoteUrl=NULL` por defecto) —
-      verificado con fila sembrada sobreviviendo
-- [x] App abre y navega a `:home` sin crash con BD v3 real
+      verificado con fila sembrada sobreviviendo (emulador)
+- [x] App abre y navega a `:home` sin crash con BD v3 real — **verificado
+      en el Xiaomi físico con su propia BD: 3→7, dashboard operativo**
 - [x] Build compila + tests verdes
-- [ ] Xiaomi físico con su propia BD: pendiente — el dispositivo está
-      ocupado por otros agentes; se verificó sobre copia byte a byte de su
-      BD en emulador. Repetir `install -r` + login en el físico cuando
-      quede libre cierra el criterio literal.
