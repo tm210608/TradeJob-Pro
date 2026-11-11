@@ -90,7 +90,7 @@ fun RegisterContent(
                 )
             )
     ) {
-        SystemBarIconStyle(darkIcons = false)
+        SystemBarIconStyle(darkIcons = false, navigationBarColor = PrimaryColor)
         Column(
             modifier = Modifier
                 .fillMaxSize()

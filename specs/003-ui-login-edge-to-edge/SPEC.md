@@ -18,8 +18,8 @@ franjas (se ve blanco del sistema).
       con `safeDrawingPadding` + `imePadding` antes del scroll, sin doble padding)
 - [x] Iconos de status/nav bar legibles sobre petróleo (oscuro) → iconos claros
       en login y registro; restaurado al salir
-- [x] Build compila + tests verdes + captura en dispositivo con el
-      petróleo llegando a los bordes (emulador; físico pendiente, ver EVIDENCE)
+- [x] Build compila + tests verdes + captura en dispositivo físico (Xiaomi
+      `rodin`) con el petróleo llegando a los bordes
 
 ## Fuera de alcance
 
@@ -31,3 +31,9 @@ franjas (se ve blanco del sistema).
 
 - `themes.xml` tiene `statusBarColor` morado legacy (lo sobreescribe
   edge-to-edge; se limpia aquí por ser 1 línea de deuda de marca)
+- MIUI/HyperOS dibuja la nav bar **opaca** (gris claro con tema `.Light`)
+  ignorando la transparencia de edge-to-edge. Resuelto aquí: `SystemBarIconStyle`
+  acepta `navigationBarColor` opcional y pinta la nav bar de petróleo en
+  login/registro (`isNavigationBarContrastEnforced = false` aplicado por
+  necesidad). El resto de pantallas hereda el problema: queda en manos de cada
+  spec ui-* o de pasar `Theme.TradeJobPro` a `DayNight`/colorScheme M3.
