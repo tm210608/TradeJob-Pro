@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,9 +21,17 @@ fun TradeJobTheme(
 ) {
     MaterialExpressiveTheme(
         colorScheme = if (darkTheme) TradeJobDarkScheme else TradeJobLightScheme,
-        motionScheme = MotionScheme.expressive(),
-        content = content
-    )
+        motionScheme = MotionScheme.expressive()
+    ) {
+        // Default global (SPEC-005): nav bar del color del fondo para OEMs
+        // con barra opaca (MIUI/HyperOS) e iconos coherentes con el tema.
+        // Las pantallas pueden sobreescribirlo (p. ej. login → petróleo).
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = MaterialTheme.colorScheme.background
+        )
+        content()
+    }
 }
 
 // Estilo de iconos de las barras del sistema por pantalla (edge-to-edge).
@@ -31,8 +40,12 @@ fun TradeJobTheme(
 @Composable
 fun SystemBarIconStyle(darkIcons: Boolean, navigationBarColor: Color? = null) {
     val view = LocalView.current
+    // darkTheme en las claves: al conmutar light↔dark el sistema, los efectos
+    // se re-aplican en orden de composición y el override de una pantalla
+    // (hija del tema) vuelve a ganar sobre el default global.
+    val darkTheme = isSystemInDarkTheme()
     if (!view.isInEditMode) {
-        DisposableEffect(darkIcons, navigationBarColor) {
+        DisposableEffect(darkIcons, navigationBarColor, darkTheme) {
             val window = (view.context as? Activity)?.window
                 ?: return@DisposableEffect onDispose {}
             val controller = WindowCompat.getInsetsController(window, view)
