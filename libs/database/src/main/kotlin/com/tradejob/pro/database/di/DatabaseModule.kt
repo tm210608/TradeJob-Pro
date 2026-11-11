@@ -29,7 +29,7 @@ class DatabaseModule {
             TradeJobDatabase::class.java,
             "trade_job_database"
         )
-            .addMigrations(TradeJobDatabase.MIGRATION_1_2, TradeJobDatabase.MIGRATION_2_3, TradeJobDatabase.MIGRATION_3_4, TradeJobDatabase.MIGRATION_4_5, TradeJobDatabase.MIGRATION_5_6)
+            .addMigrations(TradeJobDatabase.MIGRATION_1_2, TradeJobDatabase.MIGRATION_2_3, TradeJobDatabase.MIGRATION_3_4, TradeJobDatabase.MIGRATION_4_5, TradeJobDatabase.MIGRATION_5_6, TradeJobDatabase.MIGRATION_6_7)
             .build()
     }
 

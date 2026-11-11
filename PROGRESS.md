@@ -32,10 +32,28 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       app); TopAppBar de registro transparente; `LoadingIndicator` M3 Expressive.
       17/17 tests verdes, evidencia emulador + Xiaomi `rodin` en light y dark.
 
+- [x] **SPEC-006 Hotfix migración `job_photos`** (`feature/spec-006-migration-job-photos`
+      → main): la app crasheaba al abrir BD en dispositivos con `user_version`
+      antigua (detectado en el Xiaomi, v3) — `job_photos` carecía de `isSynced`/
+      `remoteUrl` y ninguna migración de la cadena las cubría. `MIGRATION_6_7`
+      reconstruye la tabla con el esquema exacto esperado copiando solo columnas
+      presentes (idempotente, cubre v1–v6), versión 6→7, `schemas/7.json`
+      exportado. Verificado en emulador con copia byte a byte de la BD real del
+      Xiaomi: `user_version 3→7`, datos preservados (corrida con fila sembrada
+      visible en dashboard), cero crash. Tests verdes.
+
+- [~] **SPEC-005 nav-bar-oem** (`feature/spec-005-nav-bar-oem`, implementada):
+      color de nav bar global en `TradeJobTheme` (fondo del tema) para MIUI y
+      OEMs con barra opaca; login/registro conservan override petróleo.
+      Evidencia de pantallas internas bloqueada por el crash de SPEC-006 —
+      se completa tras su merge (físico Xiaomi pendiente de disponibilidad).
+
 ### 🔭 Cola de specs detectadas
-- `nav-bar-oem`: resto de pantallas con nav bar opaca gris en MIUI — ya hay
-  `navigationBarColor` en `SystemBarIconStyle` para repetir el patrón; a largo
-  plazo `Theme.TradeJobPro` debería ser `DayNight`/M3.
+- `sync-worker-hilt`: `SyncWorker` no puede instanciarse
+  (`NoSuchMethodException` en WorkManager — falta `HiltWorkerFactory`/
+  `@HiltWorker`); el sync nunca ha corrido realmente. Detectado en SPEC-006.
+- `db-migration-tests`: suite `MigrationTestHelper` con los schemas exportados
+  (desde v7 ya quedan guardados en `libs/database/schemas/`).
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
