@@ -1,6 +1,6 @@
 # SPEC-003: Login a pantalla completa (edge-to-edge)
 
-**Estado:** en curso
+**Estado:** verificada
 **Rama:** `feature/spec-003-e2e-login`
 **Fecha:** 2026-11-02
 
