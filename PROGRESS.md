@@ -51,10 +51,48 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       dashboard + Mis Clientes con nav bar `Slate50`/`Slate900` en light y
       dark — el gris MIUI desaparece.
 
+### SPEC-007 — Corrección de arranque de sincronización (11 noviembre 2026)
+
+- Rama: `feature/spec-007-sync-worker-init` (sin merge).
+- Causa reproducida en emulador: WorkManager usaba `DefaultWorkerFactory`, aunque
+  `TradeJobApplication` ya proporcionaba `HiltWorkerFactory` y `SyncWorker` ya tenía
+  `@HiltWorker`. El inicializador automático ignoraba la configuración de la app.
+- Corrección: eliminar únicamente `WorkManagerInitializer` del manifiesto fusionado;
+  conservar AndroidX Startup y sus otros inicializadores.
+- Regresión: `WorkManagerInitializationTest` falla antes del cambio y pasa después
+  al comprobar la identidad de la factoría realmente usada por WorkManager.
+- Verificación: `:app:assembleDebug`, `:app:assembleDebugAndroidTest` y 17 tests de
+  `:home:testDebugUnitTest` correctos. Prueba instrumentada correcta en `emulator-5554`
+  sin conexión; no se han probado subidas a Firebase ni modificado el móvil físico.
+  `:login:testDebugUnitTest` devuelve `NO-SOURCE` (no hay tests unitarios).
+- Apertura manual: `am start -W` agotó su espera; después se confirmó `MainActivity`
+  en estado `Resumed`, sin errores en los tags `AndroidRuntime`/`WM-WorkerFactory`
+  consultados. App detenida antes de restaurar Wi-Fi y datos del emulador.
+- Pruebas locales añadidas en `:libs:database`, ejecutadas en un APK independiente
+  con Room en memoria y Firebase `demo-tradejob-sync` (Auth, Firestore, Storage).
+  Ninguna cuenta, base local ni proyecto real de la app se usa para estas pruebas.
+- `npm --prefix .devin/firebase run test:sync` verificado: arranca los tres servicios,
+  construye e instala el APK de tests solo en emulador, pasa 2/2 tests y apaga Firebase.
+  Log local: `.devin/firebase/artifacts/android-sync-test.log` (ignorado por Git).
+- Verificado: subida de cliente/trabajo/foto, flags locales y documentos remotos,
+  bytes del archivo, recuperación de foto con referencia `gs://`, y cliente pendiente
+  si no hay sesión. Se invoca `SyncWorker.doWork()` con DAOs temporales: no es una
+  prueba del planificador periódico real; la factoría de la app se verifica aparte.
+- Limitación observada: el SDK rechaza `getReferenceFromUrl()` con la URL HTTP de
+  Storage local. El test comprueba la URL generada al subir y sustituye únicamente
+  la referencia del fixture por `gs://` al mismo objeto antes de probar recuperación.
+  El round trip directo con esa URL HTTP local NO está validado ni corregido.
+- Hallazgo fuera de alcance: una recuperación fallida se registra en logs pero
+  `SyncWorker` devuelve éxito; no se ha cambiado ese comportamiento en esta rama.
+- Herramienta local fijada: `firebase-tools@15.34.2`; `npm audit` informa 14 avisos
+  moderados transitivos, sin altos/críticos. No se aplican downgrades ni overrides.
+  Servicios limitados a loopback; no se relajan las reglas de ningún proyecto real.
+- Pendiente de cierre SDMD: SPEC/EVIDENCE en disco. Cambios guardados en la rama
+  de trabajo; sin merge ni push. Próxima sesión: completar el cierre documental.
+
 ### 🔭 Cola de specs detectadas
-- `sync-worker-hilt`: `SyncWorker` no puede instanciarse
-  (`NoSuchMethodException` en WorkManager — falta `HiltWorkerFactory`/
-  `@HiltWorker`); el sync nunca ha corrido realmente. Detectado en SPEC-006.
+- `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
+  según el apartado anterior. Detectado en SPEC-006.
 - `db-migration-tests`: suite `MigrationTestHelper` con los schemas exportados
   (desde v7 ya quedan guardados en `libs/database/schemas/`).
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo

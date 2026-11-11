@@ -11,6 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -20,6 +21,13 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+    }
+}
+
+extensions.configure<com.android.build.gradle.BaseExtension> {
+    sourceSets.getByName("androidTest") {
+        manifest.srcFile(rootProject.file(".devin/firebase/AndroidManifest.xml"))
+        res.srcDir(rootProject.file(".devin/firebase/res"))
     }
 }
 
@@ -47,4 +55,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.work.testing)
 }

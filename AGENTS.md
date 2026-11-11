@@ -54,6 +54,21 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.tradejob.pro.app/.MainActivity
 ```
 
+### Pruebas locales de sincronización
+
+- Herramientas aisladas en `.devin/firebase/`; Node.js y Java 21 deben estar en `PATH`.
+- Dependencias: `npm --prefix .devin/firebase ci` (requiere autorización para descargar).
+- Con un emulador Android arrancado: `npm --prefix .devin/firebase run test:sync`.
+- Usa `demo-tradejob-sync`, sin login de Firebase, servicios ligados a `127.0.0.1`,
+  APK de tests de `:libs:database` y Room en memoria. No usa la app ni datos reales.
+- `ANDROID_SERIAL` permite elegir emulador; el ejecutor rechaza dispositivos físicos.
+- El ejecutor crea y retira sus propios puentes ADB; guarda el resultado en
+  `.devin/firebase/artifacts/android-sync-test.log` (ignorado por Git).
+- Los tests requieren `-e firebaseEmulators true`; sin esa opción se omiten.
+- El SDK rechaza `getReferenceFromUrl()` con la URL HTTP devuelta por Storage local.
+  La prueba verifica esa URL durante la subida y usa una referencia `gs://` al mismo
+  objeto para comprobar la recuperación. No equivale a validar ese round trip HTTP.
+
 ## Definición de "done" (SDMD)
 
 Una feature/fix NO está terminada hasta que:
