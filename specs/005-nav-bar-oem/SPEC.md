@@ -1,6 +1,7 @@
 # SPEC-005: nav-bar-oem — barra de navegación coherente en toda la app
 
-**Estado:** en curso
+**Estado:** verificada parcial — emulador OK + login físico; pantallas
+internas en Xiaomi físico pendientes (dispositivo ocupado, ver EVIDENCE)
 **Rama:** `feature/spec-005-nav-bar-oem`
 **Fecha:** 2026-11-11
 
@@ -24,17 +25,19 @@ todos los fabricantes.
 
 ## Criterios de aceptación
 
-- [ ] `TradeJobTheme` aplica por defecto: iconos de status/nav bar
+- [x] `TradeJobTheme` aplica por defecto: iconos de status/nav bar
       (oscuros en light, claros en dark) + `navigationBarColor =
       colorScheme.background` (verificable en código, 1 sitio)
-- [ ] `SystemBarIconStyle` re-aplica su override tras un cambio de tema
+- [x] `SystemBarIconStyle` re-aplica su override tras un cambio de tema
       (el `DisposableEffect` incluye el modo claro/oscuro en sus claves)
       → login/registro mantienen la nav bar petróleo aunque el sistema
       cambie a dark mientras están visibles
 - [ ] En el Xiaomi físico: la nav bar de al menos 2 pantallas de `:home`
-      coincide con el fondo de la app (no gris MIUI), en light y dark
-- [ ] Login/registro siguen mostrando nav bar petróleo (regresión)
-- [ ] Build compila + tests verdes
+      coincide con el fondo de la app (no gris MIUI), en light y dark —
+      pendiente: el móvil estaba ocupado por otros agentes; ya desbloqueado
+      el login por SPEC-006. Emulador verificado en su lugar.
+- [x] Login/registro siguen mostrando nav bar petróleo (regresión)
+- [x] Build compila + tests verdes
 
 ## Fuera de alcance
 
@@ -75,13 +78,15 @@ todos los fabricantes.
 
 ## Plan de tests
 
-- [ ] `gradlew.bat :app:assembleDebug` compila
-- [ ] `gradlew.bat :home:testDebugUnitTest :login:testDebugUnitTest` verdes
+- [x] `gradlew.bat :app:assembleDebug` compila
+- [x] `gradlew.bat :home:testDebugUnitTest :login:testDebugUnitTest` verdes
 - [ ] Dispositivo físico Xiaomi: login (nav petróleo) → sesión iniciada →
       dashboard + una lista (p. ej. clientes) con nav bar del color del
       fondo, en light y dark. **Requiere sesión real en el dispositivo:**
-      el usuario inicia sesión una vez (credenciales no se automatizan)
-- [ ] Screenshots en `EVIDENCE.md`
+      el usuario inicia sesión una vez (credenciales no se automatizan) —
+      pendiente, móvil ocupado por otros agentes
+- [x] Screenshots en `EVIDENCE.md` (emulador: dashboard light/dark,
+      login dark regresión)
 
 ## Hallazgos fuera de scope
 
@@ -90,4 +95,8 @@ todos los fabricantes.
   `IllegalStateException: Migration didn't properly handle: job_photos`.
   La tabla `job_photos` de ese dispositivo carece de `isSynced`/`remoteUrl`
   y ninguna migración de la cadena las añade → validación Room falla.
-  Bloquea la evidencia de esta spec. Resuelto en SPEC-006.
+  Bloquea la evidencia de esta spec. **Resuelto y mergeado en SPEC-006.**
+- **`HomeScreen` no sigue el tema en dark**: fondo `Color(0xFFF5F5F5)` y
+  colores literales hardcodeados — la nav bar global tomará `Slate900`
+  (fondo del tema dark) bajo una pantalla clara en MIUI. No es regresión
+  (antes era gris en ambos modos); se resuelve en `ui-home`.
