@@ -2,6 +2,18 @@
 
 Guía para agentes (y humanos) que trabajan en este repo bajo **SDMD (Spec-Driven Mobile Development)**.
 
+## Empezar una sesión
+
+1. Lee `.devin/STATE.md` antes de explorar: estado breve y siguiente paso.
+2. Consulta `PROGRESS.md` para el historial/roadmap y la SPEC activa en `specs/`.
+3. Flujo: `/spec` (preguntas y aprobación) → `/implement-spec` → `/verify` → `/handoff`.
+   Skills del proyecto en `.devin/skills/`; configuración nueva siempre en `.devin/`.
+   En sesiones con varios proyectos comprueba la ruta de la skill: debe pertenecer a
+   TradeJob-Pro, no a TravelDiaryBis/SocialChef. Si la resolución conserva una skill ajena,
+   lee el SKILL.md local y abre una sesión nueva para recargar las skills.
+4. Al terminar, actualiza `.devin/STATE.md` en menos de 40 líneas. No declares cerrado
+   lo que siga pendiente de pruebas, dispositivo o evidencia. No commit/merge/push sin petición.
+
 ## Qué es esta app
 
 Gestión de campo para autónomos técnicos (España/LATAM): clientes, trabajos con evidencia
@@ -42,6 +54,34 @@ Multi-módulo Gradle. Clean Architecture + MVVM. Compose, Hilt, Room, WorkManage
 
 ## Comandos
 
+Verificador SDMD (Windows, Node.js y Java 21):
+
+- `node .devin/verify.cjs`: compila app/APK de pruebas y verifica tests; salida breve.
+- `node .devin/verify.cjs --device`: lo anterior + instala conservando datos y abre
+  en móvil USB/Wi-Fi; sin móvil crea/arranca el AVD exclusivo `TradeJob_Test`.
+- `node .devin/verify.cjs --sync`: pruebas Firebase aisladas, siempre en emulador.
+- `node .devin/android/device.cjs`: selecciona móvil o prepara el emulador, sin instalar.
+- `node .devin/android/device.cjs --emulator-only`: prepara solo el emulador.
+- `node --test .devin/android/device.test.cjs`: tests de selección segura, sin dispositivos.
+- Logs/AVD locales ignorados por Git en `.devin/android/artifacts/` y `.devin/android/avd/`.
+- `ANDROID_HOME` permite elegir SDK; no leer `local.properties` ni archivos de secretos.
+- Usa imagen local Android 36.1 Google Play x86_64; si falta, pide autorización para descargar.
+- Con varios móviles/conexiones se exige `ANDROID_SERIAL`; nunca escoger el primero a ciegas.
+  Todos los comandos ADB dirigidos a un dispositivo deben llevar `-s <serial>`.
+- Explica y pide permiso antes de instalar en el móvil salvo autorización explícita vigente.
+  Nunca desinstales ni borres datos para resolver fallos. Abrir la app no verifica el flujo.
+- No uses emuladores ajenos automáticamente. No cambies ni detengas los de otros proyectos.
+- No pegues logs completos: resume y consulta el archivo de log ante fallos.
+- Si una instrumentación falla al arrancar con ANR, revisa logs y trazas antes de
+  atribuirlo al código. En TradeJob_Test se observó Android verificando/descomprimiendo
+  DEX antes del test. Precompilar app y APK de tests con
+  `adb -s <serial> shell cmd package compile -m speed -f <paquete>` permitió ejecutar
+  `WorkManagerInitializationTest` (paquetes `com.tradejob.pro.app` y
+  `com.tradejob.pro.app.test`). Esto prepara el emulador: no valida el arranque frío
+  sin precompilar ni permite ignorar ANR o dar una instrumentación fallida por verde.
+
+Comandos Gradle originales:
+
 ```bash
 # Build
 gradlew.bat :app:assembleDebug
@@ -53,6 +93,21 @@ gradlew.bat :home:testDebugUnitTest :login:testDebugUnitTest
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.tradejob.pro.app/.MainActivity
 ```
+
+### Pruebas locales de sincronización
+
+- Herramientas aisladas en `.devin/firebase/`; Node.js y Java 21 deben estar en `PATH`.
+- Dependencias: `npm --prefix .devin/firebase ci` (requiere autorización para descargar).
+- Con un emulador Android arrancado: `npm --prefix .devin/firebase run test:sync`.
+- Usa `demo-tradejob-sync`, sin login de Firebase, servicios ligados a `127.0.0.1`,
+  APK de tests de `:libs:database` y Room en memoria. No usa la app ni datos reales.
+- `ANDROID_SERIAL` permite elegir emulador; el ejecutor rechaza dispositivos físicos.
+- El ejecutor crea y retira sus propios puentes ADB; guarda el resultado en
+  `.devin/firebase/artifacts/android-sync-test.log` (ignorado por Git).
+- Los tests requieren `-e firebaseEmulators true`; sin esa opción se omiten.
+- El SDK rechaza `getReferenceFromUrl()` con la URL HTTP devuelta por Storage local.
+  La prueba verifica esa URL durante la subida y usa una referencia `gs://` al mismo
+  objeto para comprobar la recuperación. No equivale a validar ese round trip HTTP.
 
 ## Definición de "done" (SDMD)
 

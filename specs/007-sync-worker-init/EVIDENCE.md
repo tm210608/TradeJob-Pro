@@ -1,0 +1,146 @@
+# EVIDENCE — SPEC-007: Corrección de arranque de sincronización
+
+**Fecha:** 2026-11-11 (revalidada 2026-11-12)
+**Rama:** `feature/spec-007-sync-worker-init`
+**Commit:** `71821c1 fix(sync): respetar la factoria Hilt al iniciar WorkManager`
+
+Los logs y capturas son archivos locales ignorados por Git en
+`.devin/android/artifacts/` y `.devin/firebase/artifacts/`.
+
+## 1. Build
+
+```
+gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest \
+            :home:testDebugUnitTest :login:testDebugUnitTest
+BUILD SUCCESSFUL — 242 tareas (37 ejecutadas / 205 up-to-date el 11-11;
+1 ejecutada / 241 up-to-date en la revalidación del 12-11)
+```
+
+`node .devin/verify.cjs` terminó con código 0 en ejecución independiente.
+Log: `.devin/android/artifacts/spec-007-verification.log`.
+
+## 2. Tests
+
+### Unitarios
+
+- `:home:testDebugUnitTest` — 17/17 verdes; re-ejecutados con `--rerun` el
+  12-11: 0 errores, 0 fallos, 0 omitidos en los cinco XML de resultados.
+- `:login:testDebugUnitTest` → `NO-SOURCE` (el módulo no tiene unit tests;
+  ya anotado como spec candidata `login-tests`).
+
+### Instrumentados — factoría de WorkManager
+
+`WorkManagerInitializationTest` comprueba que la factoría usada por
+WorkManager es la misma instancia que `TradeJobApplication.getWorkerFactory()`
+(`HiltWorkerFactory`).
+
+- **Antes del cambio:** falla (WorkManager usaba `DefaultWorkerFactory`).
+- **Después:** `OK (1 test)` en `emulator-5560` (AVD `TradeJob_Test`).
+  Log: `.devin/android/artifacts/spec-007-workmanager-precompiled.log`.
+
+**Incidencia honesta:** los primeros intentos devolvieron `Process crashed`
+por ANR de arranque — Android descomprimía/verificaba DEX bajo alta presión
+de CPU antes de llegar al test. GPU host + 4 CPU + 4096 MB no bastó por sí
+solo. Se precompilaron ambos APKs con
+`cmd package compile -m speed -f <paquete>` (`Success` en
+`com.tradejob.pro.app` y `com.tradejob.pro.app.test`) y entonces el test
+pasó. Los logs fallidos se conservan (`spec-007-workmanager-*.log`) y **no
+equivalen a tests aprobados**.
+
+**Revalidación en frío (12-11, continuación):** reinstalación `install -r` de
+ambos APKs en `emulator-5560` y ejecución directa sin `cmd package compile`:
+`OK (1 test)` en 0,017 s. Log: `spec-007-workmanager-coldboot.log`.
+`am force-stop` + `am start -W`: `Status: ok`, `LaunchState: COLD`,
+`TotalTime: 6152 ms`, login renderizado completo y sin avisos (captura
+`spec-007-login-coldboot.png`). El arranque frío queda **verificado** en este
+AVD (el entorno ya había ejecutado la app antes; no es un primer arranque del
+emulador recién creado).
+
+### Firebase aislado — `SyncWorkerEmulatorTest`
+
+`npm --prefix .devin/firebase run test:sync` en `emulator-5560` con emuladores
+`demo-tradejob-sync` (Auth/Firestore/Storage en 127.0.0.1), Room en memoria y
+APK de tests propio. Ninguna cuenta, base ni proyecto real de la app.
+
+- **2/2 tests correctos.** Log: `.devin/firebase/artifacts/android-sync-test.log`.
+- Verificado: subida de cliente/trabajo/foto, flags `isSynced`, documentos
+  remotos, bytes del archivo, recuperación con referencia `gs://`, y cliente
+  pendiente si no hay sesión.
+- Round trip HTTP **verificado** (12-11): el SDK rechaza
+  `getReferenceFromUrl()` con el host del emulador (`127.0.0.1`), así que el
+  test reescribe la URL al formato real de `downloadUrl` en producción
+  (`https://firebasestorage.googleapis.com/v0/b/<bucket>/o/...`), comprueba
+  que el SDK la parsea (`parsedRef.path` correcto) y ejecuta la misma ruta de
+  código de `SyncWorker` (`getReferenceFromUrl` → `getFile`) contra el
+  emulador: archivo restaurado byte a byte. Lo único no cubierto son los
+  detalles del front-end real de Google (auth/firmas de la URL), inherentes
+  a cualquier emulador.
+- Cobertura: se invoca `SyncWorker.doWork()` con DAOs temporales.
+
+### Planificador periódico real (12-11, `emulator-5560`)
+
+- `TradeJobApplication.onCreate` → `SyncManager.scheduleSync()`: tras lanzar la
+  app, `adb shell am broadcast -a androidx.work.diagnostics.REQUEST_DIAGNOSTICS`
+  muestra `SyncWorker` **ENQUEUED** (unique name `SyncWorker`).
+- `dumpsys jobscheduler` confirma el job real
+  `androidx.work.systemjobscheduler:u0a227/1` hacia `SystemJobService` con:
+  `Network type: INTERNET&VALIDATED` (constraint CONNECTIVITY), latencia
+  mínima ~1 h (`+59m51s`), backoff exponencial inicial 1 min.
+- `cmd jobscheduler run --namespace androidx.work.systemjobscheduler -f
+  com.tradejob.pro.app 1` ejecuta el job de forma forzada: el sistema entrega
+  el trabajo al proceso y WorkManager lo difiere correctamente
+  (`Delaying execution ... being executed before schedule`, re-ENQUEUED).
+  **Sin `NoSuchMethodException` ni fallos de `WorkerFactory`**: la vía real
+  JobScheduler → WorkManager → factoría funciona. La ejecución de `doWork()`
+  queda cubierta por `SyncWorkerEmulatorTest`; no se ha esperado la hora real.
+
+## 3. Dispositivo
+
+- AVD exclusivo `TradeJob_Test` (`emulator-5560`), arrancado sin ventana.
+- `adb -s emulator-5560 install -r app-debug.apk` → Success (instalación
+  conservadora, sin borrar datos).
+- `am start -W` → `Status: ok`; `MainActivity` en `Resumed`.
+- Sin errores en tags `AndroidRuntime` / `WM-WorkerFactory`.
+- Capturas en `.devin/android/artifacts/`:
+  - `spec-007-login.png` — primera captura con aviso de ANR de System UI
+    (del sistema, no de la app).
+  - `spec-007-login-after-wait.png` — login renderizado sin aviso tras pulsar
+    Esperar.
+- No se ha usado ningún móvil físico ni el emulador `emulator-5556`
+  (pertenece a SocialChef).
+
+## 4. Diff
+
+```
+M  app/src/main/AndroidManifest.xml              (WorkManagerInitializer removido del merge)
+A  app/.../WorkManagerInitializationTest.java    (regresión de factoría)
+M  gradle/libs.versions.toml                     (test-runner, work-testing)
+M  libs/database/build.gradle.kts                (androidTest + manifiesto/res de tests)
+A  libs/database/.../SyncWorkerEmulatorTest.kt   (2 tests de sync aislada)
+A  .devin/firebase/**                            (runner, firebase.json, rules, lock)
+M  AGENTS.md, PROGRESS.md                        (documentación)
+```
+
+## 5. Criterios de aceptación — estado
+
+- [x] `WorkManagerInitializer` eliminado; AndroidX Startup conservado
+- [x] `WorkManagerInitializationTest`: rojo antes, verde después (en emulador
+      con APKs precompilados)
+- [x] Builds `assembleDebug` + `assembleDebugAndroidTest` correctos
+- [x] 17/17 tests unitarios de `:home` verdes (`--rerun`)
+- [x] 2/2 tests de sincronización con Firebase aislado
+- [x] App lanzada y login visible en emulador
+
+## No verificado (honesto)
+
+- ~~Arranque frío sin precompilar~~ → verificado el 12-11 en `emulator-5560`
+  (test `OK`, app COLD en 6,1 s). No equivale a un primer arranque de un AVD
+  recién creado ni a un dispositivo físico.
+- ~~Planificador periódico~~ → verificado encolado en el JobScheduler real con
+  constraint de red y ventana de 1 h; el run forzado llega al proceso y se
+  difiere por adelantado a su horario. No se ha esperado la ejecución horaria
+  real ni la sincronización contra Firebase real.
+- ~~Round trip HTTP de Storage~~ → verificado con URL en formato producción
+  (ver sección Firebase). Sigue sin cubrirse el front-end real de Google.
+- Comportamiento en dispositivo físico.
+- Merge a `main` / push: pendiente de autorización.

@@ -51,10 +51,127 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
       dashboard + Mis Clientes con nav bar `Slate50`/`Slate900` en light y
       dark — el gris MIUI desaparece.
 
+### SPEC-007 — Corrección de arranque de sincronización (11 noviembre 2026)
+
+- Rama: `feature/spec-007-sync-worker-init` (sin merge).
+- Causa reproducida en emulador: WorkManager usaba `DefaultWorkerFactory`, aunque
+  `TradeJobApplication` ya proporcionaba `HiltWorkerFactory` y `SyncWorker` ya tenía
+  `@HiltWorker`. El inicializador automático ignoraba la configuración de la app.
+- Corrección: eliminar únicamente `WorkManagerInitializer` del manifiesto fusionado;
+  conservar AndroidX Startup y sus otros inicializadores.
+- Regresión: `WorkManagerInitializationTest` falla antes del cambio y pasa después
+  al comprobar la identidad de la factoría realmente usada por WorkManager.
+- Verificación: `:app:assembleDebug`, `:app:assembleDebugAndroidTest` y 17 tests de
+  `:home:testDebugUnitTest` correctos. Prueba instrumentada correcta en `emulator-5554`
+  sin conexión; no se han probado subidas a Firebase ni modificado el móvil físico.
+  `:login:testDebugUnitTest` devuelve `NO-SOURCE` (no hay tests unitarios).
+- Apertura manual: `am start -W` agotó su espera; después se confirmó `MainActivity`
+  en estado `Resumed`, sin errores en los tags `AndroidRuntime`/`WM-WorkerFactory`
+  consultados. App detenida antes de restaurar Wi-Fi y datos del emulador.
+- Pruebas locales añadidas en `:libs:database`, ejecutadas en un APK independiente
+  con Room en memoria y Firebase `demo-tradejob-sync` (Auth, Firestore, Storage).
+  Ninguna cuenta, base local ni proyecto real de la app se usa para estas pruebas.
+- `npm --prefix .devin/firebase run test:sync` verificado: arranca los tres servicios,
+  construye e instala el APK de tests solo en emulador, pasa 2/2 tests y apaga Firebase.
+  Log local: `.devin/firebase/artifacts/android-sync-test.log` (ignorado por Git).
+- Verificado: subida de cliente/trabajo/foto, flags locales y documentos remotos,
+  bytes del archivo, recuperación de foto con referencia `gs://`, y cliente pendiente
+  si no hay sesión. Se invoca `SyncWorker.doWork()` con DAOs temporales: no es una
+  prueba del planificador periódico real; la factoría de la app se verifica aparte.
+- Limitación observada: el SDK rechaza `getReferenceFromUrl()` con la URL HTTP de
+  Storage local. El test comprueba la URL generada al subir y sustituye únicamente
+  la referencia del fixture por `gs://` al mismo objeto antes de probar recuperación.
+  El round trip directo con esa URL HTTP local NO está validado ni corregido.
+- Hallazgo fuera de alcance: una recuperación fallida se registra en logs pero
+  `SyncWorker` devuelve éxito; no se ha cambiado ese comportamiento en esta rama.
+- Herramienta local fijada: `firebase-tools@15.34.2`; `npm audit` informa 14 avisos
+  moderados transitivos, sin altos/críticos. No se aplican downgrades ni overrides.
+  Servicios limitados a loopback; no se relajan las reglas de ningún proyecto real.
+- Cierre documental completado el 12-11: `specs/007-sync-worker-init/SPEC.md` y
+  `EVIDENCE.md` creados. Rama sin merge ni push.
+- Revisión del 12 de noviembre de 2026 sobre `71821c1`: comando
+  `gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :home:testDebugUnitTest :login:testDebugUnitTest`
+  correcto (`BUILD SUCCESSFUL`, 242 tareas: 37 ejecutadas, 205 actualizadas).
+  Tests de home `UP-TO-DATE`: no se han vuelto a ejecutar; login `NO-SOURCE`.
+  El log local conservado de Firebase confirma `OK (2 tests)` de la sesión anterior,
+  no una ejecución nueva. No se ha repetido la instrumentación ni instalado la app.
+- Solo aparece conectado `emulator-5556`, identificado en el estado de SocialChef
+  como su emulador de pruebas. No se usa sin confirmar disponibilidad; no se toca
+  ningún móvil físico ni se modifica la configuración de los otros proyectos.
+- Comparación SDMD realizada en lectura: SocialChef y TravelDiaryBis tienen
+  `docs/STATE.md`, flujo de trabajo, skills en `.devin/skills/` y `scripts/verify.sh`.
+  Propuesta pendiente de aprobación: resumen breve de sesión y skills adaptadas,
+  conservando `specs/` y el requisito de dispositivo de TradeJob. No copiar scripts
+  sin adaptar módulos, selección explícita de dispositivo y comprobación del flujo.
+
+### Revalidación de SPEC-007 (12 noviembre 2026, continuación)
+
+- `:home:testDebugUnitTest --rerun` ejecutó de nuevo los 17 tests: 0 errores,
+  0 fallos y 0 omitidos en los cinco XML de resultados. Login sigue `NO-SOURCE`.
+- Gradle informó `BUILD SUCCESSFUL` (242 tareas, 1 ejecutada, 241 actualizadas)
+  al verificar también app y APK de pruebas. Log local:
+  `.devin/android/artifacts/spec-007-verification.log`. La envoltura PowerShell
+  devolvió código 1; una ejecución independiente de `node .devin/verify.cjs`
+  terminó con código 0 y confirmó la compilación. Esa segunda ejecución reutilizó tests.
+- AVD propio reiniciado sin ventana tras cerrarse un arranque anterior. Varios intentos
+  instrumentados devolvieron `Process crashed`: Android registró ANR de arranque.
+  Las trazas del hilo principal mostraron descompresión/verificación DEX y elevada
+  presión de CPU, antes de alcanzar la prueba. No se cambió código de producción.
+- Reintentar con GPU host, 4 CPU y 4096 MB no bastó por sí solo. Preparar app y
+  APK de tests con `cmd package compile -m speed -f` devolvió `Success` en ambos.
+- Después, `WorkManagerInitializationTest` pasó: `OK (1 test)` en `emulator-5560`,
+  comprobando la identidad de la factoría usada realmente por WorkManager.
+  Log: `.devin/android/artifacts/spec-007-workmanager-precompiled.log`.
+  Los logs previos fallidos se conservan; no equivalen a tests aprobados.
+- Apertura posterior con `am start -W`: `Status: ok`. Primera captura mostró
+  aviso de ANR de System UI; tras pulsar Esperar se comprobó visualmente el login
+  sin aviso. Capturas locales `spec-007-login.png` y `spec-007-login-after-wait.png`
+  en `.devin/android/artifacts/`. Esto no demuestra un flujo completo de sincronización.
+- Los 2 tests Firebase aislados correctos de esta sesión constan en el apartado de
+  configuración; no se repiten en esta continuación. Sin móvil físico, datos borrados,
+  modificación de SocialChef, commits, merge ni push.
+- Cierre formal realizado después de esta revalidación: SPEC/EVIDENCE en
+  `specs/007-sync-worker-init/` (commit `c85615b`). El arranque frío sin
+  precompilar se verificó después: test `OK` y app COLD en 6,1 s en
+  `emulator-5560`. El planificador periódico se verificó después: `SyncWorker`
+  ENQUEUED en el JobScheduler real con constraint de red y ventana ~1 h; el run
+  forzado llega al proceso y WorkManager lo difiere correctamente. El round
+  trip HTTP de Storage también quedó verificado: el test reescribe la URL del
+  emulador al formato `firebasestorage.googleapis.com` y `SyncWorker` la
+  parsea y descarga byte a byte (2/2 tests). Ya no quedan verificaciones
+  pendientes de SPEC-007 salvo la sincronización real contra Firebase
+  producción, que requiere proyecto real y no se ha hecho.
+
+### Configuración SDMD de sesiones y dispositivo propio (12 noviembre 2026)
+
+- Rama de configuración: `feature/sdmd-project-setup`, creada desde `71821c1`;
+  sin commit nuevo, merge ni push. Conserva el trabajo previo de SPEC-007.
+- Estado breve en `.devin/STATE.md`; skills `spec`, `implement-spec`, `verify` y
+  `handoff` en `.devin/skills/`. No se trasladan las specs existentes de `specs/`.
+- Verificador `node .devin/verify.cjs` probado: compila app y APK de tests;
+  home reutilizado (`UP-TO-DATE`), login sin tests (`NO-SOURCE`). Sin dependencias nuevas.
+- Selector con 13 tests Node correctos: prioridad móvil USB/Wi-Fi, selección explícita
+  con varias conexiones y rechazo de móviles offline/no autorizados. Sin prueba física.
+- AVD exclusivo `TradeJob_Test` creado con la imagen Android 36.1 local. Datos y logs
+  ignorados por Git bajo `.devin/android/`. No se copia información de otros AVD.
+- Arranque confirmado en `emulator-5560`, reutilización del AVD verificada, instalación
+  conservadora y apertura de TradeJob correctas; `MainActivity` en estado Resumed.
+  Primeros intentos terminaron sin completar; reintento con renderizado por software
+  correcto, sin afirmar causa raíz. No se modifica el emulador de SocialChef (`5556`).
+- `node .devin/verify.cjs --sync` ejecutado en `emulator-5560`: 2/2 tests nuevos
+  correctos con Firebase aislado; log `.devin/firebase/artifacts/android-sync-test.log`.
+  Se mantienen las limitaciones de cobertura descritas en SPEC-007 arriba.
+- Cierre de sesión autorizado por el usuario: configuración y registros guardados en
+  commit local de `feature/sdmd-project-setup` (consultar `git log -1`), sin merge ni push.
+  Los logs, capturas y datos del AVD permanecen locales, ignorados por Git.
+- Cierre documental SPEC-007 realizado: `specs/007-sync-worker-init/` con
+  SPEC y EVIDENCE honestos. Pendiente: verificación del flujo completo
+  (arranque frío, planificador, round trip HTTP Storage). Recargar sesión si
+  se resuelve una skill homónima de otro proyecto en lugar de la local.
+
 ### 🔭 Cola de specs detectadas
-- `sync-worker-hilt`: `SyncWorker` no puede instanciarse
-  (`NoSuchMethodException` en WorkManager — falta `HiltWorkerFactory`/
-  `@HiltWorker`); el sync nunca ha corrido realmente. Detectado en SPEC-006.
+- `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
+  según el apartado anterior. Detectado en SPEC-006.
 - `db-migration-tests`: suite `MigrationTestHelper` con los schemas exportados
   (desde v7 ya quedan guardados en `libs/database/schemas/`).
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
