@@ -53,7 +53,8 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 
 ### SPEC-007 — Corrección de arranque de sincronización (11 noviembre 2026)
 
-- Rama: `feature/spec-007-sync-worker-init` (sin merge).
+- Rama: `feature/spec-007-sync-worker-init` → **mergeada a `main`** el 12-11
+  (junto a `feature/sdmd-project-setup`) y publicada en `origin/main`.
 - Causa reproducida en emulador: WorkManager usaba `DefaultWorkerFactory`, aunque
   `TradeJobApplication` ya proporcionaba `HiltWorkerFactory` y `SyncWorker` ya tenía
   `@HiltWorker`. El inicializador automático ignoraba la configuración de la app.
