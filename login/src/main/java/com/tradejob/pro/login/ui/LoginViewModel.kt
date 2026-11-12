@@ -2,13 +2,13 @@
 
 package com.tradejob.pro.login.ui
 
-import android.util.Patterns
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.common.validation.EmailValidator
 import com.tradejob.pro.login.domain.LoginUseCase
 import com.tradejob.pro.login.domain.Input
 import com.tradejob.pro.core.session.SessionManager
@@ -75,8 +75,7 @@ class LoginViewModel @Inject constructor(
 
     private fun isValidPassword(password: String): Boolean = password.length > 6
 
-    private fun isValidEmail(email: String): Boolean =
-        Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    private fun isValidEmail(email: String): Boolean = EmailValidator.isValid(email)
 
     fun clearEvent() {
         viewModelScope.launch { _event.emit(Event.None) }
