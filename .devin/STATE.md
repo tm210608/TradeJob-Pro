@@ -1,9 +1,11 @@
 # Estado de TradeJob Pro
 
-Fecha: 2026-11-12 | Rama: main | HEAD: 12eed30 (push a origin/main hecho)
+Fecha: 2026-11-12 | Rama: main | HEAD: 26b5f1e (publicado, CI verde)
 Merge autorizado: SPEC-007 + SDMD integrados en main junto a commits remotos
 (iconos/build config/temas); conflicto de iconos resuelto conservando los
 .webp de marca. Verificacion post-merge: build + 17 tests OK.
+CI: faltaba gradlew unix -> generado wrapper completo + JDK 21 + eol=lf.
+Android CI run #9 OK en 5m28s (runs #6-8 fallaban por chmod gradlew).
 
 ## Hecho
 - SDMD configurado en .devin/skills/; estado aquí, historial/roadmap en PROGRESS.md.
