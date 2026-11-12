@@ -5,6 +5,7 @@ package com.tradejob.pro.login.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,20 +29,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.tradejob.pro.components.MitoEmailField
 import com.tradejob.pro.components.MitoPasswordField
+import com.tradejob.pro.components.MitoSignatureDivider
 import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.components.theme.TradeJobTheme
 import com.tradejob.pro.components.PrimaryButton
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
 import com.tradejob.pro.components.theme.Petrol20
 import com.tradejob.pro.components.theme.Petrol30
 import com.tradejob.pro.core.navigation.Screen
 
 import androidx.compose.ui.res.stringResource
 import com.tradejob.pro.login.R
+import java.util.Calendar
 
 class LoginScreen : Screen {
     override val route: String = "login"
@@ -88,16 +94,22 @@ fun LoginContent(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState
 ) {
+    val darkTheme = isSystemInDarkTheme()
+    val backgroundModifier = if (darkTheme) {
+        Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+    } else {
+        Modifier.background(BoneLight)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Petrol20, Petrol30)
-                )
-            )
+            .then(backgroundModifier)
     ) {
-        SystemBarIconStyle(darkIcons = false, navigationBarColor = Petrol30)
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,7 +126,7 @@ fun LoginContent(
                 modifier = Modifier.size(120.dp),
                 shape = CircleShape,
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = CardDefaults.cardColors(containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
@@ -129,16 +141,33 @@ fun LoginContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
+                text = stringResource(greetingForHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY))).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp,
+                color = MaterialTheme.colorScheme.tertiary
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
                 text = "TradeJob Pro",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color.White
+                color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
             )
 
+            MitoSignatureDivider(
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = "Gestión profesional para autónomos",
+                text = stringResource(R.string.login_tagline),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f)
+                color = if (darkTheme) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -148,7 +177,7 @@ fun LoginContent(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = CardDefaults.cardColors(containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -197,7 +226,7 @@ fun LoginContent(
             ) {
                 Text(
                     text = stringResource(R.string.login_btn_register),
-                    color = Color.White,
+                    color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )
             }

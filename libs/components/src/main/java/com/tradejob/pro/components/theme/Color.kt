@@ -19,6 +19,11 @@ val Slate600 = Color(0xFF3F5557)
 val Slate800 = Color(0xFF26494C)
 val Slate900 = Color(0xFF0A191B)
 
+// SPEC-010 "taller cálido": superficies hueso para el login en light.
+// El petróleo pasa a acento; en dark se conserva el gradiente petróleo.
+val BoneLight = Color(0xFFFAF7F0)
+val BoneCard = Color(0xFFFFFCF7)
+
 val LimeAccent = Color(0xFFB9E62E)
 val LimeContainerLight = Color(0xFFD5F28C)
 val LimeOnContainerLight = Color(0xFF253000)
