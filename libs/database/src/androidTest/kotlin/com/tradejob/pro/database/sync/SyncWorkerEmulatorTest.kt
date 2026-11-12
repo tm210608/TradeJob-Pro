@@ -127,9 +127,17 @@ class SyncWorkerEmulatorTest {
             assertArrayEquals(originalBytes, storage.reference
                 .child("users/$userId/jobs/$jobId/photos/$photoId.jpg").getBytes(1_000_000).await())
 
-            database.jobPhotoDao().update(photo.copy(
-                remoteUrl = "gs://demo-tradejob-sync.appspot.com/users/$userId/jobs/$jobId/photos/$photoId.jpg"
-            ))
+            // El SDK rechaza getReferenceFromUrl() con el host del emulador (127.0.0.1).
+            // Reescribimos al formato que produce downloadUrl en produccion
+            // (https://firebasestorage.googleapis.com/v0/b/<bucket>/o/...) para
+            // ejercitar la misma ruta de codigo que usa SyncWorker en real.
+            val productionStyleUrl = remoteUrl.replace(
+                "http://127.0.0.1:9199", "https://firebasestorage.googleapis.com"
+            )
+            val parsedRef = storage.getReferenceFromUrl(productionStyleUrl)
+            assertEquals("/users/$userId/jobs/$jobId/photos/$photoId.jpg", parsedRef.path)
+            database.jobPhotoDao().update(photo.copy(remoteUrl = productionStyleUrl))
+
             assertTrue(file.delete())
             assertEquals(ListenableWorker.Result.success(), worker().doWork())
             assertTrue(file.exists())

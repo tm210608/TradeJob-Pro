@@ -71,9 +71,11 @@ de la `Application`. La sincronización fallaba en silencio en dispositivo.
 
 ## Hallazgos fuera de scope
 
-- El SDK rechaza `getReferenceFromUrl()` con la URL HTTP del Storage local:
-  el test comprueba la URL al subir y usa una referencia `gs://` para la
-  recuperación. El round trip HTTP local NO está validado ni corregido.
+- El SDK rechaza `getReferenceFromUrl()` con el host del emulador
+  (`127.0.0.1`): el test reescribe la URL al formato de producción
+  (`firebasestorage.googleapis.com`) y verifica el round trip completo
+  URL → referencia → descarga (12-11). El host emulador en sí no se puede
+  parsear con el SDK — limitación documentada, no del código de la app.
 - Una recuperación fallida se registra en logs pero `SyncWorker` devuelve
   éxito → espec candidata (`sync-completa` / robustez de sync).
 - `npm audit`: 14 avisos moderados transitivos de `firebase-tools`, sin

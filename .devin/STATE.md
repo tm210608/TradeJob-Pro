@@ -25,8 +25,11 @@ Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
   SPEC actualizados; cambios sin commit.
 - Planificador VERIFICADO: SyncWorker ENQUEUED en JobScheduler real (red, ~1h,
   backoff 1m); run forzado llega al proceso y se difiere correctamente.
-- Pendiente: commit de la actualización (si se autoriza). Solo queda sin
-  verificar el round trip HTTP de Storage local (limitación SDK) y sync real horaria.
+- Round trip HTTP Storage VERIFICADO: test reescrito a URL formato produccion,
+  SyncWorker la parsea con getReferenceFromUrl y descarga byte a byte (2/2).
+  Cambio en libs/database/.../SyncWorkerEmulatorTest.kt sin commit.
+- Pendiente: commit (si se autoriza). Ya no quedan verificaciones de SPEC-007
+  salvo sync real contra Firebase produccion (requiere proyecto real).
 - No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo

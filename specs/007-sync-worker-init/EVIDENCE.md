@@ -66,9 +66,15 @@ APK de tests propio. Ninguna cuenta, base ni proyecto real de la app.
 - Verificado: subida de cliente/trabajo/foto, flags `isSynced`, documentos
   remotos, bytes del archivo, recuperación con referencia `gs://`, y cliente
   pendiente si no hay sesión.
-- Limitación: el SDK rechaza `getReferenceFromUrl()` con la URL HTTP del
-  Storage local; el test valida la URL al subir y usa `gs://` al mismo objeto
-  para recuperar. **El round trip HTTP local no está validado.**
+- Round trip HTTP **verificado** (12-11): el SDK rechaza
+  `getReferenceFromUrl()` con el host del emulador (`127.0.0.1`), así que el
+  test reescribe la URL al formato real de `downloadUrl` en producción
+  (`https://firebasestorage.googleapis.com/v0/b/<bucket>/o/...`), comprueba
+  que el SDK la parsea (`parsedRef.path` correcto) y ejecuta la misma ruta de
+  código de `SyncWorker` (`getReferenceFromUrl` → `getFile`) contra el
+  emulador: archivo restaurado byte a byte. Lo único no cubierto son los
+  detalles del front-end real de Google (auth/firmas de la URL), inherentes
+  a cualquier emulador.
 - Cobertura: se invoca `SyncWorker.doWork()` con DAOs temporales.
 
 ### Planificador periódico real (12-11, `emulator-5560`)
@@ -134,6 +140,7 @@ M  AGENTS.md, PROGRESS.md                        (documentación)
   constraint de red y ventana de 1 h; el run forzado llega al proceso y se
   difiere por adelantado a su horario. No se ha esperado la ejecución horaria
   real ni la sincronización contra Firebase real.
-- Round trip con la URL HTTP del Storage local (limitación del SDK).
+- ~~Round trip HTTP de Storage~~ → verificado con URL en formato producción
+  (ver sección Firebase). Sigue sin cubrirse el front-end real de Google.
 - Comportamiento en dispositivo físico.
 - Merge a `main` / push: pendiente de autorización.

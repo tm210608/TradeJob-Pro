@@ -135,8 +135,12 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   precompilar se verificó después: test `OK` y app COLD en 6,1 s en
   `emulator-5560`. El planificador periódico se verificó después: `SyncWorker`
   ENQUEUED en el JobScheduler real con constraint de red y ventana ~1 h; el run
-  forzado llega al proceso y WorkManager lo difiere correctamente. Solo queda
-  sin verificar el round trip HTTP de Storage local (limitación del SDK).
+  forzado llega al proceso y WorkManager lo difiere correctamente. El round
+  trip HTTP de Storage también quedó verificado: el test reescribe la URL del
+  emulador al formato `firebasestorage.googleapis.com` y `SyncWorker` la
+  parsea y descarga byte a byte (2/2 tests). Ya no quedan verificaciones
+  pendientes de SPEC-007 salvo la sincronización real contra Firebase
+  producción, que requiere proyecto real y no se ha hecho.
 
 ### Configuración SDMD de sesiones y dispositivo propio (12 noviembre 2026)
 
