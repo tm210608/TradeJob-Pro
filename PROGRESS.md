@@ -170,6 +170,22 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   (arranque frío, planificador, round trip HTTP Storage). Recargar sesión si
   se resuelve una skill homónima de otro proyecto en lugar de la local.
 
+### SPEC-008 — Tests unitarios de :login (12 noviembre 2026)
+
+- Rama: `feature/spec-008-login-tests` (sin merge).
+- 22 tests nuevos verdes (antes `NO-SOURCE`): LoginViewModel (8),
+  RegisterViewModel (9), LoginUseCase (2), RegisterUserUseCase (3).
+  Convenciones de `:home` (JUnit4 + mockk + coroutines-test).
+- Refactor mínimo aprobado: `EmailValidator.isValid` (companion en
+  `:libs:common`, regex ya existente) sustituye `Patterns.EMAIL_ADDRESS`
+  en ambos ViewModels — misma regex en app y tests, cero cambio visible.
+- Verificación: `verify.cjs` OK; app lanzada COLD en `emulator-5560`, login
+  idéntico (captura local `spec-008-login.png`).
+- Hallazgo documentado (no corregido): registro admite password de 6
+  caracteres pero el login exige >6 — un usuario podría registrarse con una
+  contraseña que el formulario de login no le dejaría escribir. Spec futura.
+- SPEC/EVIDENCE en `specs/008-login-tests/`. Sin merge ni push.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
@@ -179,7 +195,10 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
-- `login-tests`: el módulo `:login` no tiene tests unitarios.
+- `password-length-mismatch`: registro acepta 6 caracteres, login exige >6;
+  un usuario podría registrarse y no poder entrar. Detectado en SPEC-008.
+- `login-repo-tests`: `LoginRepositoryImpl`/`FirebaseAuthDataSource`/
+  `UserDataSourceImpl` sin tests propios (quedaron mockeados en SPEC-008).
 - `journey-login`: UI test e2e del flujo de autenticación.
 - `cleanup-deps`: `libs.material` (Views)/`appcompat` probablemente huérfanos;
   `kotlinOptions` → `compilerOptions` DSL; icons-extended → material-symbols.

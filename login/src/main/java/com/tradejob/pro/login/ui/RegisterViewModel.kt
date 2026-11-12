@@ -2,12 +2,12 @@
 
 package com.tradejob.pro.login.ui
 
-import android.util.Patterns
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.common.validation.EmailValidator
 import com.tradejob.pro.login.domain.RegisterUserUseCase
 import com.tradejob.pro.login.domain.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,9 +57,7 @@ class RegisterViewModel @Inject constructor(
         _status.value = currentStatus.copy(isValid = isValid)
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
+    private fun isValidEmail(email: String): Boolean = EmailValidator.isValid(email)
 
     fun register() {
         if (!_status.value.isValid) {

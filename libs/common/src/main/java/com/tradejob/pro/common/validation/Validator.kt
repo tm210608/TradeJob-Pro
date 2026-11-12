@@ -28,15 +28,20 @@ class NumberValidator(@StringRes private val errorMessage: Int) : Validator<Stri
 }
 
 class EmailValidator(@StringRes private val errorMessage: Int) : Validator<String> {
-    private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$".toRegex()
 
     override fun validate(value: String): ValidationResult {
         if (value.isBlank()) return ValidationResult.Success
-        return if (!value.matches(emailRegex)) {
+        return if (!isValid(value)) {
             ValidationResult.Error(errorMessage)
         } else {
             ValidationResult.Success
         }
+    }
+
+    companion object {
+        private val EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$".toRegex()
+
+        fun isValid(value: String): Boolean = value.matches(EMAIL_REGEX)
     }
 }
 

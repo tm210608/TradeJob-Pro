@@ -1,6 +1,6 @@
 # Estado de TradeJob Pro
 
-Fecha: 2026-11-12 | Rama: main | HEAD: 26b5f1e (publicado, CI verde)
+Fecha: 2026-11-12 | Rama: feature/spec-008-login-tests | Base: main publicado
 Merge autorizado: SPEC-007 + SDMD integrados en main junto a commits remotos
 (iconos/build config/temas); conflicto de iconos resuelto conservando los
 .webp de marca. Verificacion post-merge: build + 17 tests OK.
@@ -24,12 +24,12 @@ Android CI run #9 OK en 5m28s (runs #6-8 fallaban por chmod gradlew).
 - Logs y capturas en .devin/android/artifacts/, ignorados por Git; detalles en PROGRESS.md.
 
 ## Siguiente paso
-- SPEC-007 cerrada e integrada en main. Todo verificado salvo sync real
-  contra Firebase producción y la ejecución horaria real del worker.
-- Cola de specs en PROGRESS.md (sección "Cola de specs detectadas"):
-  db-migration-tests, ui-*, sync-completa, i18n-domain, login-tests, etc.
-- Rama feature/sdmd-project-setup ya mergeada; puede borrarse si se quiere.
-- No integrar ramas ni publicar sin autorización.
+- SPEC-008 login-tests VERIFICADA en rama feature/spec-008-login-tests:
+  22 tests nuevos verdes, verify.cjs OK, login idéntico en emulador.
+  SPEC+EVIDENCE en specs/008-login-tests/. Cambios sin commit.
+- Pendiente: commit/merge/push solo con autorización.
+- Cola: db-migration-tests, ui-*, sync-completa, i18n-domain,
+  password-length-mismatch (hallazgo SPEC-008), journey-login, cleanup-deps.
 
 ## Decisiones y dispositivo
 - Móvil USB/Wi-Fi autorizado prioritario; varias conexiones requieren ANDROID_SERIAL.
