@@ -63,9 +63,15 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `loginEnable desactivado con password de 6 caracteres exactos`() {
-        // El login exige > 6 caracteres (comportamiento actual; ver hallazgo en SPEC-008)
+    fun `loginEnable activo con password de 6 caracteres exactos`() {
+        // Minimo unificado: 6 caracteres, igual que registro y Firebase (SPEC-009)
         viewModel.onLoginChanged("tecnico@tradejob.es", "123456")
+        assertTrue(viewModel.status.value.loginEnable)
+    }
+
+    @Test
+    fun `loginEnable desactivado con password de 5 caracteres`() {
+        viewModel.onLoginChanged("tecnico@tradejob.es", "12345")
         assertFalse(viewModel.status.value.loginEnable)
     }
 

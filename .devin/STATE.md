@@ -1,6 +1,6 @@
 # Estado de TradeJob Pro
 
-Fecha: 2026-11-12 | Rama: main | HEAD: ba6ae31 (publicado, CI pendiente)
+Fecha: 2026-11-12 | Rama: feature/spec-009-password-min-length | Base: main
 Merge autorizado: SPEC-007 + SDMD integrados en main junto a commits remotos
 (iconos/build config/temas); conflicto de iconos resuelto conservando los
 .webp de marca. Verificacion post-merge: build + 17 tests OK.
@@ -24,10 +24,12 @@ Android CI run #9 OK en 5m28s (runs #6-8 fallaban por chmod gradlew).
 - Logs y capturas en .devin/android/artifacts/, ignorados por Git; detalles en PROGRESS.md.
 
 ## Siguiente paso
-- SPEC-008 login-tests cerrada e INTEGRADA en main (merge ba6ae31, push hecho).
-  22 tests de login verdes + 17 de home. Login idéntico en emulador.
+- SPEC-008 integrada en main (ba6ae31). SPEC-009 password-min-length
+  VERIFICADA en su rama: login y registro unificados a >=6; 24 tests verdes;
+  app idéntica en emulador. Cambios sin commit.
+- Pendiente: commit/merge/push solo con autorización.
 - Cola: db-migration-tests, ui-*, sync-completa, i18n-domain,
-  password-length-mismatch (hallazgo SPEC-008), journey-login, cleanup-deps.
+  journey-login, login-repo-tests, cleanup-deps.
 - No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo
