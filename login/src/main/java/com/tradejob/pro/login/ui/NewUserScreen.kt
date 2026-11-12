@@ -3,6 +3,7 @@
 package com.tradejob.pro.login.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +30,8 @@ import com.tradejob.pro.components.MitoPasswordField
 import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.core.navigation.Screen
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
 import com.tradejob.pro.components.theme.Petrol20
 import com.tradejob.pro.components.theme.Petrol30
 import com.tradejob.pro.components.theme.SystemBarIconStyle
@@ -43,14 +46,15 @@ class NewUserScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: RegisterViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val topBarContentColor = if (isSystemInDarkTheme()) Color.White else MaterialTheme.colorScheme.primary
 
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.register_title), color = Color.White) },
+                    title = { Text(stringResource(R.string.register_title), color = topBarContentColor) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back_login), tint = Color.White)
+                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back_login), tint = topBarContentColor)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -80,17 +84,23 @@ fun RegisterContent(
 ) {
     val status by viewModel.status.collectAsState()
     val event by viewModel.event.collectAsState()
+    val darkTheme = isSystemInDarkTheme()
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Petrol20, Petrol30)
-                )
+            .then(
+                if (darkTheme) {
+                    Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+                } else {
+                    Modifier.background(BoneLight)
+                }
             )
     ) {
-        SystemBarIconStyle(darkIcons = false, navigationBarColor = Petrol30)
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,13 +116,13 @@ fun RegisterContent(
                 text = stringResource(R.string.register_title_main),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color.White
+                color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
             )
 
             Text(
                 text = stringResource(R.string.register_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f)
+                color = if (darkTheme) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -121,7 +131,7 @@ fun RegisterContent(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = CardDefaults.cardColors(containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -181,7 +191,7 @@ fun RegisterContent(
             ) {
                 Text(
                     text = stringResource(R.string.register_btn_back),
-                    color = Color.White,
+                    color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )
             }

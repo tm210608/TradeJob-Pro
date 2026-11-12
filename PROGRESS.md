@@ -195,6 +195,17 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - 24 tests de login verdes (casos límite "123456"/"12345" en ambos lados);
   verify.cjs OK; login idéntico en emulador.
 
+### SPEC-010 — Login cálido "El taller te da los buenos días" (12 noviembre 2026)
+
+- Rama: `feature/spec-010-ui-login-calido` (sin merge).
+- El login dejaba de lado el gradiente petróleo total en light: ahora fondo
+  hueso `#FAF7F0` (petróleo solo en acentos); en dark se conserva petróleo.
+- Saludo por hora (mañana/tarde/noche) en lima, tagline "Tu taller en el
+  bolsillo" y `MitoSignatureDivider` (trazo de firma de marca) bajo el título.
+- Registro con el mismo tratamiento; TopAppBar adaptada por tema.
+- 27 tests login (incluye `GreetingTest`), 17 home, verify.cjs OK.
+- Capturas light/dark de login y registro en `emulator-5560`.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.

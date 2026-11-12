@@ -1,6 +1,8 @@
 # Estado de TradeJob Pro
 
-Fecha: 2026-11-12 | Rama: main | HEAD: 1046876 (publicado)
+Fecha: 2026-11-12 | Rama: feature/spec-010-ui-login-calido | Base: main
+SPEC-010 VERIFICADA: login hueso+saludo+firma, capturas light/dark en
+emulador-5560. Cambios sin commit.
 Merge autorizado: SPEC-007 + SDMD integrados en main junto a commits remotos
 (iconos/build config/temas); conflicto de iconos resuelto conservando los
 .webp de marca. Verificacion post-merge: build + 17 tests OK.
