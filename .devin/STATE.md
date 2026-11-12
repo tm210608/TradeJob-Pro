@@ -1,7 +1,9 @@
 # Estado de TradeJob Pro
 
-Fecha: 2026-11-12 | Rama: feature/sdmd-project-setup | Base: 71821c1
-Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
+Fecha: 2026-11-12 | Rama: main | HEAD: 12eed30 (push a origin/main hecho)
+Merge autorizado: SPEC-007 + SDMD integrados en main junto a commits remotos
+(iconos/build config/temas); conflicto de iconos resuelto conservando los
+.webp de marca. Verificacion post-merge: build + 17 tests OK.
 
 ## Hecho
 - SDMD configurado en .devin/skills/; estado aquí, historial/roadmap en PROGRESS.md.
@@ -20,16 +22,11 @@ Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
 - Logs y capturas en .devin/android/artifacts/, ignorados por Git; detalles en PROGRESS.md.
 
 ## Siguiente paso
-- Arranque frío VERIFICADO el 12-11 en emulator-5560: test OK sin precompilar,
-  app COLD en 6,1 s, login limpio (spec-007-login-coldboot.png). EVIDENCE y
-  SPEC actualizados; cambios sin commit.
-- Planificador VERIFICADO: SyncWorker ENQUEUED en JobScheduler real (red, ~1h,
-  backoff 1m); run forzado llega al proceso y se difiere correctamente.
-- Round trip HTTP Storage VERIFICADO: test reescrito a URL formato produccion,
-  SyncWorker la parsea con getReferenceFromUrl y descarga byte a byte (2/2).
-  Cambio en libs/database/.../SyncWorkerEmulatorTest.kt sin commit.
-- Pendiente: commit (si se autoriza). Ya no quedan verificaciones de SPEC-007
-  salvo sync real contra Firebase produccion (requiere proyecto real).
+- SPEC-007 cerrada e integrada en main. Todo verificado salvo sync real
+  contra Firebase producción y la ejecución horaria real del worker.
+- Cola de specs en PROGRESS.md (sección "Cola de specs detectadas"):
+  db-migration-tests, ui-*, sync-completa, i18n-domain, login-tests, etc.
+- Rama feature/sdmd-project-setup ya mergeada; puede borrarse si se quiere.
 - No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo
