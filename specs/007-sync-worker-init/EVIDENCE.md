@@ -69,8 +69,24 @@ APK de tests propio. Ninguna cuenta, base ni proyecto real de la app.
 - Limitación: el SDK rechaza `getReferenceFromUrl()` con la URL HTTP del
   Storage local; el test valida la URL al subir y usa `gs://` al mismo objeto
   para recuperar. **El round trip HTTP local no está validado.**
-- Cobertura: se invoca `SyncWorker.doWork()` con DAOs temporales; **no es una
-  prueba del planificador periódico real**.
+- Cobertura: se invoca `SyncWorker.doWork()` con DAOs temporales.
+
+### Planificador periódico real (12-11, `emulator-5560`)
+
+- `TradeJobApplication.onCreate` → `SyncManager.scheduleSync()`: tras lanzar la
+  app, `adb shell am broadcast -a androidx.work.diagnostics.REQUEST_DIAGNOSTICS`
+  muestra `SyncWorker` **ENQUEUED** (unique name `SyncWorker`).
+- `dumpsys jobscheduler` confirma el job real
+  `androidx.work.systemjobscheduler:u0a227/1` hacia `SystemJobService` con:
+  `Network type: INTERNET&VALIDATED` (constraint CONNECTIVITY), latencia
+  mínima ~1 h (`+59m51s`), backoff exponencial inicial 1 min.
+- `cmd jobscheduler run --namespace androidx.work.systemjobscheduler -f
+  com.tradejob.pro.app 1` ejecuta el job de forma forzada: el sistema entrega
+  el trabajo al proceso y WorkManager lo difiere correctamente
+  (`Delaying execution ... being executed before schedule`, re-ENQUEUED).
+  **Sin `NoSuchMethodException` ni fallos de `WorkerFactory`**: la vía real
+  JobScheduler → WorkManager → factoría funciona. La ejecución de `doWork()`
+  queda cubierta por `SyncWorkerEmulatorTest`; no se ha esperado la hora real.
 
 ## 3. Dispositivo
 
@@ -114,7 +130,10 @@ M  AGENTS.md, PROGRESS.md                        (documentación)
 - ~~Arranque frío sin precompilar~~ → verificado el 12-11 en `emulator-5560`
   (test `OK`, app COLD en 6,1 s). No equivale a un primer arranque de un AVD
   recién creado ni a un dispositivo físico.
-- Planificador periódico real de WorkManager end-to-end.
+- ~~Planificador periódico~~ → verificado encolado en el JobScheduler real con
+  constraint de red y ventana de 1 h; el run forzado llega al proceso y se
+  difiere por adelantado a su horario. No se ha esperado la ejecución horaria
+  real ni la sincronización contra Firebase real.
 - Round trip con la URL HTTP del Storage local (limitación del SDK).
 - Comportamiento en dispositivo físico.
 - Merge a `main` / push: pendiente de autorización.

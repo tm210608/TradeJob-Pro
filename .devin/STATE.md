@@ -23,8 +23,10 @@ Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
 - Arranque frío VERIFICADO el 12-11 en emulator-5560: test OK sin precompilar,
   app COLD en 6,1 s, login limpio (spec-007-login-coldboot.png). EVIDENCE y
   SPEC actualizados; cambios sin commit.
-- Pendiente: commit de la actualización (si se autoriza). Sigue sin verificar:
-  planificador periódico real y round trip HTTP de Storage local.
+- Planificador VERIFICADO: SyncWorker ENQUEUED en JobScheduler real (red, ~1h,
+  backoff 1m); run forzado llega al proceso y se difiere correctamente.
+- Pendiente: commit de la actualización (si se autoriza). Solo queda sin
+  verificar el round trip HTTP de Storage local (limitación SDK) y sync real horaria.
 - No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo
