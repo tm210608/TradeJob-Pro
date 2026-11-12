@@ -36,6 +36,7 @@ android {
 
 dependencies {
     implementation(project(":libs:common"))
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.material3)
