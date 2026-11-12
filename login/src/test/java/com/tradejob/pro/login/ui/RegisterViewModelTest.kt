@@ -77,10 +77,15 @@ class RegisterViewModelTest {
 
     @Test
     fun `isValid acepta password de 6 caracteres exactos`() {
-        // El registro exige >= 6 (comportamiento actual; ver hallazgo en SPEC-008:
-        // el login pide > 6, asi que esta contrasena fallaria despues al entrar)
+        // Minimo unificado: 6 caracteres, igual que login y Firebase (SPEC-009)
         fillValidForm(password = "123456")
         assertTrue(viewModel.status.value.isValid)
+    }
+
+    @Test
+    fun `isValid falso con password de 5 caracteres`() {
+        fillValidForm(password = "12345")
+        assertFalse(viewModel.status.value.isValid)
     }
 
     @Test

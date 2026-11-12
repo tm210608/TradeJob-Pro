@@ -186,6 +186,15 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   contraseña que el formulario de login no le dejaría escribir. Spec futura.
 - SPEC/EVIDENCE en `specs/008-login-tests/`. Sin merge ni push.
 
+### SPEC-009 — Mínimo de contraseña unificado (12 noviembre 2026)
+
+- Rama: `feature/spec-009-password-min-length` (sin merge).
+- Bug real corregido: registro aceptaba 6 caracteres pero login exigía >6 —
+  un usuario registrado con 6 no podía entrar. `isValidPassword`: `>6`→`>=6`,
+  alineado con Firebase (mínimo 6). Rescata cuentas ya creadas.
+- 24 tests de login verdes (casos límite "123456"/"12345" en ambos lados);
+  verify.cjs OK; login idéntico en emulador.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
@@ -195,8 +204,6 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
-- `password-length-mismatch`: registro acepta 6 caracteres, login exige >6;
-  un usuario podría registrarse y no poder entrar. Detectado en SPEC-008.
 - `login-repo-tests`: `LoginRepositoryImpl`/`FirebaseAuthDataSource`/
   `UserDataSourceImpl` sin tests propios (quedaron mockeados en SPEC-008).
 - `journey-login`: UI test e2e del flujo de autenticación.
