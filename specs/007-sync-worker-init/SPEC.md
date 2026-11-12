@@ -78,5 +78,6 @@ de la `Application`. La sincronización fallaba en silencio en dispositivo.
   éxito → espec candidata (`sync-completa` / robustez de sync).
 - `npm audit`: 14 avisos moderados transitivos de `firebase-tools`, sin
   altos/críticos; no se aplican downgrades ni overrides.
-- Arranque frío sin precompilar no verificado: el emulador ANR-eaba durante
-  la verificación DEX (limitación del AVD, no del código).
+- Arranque frío: verificado el 12-11 sin precompilar en `emulator-5560`
+  (ver EVIDENCE). Los ANR iniciales eran verificación DEX del AVD, no del
+  código. Sigue sin probarse en dispositivo físico.

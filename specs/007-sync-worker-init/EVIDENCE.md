@@ -45,8 +45,16 @@ solo. Se precompilaron ambos APKs con
 `cmd package compile -m speed -f <paquete>` (`Success` en
 `com.tradejob.pro.app` y `com.tradejob.pro.app.test`) y entonces el test
 pasó. Los logs fallidos se conservan (`spec-007-workmanager-*.log`) y **no
-equivalen a tests aprobados**. El arranque frío sin precompilar **no está
-verificado**.
+equivalen a tests aprobados**.
+
+**Revalidación en frío (12-11, continuación):** reinstalación `install -r` de
+ambos APKs en `emulator-5560` y ejecución directa sin `cmd package compile`:
+`OK (1 test)` en 0,017 s. Log: `spec-007-workmanager-coldboot.log`.
+`am force-stop` + `am start -W`: `Status: ok`, `LaunchState: COLD`,
+`TotalTime: 6152 ms`, login renderizado completo y sin avisos (captura
+`spec-007-login-coldboot.png`). El arranque frío queda **verificado** en este
+AVD (el entorno ya había ejecutado la app antes; no es un primer arranque del
+emulador recién creado).
 
 ### Firebase aislado — `SyncWorkerEmulatorTest`
 
@@ -103,7 +111,9 @@ M  AGENTS.md, PROGRESS.md                        (documentación)
 
 ## No verificado (honesto)
 
-- Arranque frío de la app/tests sin precompilación DEX en el emulador.
+- ~~Arranque frío sin precompilar~~ → verificado el 12-11 en `emulator-5560`
+  (test `OK`, app COLD en 6,1 s). No equivale a un primer arranque de un AVD
+  recién creado ni a un dispositivo físico.
 - Planificador periódico real de WorkManager end-to-end.
 - Round trip con la URL HTTP del Storage local (limitación del SDK).
 - Comportamiento en dispositivo físico.

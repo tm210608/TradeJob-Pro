@@ -20,10 +20,11 @@ Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
 - Logs y capturas en .devin/android/artifacts/, ignorados por Git; detalles en PROGRESS.md.
 
 ## Siguiente paso
-- Cierre documental de SPEC-007 hecho: specs/007-sync-worker-init/{SPEC,EVIDENCE}.md
-  + PROGRESS actualizado. Sin commit: cambios solo en working tree.
-- Pendiente: commit de estos docs (si se autoriza) y verificación pendiente:
-  arranque frío sin precompilar, planificador periódico, round trip HTTP Storage.
+- Arranque frío VERIFICADO el 12-11 en emulator-5560: test OK sin precompilar,
+  app COLD en 6,1 s, login limpio (spec-007-login-coldboot.png). EVIDENCE y
+  SPEC actualizados; cambios sin commit.
+- Pendiente: commit de la actualización (si se autoriza). Sigue sin verificar:
+  planificador periódico real y round trip HTTP de Storage local.
 - No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo

@@ -131,9 +131,10 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   configuración; no se repiten en esta continuación. Sin móvil físico, datos borrados,
   modificación de SocialChef, commits, merge ni push.
 - Cierre formal realizado después de esta revalidación: SPEC/EVIDENCE en
-  `specs/007-sync-worker-init/`. El arranque frío sin precompilar, el
-  planificador periódico y el round trip HTTP de Storage local quedan
-  registrados como NO verificados en la evidencia.
+  `specs/007-sync-worker-init/` (commit `c85615b`). El arranque frío sin
+  precompilar se verificó después: test `OK` y app COLD en 6,1 s en
+  `emulator-5560`. El planificador periódico y el round trip HTTP de Storage
+  local quedan registrados como NO verificados en la evidencia.
 
 ### Configuración SDMD de sesiones y dispositivo propio (12 noviembre 2026)
 
