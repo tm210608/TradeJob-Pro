@@ -20,8 +20,11 @@ Commit de cierre: consultar git log -1; guardado local, sin merge ni push.
 - Logs y capturas en .devin/android/artifacts/, ignorados por Git; detalles en PROGRESS.md.
 
 ## Siguiente paso
-- Falta cierre formal de SPEC-007: archivos SPEC/EVIDENCE; no declarar cerrada.
-- Revisar git status al retomar; no integrar ramas ni publicar sin autorización.
+- Cierre documental de SPEC-007 hecho: specs/007-sync-worker-init/{SPEC,EVIDENCE}.md
+  + PROGRESS actualizado. Sin commit: cambios solo en working tree.
+- Pendiente: commit de estos docs (si se autoriza) y verificación pendiente:
+  arranque frío sin precompilar, planificador periódico, round trip HTTP Storage.
+- No integrar ramas ni publicar sin autorización.
 
 ## Decisiones y dispositivo
 - Móvil USB/Wi-Fi autorizado prioritario; varias conexiones requieren ANDROID_SERIAL.

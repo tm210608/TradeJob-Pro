@@ -87,8 +87,8 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - Herramienta local fijada: `firebase-tools@15.34.2`; `npm audit` informa 14 avisos
   moderados transitivos, sin altos/críticos. No se aplican downgrades ni overrides.
   Servicios limitados a loopback; no se relajan las reglas de ningún proyecto real.
-- Pendiente de cierre SDMD: SPEC/EVIDENCE en disco. Cambios guardados en la rama
-  de trabajo; sin merge ni push. Próxima sesión: completar el cierre documental.
+- Cierre documental completado el 12-11: `specs/007-sync-worker-init/SPEC.md` y
+  `EVIDENCE.md` creados. Rama sin merge ni push.
 - Revisión del 12 de noviembre de 2026 sobre `71821c1`: comando
   `gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :home:testDebugUnitTest :login:testDebugUnitTest`
   correcto (`BUILD SUCCESSFUL`, 242 tareas: 37 ejecutadas, 205 actualizadas).
@@ -130,9 +130,10 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - Los 2 tests Firebase aislados correctos de esta sesión constan en el apartado de
   configuración; no se repiten en esta continuación. Sin móvil físico, datos borrados,
   modificación de SocialChef, commits, merge ni push.
-- Sigue pendiente el cierre formal: faltan los archivos SPEC/EVIDENCE de SPEC-007.
-  El arranque frío sin precompilar, el planificador periódico y el round trip HTTP
-  de Storage local no se dan por verificados.
+- Cierre formal realizado después de esta revalidación: SPEC/EVIDENCE en
+  `specs/007-sync-worker-init/`. El arranque frío sin precompilar, el
+  planificador periódico y el round trip HTTP de Storage local quedan
+  registrados como NO verificados en la evidencia.
 
 ### Configuración SDMD de sesiones y dispositivo propio (12 noviembre 2026)
 
@@ -156,9 +157,10 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - Cierre de sesión autorizado por el usuario: configuración y registros guardados en
   commit local de `feature/sdmd-project-setup` (consultar `git log -1`), sin merge ni push.
   Los logs, capturas y datos del AVD permanecen locales, ignorados por Git.
-- Pendiente: cierre documental SPEC-007. La configuración no sustituye SPEC/EVIDENCE
-  ni la verificación del flujo completo. Recargar sesión si se resuelve una skill
-  homónima de otro proyecto en lugar de la local de TradeJob.
+- Cierre documental SPEC-007 realizado: `specs/007-sync-worker-init/` con
+  SPEC y EVIDENCE honestos. Pendiente: verificación del flujo completo
+  (arranque frío, planificador, round trip HTTP Storage). Recargar sesión si
+  se resuelve una skill homónima de otro proyecto en lugar de la local.
 
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
