@@ -2,6 +2,18 @@
 
 Guía para agentes (y humanos) que trabajan en este repo bajo **SDMD (Spec-Driven Mobile Development)**.
 
+## Empezar una sesión
+
+1. Lee `.devin/STATE.md` antes de explorar: estado breve y siguiente paso.
+2. Consulta `PROGRESS.md` para el historial/roadmap y la SPEC activa en `specs/`.
+3. Flujo: `/spec` (preguntas y aprobación) → `/implement-spec` → `/verify` → `/handoff`.
+   Skills del proyecto en `.devin/skills/`; configuración nueva siempre en `.devin/`.
+   En sesiones con varios proyectos comprueba la ruta de la skill: debe pertenecer a
+   TradeJob-Pro, no a TravelDiaryBis/SocialChef. Si la resolución conserva una skill ajena,
+   lee el SKILL.md local y abre una sesión nueva para recargar las skills.
+4. Al terminar, actualiza `.devin/STATE.md` en menos de 40 líneas. No declares cerrado
+   lo que siga pendiente de pruebas, dispositivo o evidencia. No commit/merge/push sin petición.
+
 ## Qué es esta app
 
 Gestión de campo para autónomos técnicos (España/LATAM): clientes, trabajos con evidencia
@@ -41,6 +53,34 @@ Multi-módulo Gradle. Clean Architecture + MVVM. Compose, Hilt, Room, WorkManage
 - **Componentes UI**: reutilizar `Mito*` de `:libs:components` antes de crear nuevos.
 
 ## Comandos
+
+Verificador SDMD (Windows, Node.js y Java 21):
+
+- `node .devin/verify.cjs`: compila app/APK de pruebas y verifica tests; salida breve.
+- `node .devin/verify.cjs --device`: lo anterior + instala conservando datos y abre
+  en móvil USB/Wi-Fi; sin móvil crea/arranca el AVD exclusivo `TradeJob_Test`.
+- `node .devin/verify.cjs --sync`: pruebas Firebase aisladas, siempre en emulador.
+- `node .devin/android/device.cjs`: selecciona móvil o prepara el emulador, sin instalar.
+- `node .devin/android/device.cjs --emulator-only`: prepara solo el emulador.
+- `node --test .devin/android/device.test.cjs`: tests de selección segura, sin dispositivos.
+- Logs/AVD locales ignorados por Git en `.devin/android/artifacts/` y `.devin/android/avd/`.
+- `ANDROID_HOME` permite elegir SDK; no leer `local.properties` ni archivos de secretos.
+- Usa imagen local Android 36.1 Google Play x86_64; si falta, pide autorización para descargar.
+- Con varios móviles/conexiones se exige `ANDROID_SERIAL`; nunca escoger el primero a ciegas.
+  Todos los comandos ADB dirigidos a un dispositivo deben llevar `-s <serial>`.
+- Explica y pide permiso antes de instalar en el móvil salvo autorización explícita vigente.
+  Nunca desinstales ni borres datos para resolver fallos. Abrir la app no verifica el flujo.
+- No uses emuladores ajenos automáticamente. No cambies ni detengas los de otros proyectos.
+- No pegues logs completos: resume y consulta el archivo de log ante fallos.
+- Si una instrumentación falla al arrancar con ANR, revisa logs y trazas antes de
+  atribuirlo al código. En TradeJob_Test se observó Android verificando/descomprimiendo
+  DEX antes del test. Precompilar app y APK de tests con
+  `adb -s <serial> shell cmd package compile -m speed -f <paquete>` permitió ejecutar
+  `WorkManagerInitializationTest` (paquetes `com.tradejob.pro.app` y
+  `com.tradejob.pro.app.test`). Esto prepara el emulador: no valida el arranque frío
+  sin precompilar ni permite ignorar ANR o dar una instrumentación fallida por verde.
+
+Comandos Gradle originales:
 
 ```bash
 # Build

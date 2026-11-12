@@ -89,6 +89,76 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   Servicios limitados a loopback; no se relajan las reglas de ningún proyecto real.
 - Pendiente de cierre SDMD: SPEC/EVIDENCE en disco. Cambios guardados en la rama
   de trabajo; sin merge ni push. Próxima sesión: completar el cierre documental.
+- Revisión del 12 de noviembre de 2026 sobre `71821c1`: comando
+  `gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :home:testDebugUnitTest :login:testDebugUnitTest`
+  correcto (`BUILD SUCCESSFUL`, 242 tareas: 37 ejecutadas, 205 actualizadas).
+  Tests de home `UP-TO-DATE`: no se han vuelto a ejecutar; login `NO-SOURCE`.
+  El log local conservado de Firebase confirma `OK (2 tests)` de la sesión anterior,
+  no una ejecución nueva. No se ha repetido la instrumentación ni instalado la app.
+- Solo aparece conectado `emulator-5556`, identificado en el estado de SocialChef
+  como su emulador de pruebas. No se usa sin confirmar disponibilidad; no se toca
+  ningún móvil físico ni se modifica la configuración de los otros proyectos.
+- Comparación SDMD realizada en lectura: SocialChef y TravelDiaryBis tienen
+  `docs/STATE.md`, flujo de trabajo, skills en `.devin/skills/` y `scripts/verify.sh`.
+  Propuesta pendiente de aprobación: resumen breve de sesión y skills adaptadas,
+  conservando `specs/` y el requisito de dispositivo de TradeJob. No copiar scripts
+  sin adaptar módulos, selección explícita de dispositivo y comprobación del flujo.
+
+### Revalidación de SPEC-007 (12 noviembre 2026, continuación)
+
+- `:home:testDebugUnitTest --rerun` ejecutó de nuevo los 17 tests: 0 errores,
+  0 fallos y 0 omitidos en los cinco XML de resultados. Login sigue `NO-SOURCE`.
+- Gradle informó `BUILD SUCCESSFUL` (242 tareas, 1 ejecutada, 241 actualizadas)
+  al verificar también app y APK de pruebas. Log local:
+  `.devin/android/artifacts/spec-007-verification.log`. La envoltura PowerShell
+  devolvió código 1; una ejecución independiente de `node .devin/verify.cjs`
+  terminó con código 0 y confirmó la compilación. Esa segunda ejecución reutilizó tests.
+- AVD propio reiniciado sin ventana tras cerrarse un arranque anterior. Varios intentos
+  instrumentados devolvieron `Process crashed`: Android registró ANR de arranque.
+  Las trazas del hilo principal mostraron descompresión/verificación DEX y elevada
+  presión de CPU, antes de alcanzar la prueba. No se cambió código de producción.
+- Reintentar con GPU host, 4 CPU y 4096 MB no bastó por sí solo. Preparar app y
+  APK de tests con `cmd package compile -m speed -f` devolvió `Success` en ambos.
+- Después, `WorkManagerInitializationTest` pasó: `OK (1 test)` en `emulator-5560`,
+  comprobando la identidad de la factoría usada realmente por WorkManager.
+  Log: `.devin/android/artifacts/spec-007-workmanager-precompiled.log`.
+  Los logs previos fallidos se conservan; no equivalen a tests aprobados.
+- Apertura posterior con `am start -W`: `Status: ok`. Primera captura mostró
+  aviso de ANR de System UI; tras pulsar Esperar se comprobó visualmente el login
+  sin aviso. Capturas locales `spec-007-login.png` y `spec-007-login-after-wait.png`
+  en `.devin/android/artifacts/`. Esto no demuestra un flujo completo de sincronización.
+- Los 2 tests Firebase aislados correctos de esta sesión constan en el apartado de
+  configuración; no se repiten en esta continuación. Sin móvil físico, datos borrados,
+  modificación de SocialChef, commits, merge ni push.
+- Sigue pendiente el cierre formal: faltan los archivos SPEC/EVIDENCE de SPEC-007.
+  El arranque frío sin precompilar, el planificador periódico y el round trip HTTP
+  de Storage local no se dan por verificados.
+
+### Configuración SDMD de sesiones y dispositivo propio (12 noviembre 2026)
+
+- Rama de configuración: `feature/sdmd-project-setup`, creada desde `71821c1`;
+  sin commit nuevo, merge ni push. Conserva el trabajo previo de SPEC-007.
+- Estado breve en `.devin/STATE.md`; skills `spec`, `implement-spec`, `verify` y
+  `handoff` en `.devin/skills/`. No se trasladan las specs existentes de `specs/`.
+- Verificador `node .devin/verify.cjs` probado: compila app y APK de tests;
+  home reutilizado (`UP-TO-DATE`), login sin tests (`NO-SOURCE`). Sin dependencias nuevas.
+- Selector con 13 tests Node correctos: prioridad móvil USB/Wi-Fi, selección explícita
+  con varias conexiones y rechazo de móviles offline/no autorizados. Sin prueba física.
+- AVD exclusivo `TradeJob_Test` creado con la imagen Android 36.1 local. Datos y logs
+  ignorados por Git bajo `.devin/android/`. No se copia información de otros AVD.
+- Arranque confirmado en `emulator-5560`, reutilización del AVD verificada, instalación
+  conservadora y apertura de TradeJob correctas; `MainActivity` en estado Resumed.
+  Primeros intentos terminaron sin completar; reintento con renderizado por software
+  correcto, sin afirmar causa raíz. No se modifica el emulador de SocialChef (`5556`).
+- `node .devin/verify.cjs --sync` ejecutado en `emulator-5560`: 2/2 tests nuevos
+  correctos con Firebase aislado; log `.devin/firebase/artifacts/android-sync-test.log`.
+  Se mantienen las limitaciones de cobertura descritas en SPEC-007 arriba.
+- Cierre de sesión autorizado por el usuario: configuración y registros guardados en
+  commit local de `feature/sdmd-project-setup` (consultar `git log -1`), sin merge ni push.
+  Los logs, capturas y datos del AVD permanecen locales, ignorados por Git.
+- Pendiente: cierre documental SPEC-007. La configuración no sustituye SPEC/EVIDENCE
+  ni la verificación del flujo completo. Recargar sesión si se resuelve una skill
+  homónima de otro proyecto en lugar de la local de TradeJob.
 
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
