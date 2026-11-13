@@ -1,9 +1,9 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-13 | Rama: feature/spec-011-ui-home | Base: main 1323319
+Fecha: 2026-11-13 | Rama: main | Ultimo merge: SPEC-011 (b8c350a)
 
 ## Hecho hoy
-- SPEC-011 (dashboard calido) implementada y verificada. SIN COMMIT —
-  pendiente solo el visto bueno del usuario para merge/push.
+- SPEC-011 (dashboard "parte de la semana") implementada, verificada en
+  emulador, aprobada por el usuario y mergeada a main con push.
 - Diseno final v2 "parte de la semana" (v1 rechazada por el usuario):
   fecha real, saludo+nombre, tarjeta-parte con borde (rango lun-dom,
   N trabajos, lineas lima terminado/cobrada, troquelado, pie de totales,
@@ -18,8 +18,7 @@ Fecha: 2026-11-13 | Rama: feature/spec-011-ui-home | Base: main 1323319
   resto = deuda); app siempre arranca en login (preexistente).
 
 ## Siguiente paso propuesto
-- Merge/push de SPEC-011 si el usuario lo pide.
-- Cola: ui-jobs (JobCard malva), ui-clients, db-migration-tests,
+- Cola: ui-jobs (JobCard malva pendiente), ui-clients, db-migration-tests,
   sync-completa, i18n-domain, cleanup-strings-app (duplicados :app).
 
 ## Decisiones/deuda
