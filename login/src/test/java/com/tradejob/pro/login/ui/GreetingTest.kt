@@ -1,6 +1,7 @@
 package com.tradejob.pro.login.ui
 
-import com.tradejob.pro.login.R
+import com.tradejob.pro.common.R
+import com.tradejob.pro.common.ui.greetingForHour
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

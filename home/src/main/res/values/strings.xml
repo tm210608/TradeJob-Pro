@@ -9,18 +9,40 @@
     <string name="nav_back">Volver</string>
 
     <!-- Home Screen -->
-    <string name="home_welcome">¡Hola, %1$s!</string>
-    <string name="home_subtitle">Hoy es un buen día para trabajar</string>
+    <string name="home_greeting_name">%1$s, %2$s</string>
+    <string name="home_parte_title">Parte de la semana</string>
+    <string name="home_week_range">%1$s–%2$s</string>
+    <plurals name="home_jobs_unit">
+        <item quantity="one">trabajo esta semana</item>
+        <item quantity="other">trabajos esta semana</item>
+    </plurals>
+    <plurals name="home_celebration_jobs">
+        <item quantity="one">%d trabajo terminado</item>
+        <item quantity="other">%d trabajos terminados</item>
+    </plurals>
+    <plurals name="home_celebration_invoices">
+        <item quantity="one">%d factura cobrada</item>
+        <item quantity="other">%d facturas cobradas</item>
+    </plurals>
+    <plurals name="home_count_pending">
+        <item quantity="one">%d pendiente</item>
+        <item quantity="other">%d pendientes</item>
+    </plurals>
+    <string name="home_count_progress">%d en curso</string>
+    <plurals name="home_count_done">
+        <item quantity="one">%d terminado</item>
+        <item quantity="other">%d terminados</item>
+    </plurals>
+    <string name="home_empty_title">Tu taller empieza aquí</string>
+    <string name="home_empty_body">Crea tu primer cliente para empezar a organizar trabajos, presupuestos y facturas.</string>
+    <string name="home_empty_cta">Crear mi primer cliente</string>
+    <string name="home_version">TradeJob Pro v1.0</string>
     <string name="home_stats_title">Resumen de actividad</string>
     <string name="home_recent_jobs">Trabajos recientes</string>
     <string name="home_quick_actions">Acciones rápidas</string>
     <string name="home_new_client">Nuevo Cliente</string>
     <string name="home_view_agenda">Ver Agenda</string>
     <string name="home_error_stats">Error al cargar estadísticas</string>
-    <string name="home_stat_clients">Clientes</string>
-    <string name="home_stat_pending">Pendientes</string>
-    <string name="home_stat_in_progress">En curso</string>
-    <string name="home_stat_completed">Completados</string>
 
     <!-- Client List -->
     <string name="client_list_title">Mis Clientes</string>

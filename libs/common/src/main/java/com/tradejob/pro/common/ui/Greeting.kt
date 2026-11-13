@@ -1,7 +1,7 @@
-package com.tradejob.pro.login.ui
+package com.tradejob.pro.common.ui
 
 import androidx.annotation.StringRes
-import com.tradejob.pro.login.R
+import com.tradejob.pro.common.R
 
 @StringRes
 fun greetingForHour(hour: Int): Int = when (hour) {

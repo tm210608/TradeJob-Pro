@@ -206,6 +206,34 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - 27 tests login (incluye `GreetingTest`), 17 home, verify.cjs OK.
 - Capturas light/dark de login y registro en `emulator-5560`.
 
+### SPEC-011 — Dashboard cálido "El parte de la semana" (13 noviembre 2026)
+
+- Rama: `feature/spec-011-ui-home` (sin merge).
+- **Iteración de diseño**: v1 (saludo + número grande + chips + tarjetas)
+  rechazada por el usuario; v2 aprobada — el dashboard se convierte en el
+  **parte de trabajo de la semana**: fecha real, saludo con nombre, una sola
+  tarjeta-parte con borde (rango lun–dom, "N trabajos esta semana", líneas
+  ✓ lima de terminado/cobrado, divisor troquelado, pie de totales y la
+  firma `MitoSignatureDivider` cerrando el parte). Trabajos recientes como
+  líneas del parte con punto de estado (JobCard intacto, solo fuera del
+  dashboard).
+- Regla semanal: `scheduledAt ?: createdAt` en lun–dom local; "terminados"
+  cuenta `COMPLETED` + `INVOICED`.
+- Estado vacío nuevo: "Tu taller empieza aquí" + CTA a `client_form/0` cuando
+  no hay clientes ni trabajos.
+- `greetingForHour` + strings `greeting_*` trasladados de `:login` a
+  `:libs:common`; login sin regresión visual.
+- Migrada la pantalla a `colorScheme`/tokens (sin colores hardcodeados ni
+  imports del shim de colores viejo en `HomeScreen`).
+- Corrección incluida: "terminados" cuenta `COMPLETED` + `INVOICED` (los
+  facturados ya no desaparecen del total). Fix de runtime: `:app` duplicaba
+  `home_stat_completed` y pisaba el nuevo texto — alineado.
+- Tests: 25 verdes en `:home` (8 nuevos de cómputo semanal con reloj fijo),
+  27 en `:login`. `verify.cjs` OK dos veces.
+- Verificado en `TradeJob_Test` (emulator-5560): login light/dark, dashboard
+  vacío dark, dashboard con datos light/dark, celebración, menú, navegación
+  a clientes y a formulario de cliente. Evidencia en `specs/011-ui-home/`.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.

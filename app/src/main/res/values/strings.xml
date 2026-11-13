@@ -21,7 +21,7 @@
     <string name="home_stat_clients">Clientes</string>
     <string name="home_stat_pending">Pendientes</string>
     <string name="home_stat_in_progress">En curso</string>
-    <string name="home_stat_completed">Completados</string>
+    <string name="home_stat_completed">Terminados</string>
 
     <!-- Client List -->
     <string name="client_list_title">Mis Clientes</string>
