@@ -33,7 +33,8 @@ class ClientDetailViewModel @Inject constructor(
     val client: StateFlow<ClientEntity?> = _client
 
     private val _allJobs = MutableStateFlow<List<JobEntity>>(emptyList())
-    
+    val allJobs: StateFlow<List<JobEntity>> = _allJobs
+
     private val _selectedFilter = MutableStateFlow<JobStatus?>(null)
     val selectedFilter: StateFlow<JobStatus?> = _selectedFilter
 

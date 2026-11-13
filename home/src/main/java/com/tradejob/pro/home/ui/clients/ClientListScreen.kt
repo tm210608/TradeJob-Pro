@@ -1,5 +1,7 @@
 package com.tradejob.pro.home.ui.clients
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +56,11 @@ import androidx.navigation.NavHostController
 import com.tradejob.pro.components.MitoBottomSheet
 import com.tradejob.pro.components.MitoButtonSheet
 import com.tradejob.pro.components.MitoTextField
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.core.navigation.Screen
 
 import androidx.compose.ui.res.stringResource
@@ -67,8 +76,22 @@ override fun Content(navController: NavHostController) {
     val snackbarHostState = remember { SnackbarHostState() }
     var isSearching by remember { mutableStateOf(false) }
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val darkTheme = isSystemInDarkTheme()
+    val topBarContentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+
+    SystemBarIconStyle(
+        darkIcons = !darkTheme,
+        navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+    )
+
+    val backgroundModifier = if (darkTheme) {
+        Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+    } else {
+        Modifier.background(BoneLight)
+    }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             if (isSearching) {
                 TopAppBar(
@@ -89,25 +112,45 @@ override fun Content(navController: NavHostController) {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { 
+                        IconButton(onClick = {
                             isSearching = false
                             viewModel.onSearchQueryChanged("")
                         }) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.btn_cancel))
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(R.string.btn_cancel),
+                                tint = topBarContentColor
+                            )
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             } else {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.client_list_title)) },
+                    title = {
+                        Text(
+                            stringResource(R.string.client_list_title),
+                            fontWeight = FontWeight.Bold,
+                            color = topBarContentColor
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = topBarContentColor
+                            )
                         }
                     },
                     actions = {
                         IconButton(onClick = { isSearching = true }) {
-                            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.client_list_search))
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = stringResource(R.string.client_list_search),
+                                tint = topBarContentColor
+                            )
                         }
                     }
                 )
@@ -115,19 +158,24 @@ override fun Content(navController: NavHostController) {
         },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { navController.navigate("client_form/0") }
+                    onClick = { navController.navigate("client_form/0") },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(R.string.client_form_new))
                 }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
-            ClientListContent(
-                viewModel = viewModel,
-                navController = navController,
-                snackbarHostState = snackbarHostState,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Box(modifier = Modifier.fillMaxSize().then(backgroundModifier)) {
+                ClientListContent(
+                    viewModel = viewModel,
+                    navController = navController,
+                    snackbarHostState = snackbarHostState,
+                    darkTheme = darkTheme,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
@@ -137,6 +185,7 @@ fun ClientListContent(
     viewModel: ClientListViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
+    darkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     val clients by viewModel.clients.collectAsState()
@@ -213,6 +262,7 @@ fun ClientListContent(
                     items(clients, key = { it.id }) { client ->
                         ClientCard(
                             client = client,
+                            darkTheme = darkTheme,
                             onEdit = { navController.navigate("client_form/${client.id}") },
                             onDelete = { clientToDelete = client },
                             onViewJobs = { navController.navigate("client_detail/${client.id}") }
@@ -227,6 +277,7 @@ fun ClientListContent(
 @Composable
 fun ClientCard(
     client: com.tradejob.pro.database.data.entity.ClientEntity,
+    darkTheme: Boolean,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onViewJobs: () -> Unit
@@ -236,6 +287,9 @@ fun ClientCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
         onClick = onViewJobs,
+        colors = CardDefaults.cardColors(
+            containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -252,7 +306,8 @@ fun ClientCard(
                     Text(
                         text = client.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
                     )
                     if (client.phone.isNotBlank()) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -272,10 +327,10 @@ fun ClientCard(
                 }
                 Row {
                     IconButton(onClick = onEdit) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar")
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.client_form_edit))
                     }
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.btn_delete))
                     }
                 }
             }
