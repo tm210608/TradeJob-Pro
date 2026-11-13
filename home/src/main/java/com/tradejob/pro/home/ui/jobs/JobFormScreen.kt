@@ -4,6 +4,7 @@ package com.tradejob.pro.home.ui.jobs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,6 +64,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -77,6 +80,10 @@ import coil.compose.AsyncImage
 import com.tradejob.pro.components.MitoNumberField
 import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
+import com.tradejob.pro.components.theme.BoneLight
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.core.navigation.Screen
 import com.tradejob.pro.database.data.entity.JobPhotoEntity
 import com.tradejob.pro.common.validation.ValidationResult
@@ -109,29 +116,54 @@ class JobFormScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: JobFormViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
-        val context = androidx.compose.ui.platform.LocalContext.current
+        val darkTheme = isSystemInDarkTheme()
+
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
+
+        val backgroundModifier = if (darkTheme) {
+            Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+        } else {
+            Modifier.background(BoneLight)
+        }
 
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(if (viewModel.isEditMode) stringResource(R.string.job_form_edit) else stringResource(R.string.job_form_new))
+                        Text(
+                            text = if (viewModel.isEditMode) stringResource(R.string.job_form_edit) else stringResource(R.string.job_form_new),
+                            fontWeight = FontWeight.Bold,
+                            color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+                        )
                     },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 )
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
-            JobFormContent(
-                viewModel = viewModel,
-                navController = navController,
-                snackbarHostState = snackbarHostState,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Box(modifier = Modifier.fillMaxSize().then(backgroundModifier)) {
+                JobFormContent(
+                    viewModel = viewModel,
+                    navController = navController,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
@@ -160,17 +192,34 @@ fun PhotoItem(
                 error = painterResource(id = com.tradejob.pro.home.R.drawable.ic_photo_error)
             )
             
+            val (badgeColor, badgeTextColor, badgeLabel) = when (photo.type) {
+                "BEFORE" -> Triple(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.onPrimary,
+                    stringResource(R.string.job_photo_before)
+                )
+                "AFTER" -> Triple(
+                    MaterialTheme.colorScheme.tertiary,
+                    MaterialTheme.colorScheme.onTertiary,
+                    stringResource(R.string.job_photo_after)
+                )
+                else -> Triple(
+                    MaterialTheme.colorScheme.secondary,
+                    MaterialTheme.colorScheme.onSecondary,
+                    stringResource(R.string.job_photo_progress)
+                )
+            }
             Surface(
-                color = if (photo.type == "BEFORE") Color.Red.copy(alpha = 0.7f) else Color.Green.copy(alpha = 0.7f),
+                color = badgeColor.copy(alpha = 0.85f),
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(4.dp)
                     .clip(CircleShape)
             ) {
                 Text(
-                    text = if (photo.type == "BEFORE") "Antes" else "Después",
+                    text = badgeLabel,
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White,
+                    color = badgeTextColor,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
@@ -382,7 +431,7 @@ fun JobFormContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = stringResource(R.string.job_form_edit), // Reusing a title but should be more generic like "Detalles"
+            text = stringResource(R.string.job_section_details),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -392,7 +441,7 @@ fun JobFormContent(
             value = title,
             onValueChange = { viewModel.onTitleChanged(it) },
             label = stringResource(R.string.job_label_title),
-            placeholder = "Ej: Reparación de fuga en baño",
+            placeholder = stringResource(R.string.job_ph_title),
             errorText = titleError.asString(),
             leadingIcon = { Icon(Icons.Default.Build, contentDescription = null) },
             modifier = Modifier.fillMaxWidth()
@@ -406,7 +455,7 @@ fun JobFormContent(
                 value = budgetAmount,
                 onValueChange = { viewModel.onBudgetAmountChanged(it) },
                 label = stringResource(R.string.job_label_budget),
-                placeholder = "0.00",
+                placeholder = stringResource(R.string.job_ph_amount),
                 errorText = budgetError.asString(),
                 leadingIcon = { Icon(Icons.Default.AttachMoney, contentDescription = null) },
                 modifier = Modifier.weight(1f)
@@ -416,7 +465,7 @@ fun JobFormContent(
                 value = finalAmount,
                 onValueChange = { viewModel.onFinalAmountChanged(it) },
                 label = stringResource(R.string.job_label_final_amount),
-                placeholder = "0.00",
+                placeholder = stringResource(R.string.job_ph_amount),
                 errorText = finalAmountError.asString(),
                 leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null) },
                 modifier = Modifier.weight(1f)
@@ -428,7 +477,7 @@ fun JobFormContent(
             onValueChange = {},
             readOnly = true,
             label = stringResource(R.string.job_label_date),
-            placeholder = "Seleccionar fecha",
+            placeholder = stringResource(R.string.job_ph_date),
             leadingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -454,7 +503,7 @@ fun JobFormContent(
             value = description,
             onValueChange = { viewModel.onDescriptionChanged(it) },
             label = stringResource(R.string.job_label_description),
-            placeholder = "Detalles sobre el trabajo a realizar...",
+            placeholder = stringResource(R.string.job_ph_description),
             leadingIcon = { Icon(Icons.Default.Description, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = false,

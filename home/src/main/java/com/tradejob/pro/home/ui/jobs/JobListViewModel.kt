@@ -51,8 +51,19 @@ class JobListViewModel @Inject constructor(
     private val _event = MutableStateFlow<JobListEvent>(JobListEvent.None)
     val event: StateFlow<JobListEvent> = _event
 
+    private val _clientName = MutableStateFlow<String?>(null)
+    val clientName: StateFlow<String?> = _clientName
+
     init {
-        clientId?.let { loadJobs(it) }
+        clientId?.let { id ->
+            loadJobs(id)
+            viewModelScope.launch {
+                val result = clientRepository.getClientById(id)
+                if (result is Result.Success) {
+                    _clientName.value = result.data?.name
+                }
+            }
+        }
     }
 
     private fun loadJobs(id: Long) {

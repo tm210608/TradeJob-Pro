@@ -31,6 +31,10 @@ val LimeDark = Color(0xFF617D00)
 val LimeContainerDark = Color(0xFF425900)
 val LimeOnContainerDark = Color(0xFFD5F28C)
 
+// Ámbar de aviso (prioridad urgente, fuera de lo positivo)
+val AmberWarning = Color(0xFFB26A00)
+val AmberWarningDark = Color(0xFFFFC36B)
+
 val TradeJobLightScheme = androidx.compose.material3.lightColorScheme(
     primary = Petrol30,
     onPrimary = Color.White,

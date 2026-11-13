@@ -234,6 +234,31 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   vacío dark, dashboard con datos light/dark, celebración, menú, navegación
   a clientes y a formulario de cliente. Evidencia en `specs/011-ui-home/`.
 
+### SPEC-012 — Trabajos cálidos "Los partes del cliente" (13 noviembre 2026)
+
+- Rama: `feature/spec-012-ui-jobs` (sin merge).
+- `JobCard` rediseñada (usada en `ClientDetailScreen` y `JobListScreen`):
+  borde sutil, `BoneCard`/`surface`, estados con colores del parte
+  (pendiente neutro — ya no rojo de error —, curso petrol, terminado lima,
+  facturado cyan), **fecha programada + importe** ("10 nov · 890 €",
+  `finalAmount` ?? `budgetAmount`) y **marca ámbar "Urgente"** solo en
+  `HIGH`/`URGENT`.
+- `JobListScreen` (piel completa + título con nombre de cliente + estado
+  vacío con CTA) quedó lista, pero **`job_list` es código muerto**: nada
+  navega a esa ruta; la lista real es la sección de `ClientDetailScreen`.
+  Hallazgo registrado en la spec — candidata a fusión/borrado.
+- Ficha de trabajo con la piel (hueso/petróleo, "Detalles"), badges de
+  foto "Antes"/"Después"/"Progreso" con colores de tema (el caso PROGRESS
+  mostraba mal "Después" — corregido).
+- Strings del flujo a `strings.xml` (filtros, borrado, vacíos, badges,
+  placeholders); `ClientDetailScreen` externalizados sus textos de la
+  sección trabajos.
+- Tests: 32 verdes en `:home` (7 nuevos `JobFormattersTest`; stub
+  `getClientById` añadido a `JobListViewModelTest`), `:login` verdes,
+  `verify.cjs` OK.
+- Verificado en `TradeJob_Test` con ventana: tarjetas light/dark con
+  urgente/fecha/importe, ficha, estado vacío con CTA a `job_form/0`.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
@@ -243,6 +268,13 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
+- `voice-parte`: rellenar la ficha de trabajo dictando por voz o escribiendo
+  (el trabajador elige). Idea del usuario 13-11: `SpeechRecognizer` nativo
+  permite parsear "cambio de enchufes en cocina, 90 euros, mañana a las 10"
+  a título/importe/fecha sin dependencias nuevas.
+- `cleanup-job-list-route`: `job_list/{clientId}` no recibe navegación
+  (la lista real es la sección de `ClientDetailScreen`); `JobListScreen`
+  es código muerto navegable — borrarla o hacerla la ruta oficial.
 - `login-repo-tests`: `LoginRepositoryImpl`/`FirebaseAuthDataSource`/
   `UserDataSourceImpl` sin tests propios (quedaron mockeados en SPEC-008).
 - `journey-login`: UI test e2e del flujo de autenticación.
