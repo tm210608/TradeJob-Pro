@@ -75,6 +75,23 @@
     <string name="client_list_empty">No tienes clientes aún</string>
     <string name="client_list_empty_hint">Pulsa + para añadir tu primer cliente</string>
     <string name="client_view_jobs">Ver trabajos</string>
+    <string name="client_action_call">Llamar</string>
+    <string name="client_action_email">Email</string>
+    <string name="client_action_route">Ruta</string>
+    <string name="client_action_no_app">No hay ninguna app para esta acción</string>
+    <string name="client_last_job">Último trabajo</string>
+    <plurals name="client_summary_in_progress">
+        <item quantity="one">%d en curso</item>
+        <item quantity="other">%d en curso</item>
+    </plurals>
+    <plurals name="client_summary_pending">
+        <item quantity="one">%d pendiente</item>
+        <item quantity="other">%d pendientes</item>
+    </plurals>
+    <plurals name="client_summary_completed">
+        <item quantity="one">%d completado</item>
+        <item quantity="other">%d completados</item>
+    </plurals>
     <string name="client_delete_title">Eliminar cliente</string>
     <string name="client_delete_msg">¿Estás seguro de que deseas eliminar a %1$s? Esta acción no se puede deshacer y eliminará todos sus trabajos asociados.</string>
 

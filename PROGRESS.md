@@ -259,6 +259,30 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - Verificado en `TradeJob_Test` con ventana: tarjetas light/dark con
   urgente/fecha/importe, ficha, estado vacío con CTA a `job_form/0`.
 
+### SPEC-013 — Clientes cálidos: ficha con contacto directo (13 noviembre 2026)
+
+- Rama: `feature/spec-013-ui-clients` (sin merge).
+- Dirección aprobada desde exploración Stitch (variante "zen",
+  `stitch-minimal.png`): ficha limpia + contacto directo, sin mover
+  la lista de trabajos (decisión del usuario: embebida).
+- `ClientDetailScreen` rediseñada: fondo hueso/petróleo, TopAppBar con
+  el **nombre del cliente**, tarjeta `BoneCard` con contacto y notas,
+  **fila de botones Llamar/Email/Ruta** (intents `tel:`/`mailto:`/`geo:`
+  — Gmail/Maps/Dialer abiertos en emulador; botón oculto si falta el
+  dato), **línea resumen** "● 1 en curso · ● 1 pendiente · ● 2
+  completados" (INVOICED cuenta terminado, como el dashboard) y tarjeta
+  **"Último trabajo"** (createdAt mayor). Lista embebida + filtros
+  conservados.
+- `ClientListScreen` con la piel: fondo, tarjetas `BoneCard`, nombre
+  petróleo, FAB petróleo, contentDescriptions a recursos.
+- `ClientFormatters.kt` nuevo: `countJobsByStatus` + `lastJob` puros;
+  `ClientDetailViewModel` expone `allJobs` sin filtrar.
+- Strings nuevos en `:home` y espejo en `:app` (plurals ES incluidos).
+- Tests: 4 nuevos `ClientFormattersTest`; `verify.cjs` verde.
+- Verificado en `TradeJob_Test2` light+dark: intents de llamada/mapas/
+  email reales, cliente sin datos (solo Llamar), estado vacío + CTA.
+- Fix durante verificación: "Llamar" partía en dos líneas → `maxLines=1`.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
