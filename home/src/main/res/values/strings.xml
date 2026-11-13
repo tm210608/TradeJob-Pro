@@ -44,6 +44,31 @@
     <string name="home_view_agenda">Ver Agenda</string>
     <string name="home_error_stats">Error al cargar estadísticas</string>
 
+    <!-- Job List -->
+    <string name="job_list_title_fallback">Trabajos</string>
+    <string name="job_filter_all">Todos</string>
+    <string name="job_empty_all">No hay trabajos registrados</string>
+    <string name="job_empty_filtered">No hay trabajos en este estado</string>
+    <string name="job_empty_cta">Crear primer trabajo</string>
+    <string name="job_delete_message">¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.</string>
+    <string name="job_delete_confirm">Eliminar</string>
+    <string name="job_delete_cancel">Cancelar</string>
+    <string name="job_share_pdf">Compartir PDF</string>
+    <string name="job_cd_pdf">Exportar PDF</string>
+    <string name="job_cd_share">Compartir</string>
+    <string name="job_cd_delete">Eliminar</string>
+    <string name="job_no_date">Sin fecha</string>
+    <string name="job_urgent">Urgente</string>
+    <string name="job_photo_before">Antes</string>
+    <string name="job_photo_after">Después</string>
+    <string name="job_photo_progress">Progreso</string>
+    <string name="job_ph_title">Ej: Reparación de fuga en baño</string>
+    <string name="job_ph_amount">0.00</string>
+    <string name="job_ph_date">Seleccionar fecha</string>
+    <string name="job_ph_description">Detalles sobre el trabajo a realizar...</string>
+    <string name="job_section_details">Detalles</string>
+    <string name="client_jobs_section">Trabajos / Averías</string>
+
     <!-- Client List -->
     <string name="client_list_title">Mis Clientes</string>
     <string name="client_list_search">Buscar cliente&#8230;</string>

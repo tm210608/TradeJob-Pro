@@ -1,22 +1,35 @@
 package com.tradejob.pro.home.ui.jobs
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.items as lazyItems
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,42 +44,45 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.tradejob.pro.core.navigation.Screen
-import com.tradejob.pro.database.data.entity.JobEntity
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items as lazyItems
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PictureAsPdf
-import androidx.compose.material.icons.filled.Share
 import com.tradejob.pro.components.MitoBottomSheet
 import com.tradejob.pro.components.MitoButtonSheet
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.material3.FilterChipDefaults
-import androidx.core.content.FileProvider
-import java.io.File
-
-import androidx.compose.ui.res.stringResource
+import com.tradejob.pro.components.PrimaryButton
+import com.tradejob.pro.components.theme.AmberWarning
+import com.tradejob.pro.components.theme.AmberWarningDark
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
+import com.tradejob.pro.components.theme.SystemBarIconStyle
+import com.tradejob.pro.core.navigation.Screen
+import com.tradejob.pro.database.data.entity.JobEntity
 import com.tradejob.pro.home.R
+import java.io.File
 
 class JobListScreen : Screen {
     override val route: String = "job_list/{clientId}"
-    
+
     override val arguments = listOf(
         navArgument("clientId") {
             type = NavType.StringType
@@ -78,36 +94,67 @@ class JobListScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: JobListViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val clientName by viewModel.clientName.collectAsState()
+        val darkTheme = isSystemInDarkTheme()
+        val clientId = navController.currentBackStackEntry?.arguments?.getString("clientId") ?: "0"
+
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
+
+        val backgroundModifier = if (darkTheme) {
+            Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+        } else {
+            Modifier.background(BoneLight)
+        }
 
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.home_stats_title)) }, // Reusing or specific
+                    title = {
+                        Text(
+                            text = clientName ?: stringResource(R.string.job_list_title_fallback),
+                            fontWeight = FontWeight.Bold,
+                            color = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { 
-                        val clientId = navController.currentBackStackEntry?.arguments?.getString("clientId") ?: "0"
-                        navController.navigate("job_form/$clientId/0") 
-                    }
+                    onClick = { navController.navigate("job_form/$clientId/0") },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(R.string.job_form_new))
                 }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
-            JobListContent(
-                viewModel = viewModel,
-                navController = navController,
-                snackbarHostState = snackbarHostState,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Box(modifier = Modifier.fillMaxSize().then(backgroundModifier)) {
+                JobListContent(
+                    viewModel = viewModel,
+                    navController = navController,
+                    snackbarHostState = snackbarHostState,
+                    clientId = clientId,
+                    darkTheme = darkTheme,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
@@ -118,6 +165,8 @@ fun JobListContent(
     viewModel: JobListViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
+    clientId: String,
+    darkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     val jobs by viewModel.jobs.collectAsState()
@@ -158,7 +207,9 @@ fun JobListContent(
                     putExtra(android.content.Intent.EXTRA_STREAM, uri)
                     addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                context.startActivity(android.content.Intent.createChooser(intent, "Compartir PDF"))
+                context.startActivity(
+                    android.content.Intent.createChooser(intent, context.getString(R.string.job_share_pdf))
+                )
                 viewModel.clearEvent()
             }
             else -> {}
@@ -168,10 +219,10 @@ fun JobListContent(
     if (jobToDelete != null) {
         MitoBottomSheet(
             mitoButtonSheet = MitoButtonSheet.ConfirmMitoButtonSheet(
-                title = "Eliminar trabajo",
-                message = "¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.",
-                confirmText = "Eliminar",
-                dismissText = "Cancelar",
+                title = stringResource(R.string.job_delete_title),
+                message = stringResource(R.string.job_delete_message),
+                confirmText = stringResource(R.string.job_delete_confirm),
+                dismissText = stringResource(R.string.job_delete_cancel),
                 onConfirm = {
                     jobToDelete?.let { viewModel.deleteJob(it) }
                     jobToDelete = null
@@ -182,7 +233,6 @@ fun JobListContent(
     }
 
     Column(modifier = modifier.fillMaxSize()) {
-        // Filter Bar
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -195,13 +245,13 @@ fun JobListContent(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { viewModel.onFilterSelected(null) },
-                    label = { Text("Todos") },
+                    label = { Text(stringResource(R.string.job_filter_all)) },
                     leadingIcon = if (selectedFilter == null) {
                         { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
                     } else null
                 )
             }
-            
+
             JobStatus.entries.forEach { status ->
                 item {
                     FilterChip(
@@ -218,7 +268,7 @@ fun JobListContent(
             contentAlignment = Alignment.Center
         ) {
             when {
-                isLoading -> CircularProgressIndicator()
+                isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 jobs.isEmpty() -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -232,10 +282,21 @@ fun JobListContent(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = if (selectedFilter == null) "No hay trabajos registrados" else "No hay trabajos en este estado",
+                            text = if (selectedFilter == null) {
+                                stringResource(R.string.job_empty_all)
+                            } else {
+                                stringResource(R.string.job_empty_filtered)
+                            },
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.outline
+                            color = if (darkTheme) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline
                         )
+                        if (selectedFilter == null) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            PrimaryButton(
+                                text = stringResource(R.string.job_empty_cta),
+                                onClick = { navController.navigate("job_form/$clientId/0") }
+                            )
+                        }
                     }
                 }
                 else -> {
@@ -247,8 +308,8 @@ fun JobListContent(
                         items(jobs, key = { it.id }) { job ->
                             JobCard(
                                 job = job,
-                                onClick = { 
-                                    navController.navigate("job_form/${job.clientId}/${job.id}") 
+                                onClick = {
+                                    navController.navigate("job_form/${job.clientId}/${job.id}")
                                 },
                                 onDelete = { jobToDelete = job },
                                 onExport = { viewModel.exportJob(job) },
@@ -271,12 +332,36 @@ fun JobCard(
     onExport: () -> Unit,
     onExportPdf: () -> Unit
 ) {
+    val darkTheme = isSystemInDarkTheme()
+    val status = JobStatus.fromValue(job.status)
+    val priority = JobPriority.fromValue(job.priority)
+    val statusColor = when (status) {
+        JobStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant
+        JobStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primary
+        JobStatus.COMPLETED -> MaterialTheme.colorScheme.tertiary
+        JobStatus.INVOICED -> MaterialTheme.colorScheme.secondary
+    }
+    val urgentColor = if (darkTheme) AmberWarningDark else AmberWarning
+    val contentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.onSurface
+    val subtleColor = if (darkTheme) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant
+
+    val date = formatJobDate(job.scheduledAt)
+    val amount = formatJobAmount(job.finalAmount, job.budgetAmount)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
         onClick = onClick,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(
+            1.dp,
+            if (darkTheme) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard
+        )
     ) {
         Column(
             modifier = Modifier
@@ -292,41 +377,67 @@ fun JobCard(
                     Text(
                         text = job.title,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.ExtraBold,
+                        color = contentColor
                     )
-                    
-                    val statusEnum = JobStatus.fromValue(job.status)
-                    Text(
-                        text = statusEnum.displayName,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = when (statusEnum) {
-                            JobStatus.COMPLETED -> MaterialTheme.colorScheme.primary
-                            JobStatus.PENDING -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.secondary
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = status.displayName,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = statusColor
+                        )
+                        if (isUrgent(priority)) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(urgentColor, CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.job_urgent),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = urgentColor
+                            )
                         }
-                    )
+                    }
                 }
-                
+
                 Row {
                     IconButton(onClick = onExportPdf) {
-                        Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = stringResource(R.string.job_cd_pdf), tint = MaterialTheme.colorScheme.primary)
                     }
                     IconButton(onClick = onExport) {
-                        Icon(Icons.Default.Share, contentDescription = "Compartir", tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Default.Share, contentDescription = stringResource(R.string.job_cd_share), tint = MaterialTheme.colorScheme.primary)
                     }
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.job_cd_delete), tint = MaterialTheme.colorScheme.error)
                     }
                 }
             }
-            
+
+            val infoLine = listOfNotNull(
+                date ?: stringResource(R.string.job_no_date),
+                amount
+            ).joinToString("  ·  ")
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = infoLine,
+                style = MaterialTheme.typography.bodySmall,
+                color = subtleColor
+            )
+
             if (!job.description.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = job.description ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = subtleColor
                 )
             }
         }

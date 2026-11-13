@@ -2,12 +2,14 @@ package com.tradejob.pro.home.ui.jobs
 
 import androidx.lifecycle.SavedStateHandle
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.JobEntity
 import com.tradejob.pro.home.domain.ClientRepository
 import com.tradejob.pro.home.domain.DeleteJobUseCase
 import com.tradejob.pro.home.domain.ExportJobUseCase
 import com.tradejob.pro.home.domain.GeneratePdfReportUseCase
 import com.tradejob.pro.home.domain.GetJobsByClientUseCase
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +44,8 @@ class JobListViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { savedStateHandle.get<String>("clientId") } returns "1"
+        coEvery { clientRepository.getClientById(1L) } returns
+            Result.Success(ClientEntity(id = 1, name = "Cliente Prueba", phone = ""))
     }
 
     @After

@@ -223,7 +223,7 @@ fun ClientDetailContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Trabajos / Averías", // Should be externalized too
+                text = stringResource(R.string.client_jobs_section),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -248,7 +248,7 @@ fun ClientDetailContent(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { onFilterSelected(null) },
-                    label = { Text("Todos") } // Should be externalized
+                    label = { Text(stringResource(R.string.job_filter_all)) }
                 )
             }
             JobStatus.entries.forEach { status ->
@@ -271,7 +271,7 @@ fun ClientDetailContent(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
-                    Text(text = "Sin trabajos aún", color = MaterialTheme.colorScheme.outline)
+                    Text(text = stringResource(R.string.job_empty_all), color = MaterialTheme.colorScheme.outline)
                 }
             }
         } else {

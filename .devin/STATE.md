@@ -1,31 +1,33 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-13 | Rama: main | Ultimo merge: SPEC-011 (b8c350a)
+Fecha: 2026-11-13 | Rama: feature/spec-012-ui-jobs | Base: main cb35655
 
 ## Hecho hoy
-- SPEC-011 (dashboard "parte de la semana") implementada, verificada en
-  emulador, aprobada por el usuario y mergeada a main con push.
-- Diseno final v2 "parte de la semana" (v1 rechazada por el usuario):
-  fecha real, saludo+nombre, tarjeta-parte con borde (rango lun-dom,
-  N trabajos, lineas lima terminado/cobrada, troquelado, pie de totales,
-  firma cerrando el parte). Trabajos recientes = lineas con punto de
-  estado; JobCard intacto fuera del dashboard.
-- Regla semanal scheduledAt ?: createdAt lun-dom; INVOICED cuenta
-  como terminado; greetingForHour en :libs:common compartido con login.
-- 25 tests home (8 nuevos), 27 login, verify.cjs OK sobre estado final.
-- Capturas home_v2_*.png (diseno final) + spec-011-*.png (v1, evidencia
-  de datos/nav/estado vacio). Cuenta prueba Carlos Prueba + semilla Room.
-- Hallazgos: :app duplica strings home_* (corregido home_stat_completed,
-  resto = deuda); app siempre arranca en login (preexistente).
+- SPEC-011 mergeada y publicada (main cb35655): dashboard "parte de la
+  semana" aprobado por el usuario.
+- SPEC-012 (trabajos calidos) implementada y verificada en emulador.
+  SIN COMMIT — pendiente visto bueno para merge/push.
+- JobCard redisenada: borde, BoneCard, estados tipo parte (pendiente
+  neutro, curso petrol, terminado lima, facturado cyan), "fecha · importe"
+  (finalAmount ?? budgetAmount), marca ambar Urgente solo HIGH/URGENT.
+- HALLAZGO: ruta job_list/{clientId} no recibe navegacion — la lista real
+  es la seccion de ClientDetailScreen. JobListScreen actualizada pero es
+  codigo muerto; spec de limpieza en cola.
+- Ficha trabajo con piel + badges foto Antes/Despues/Progreso con
+  colorScheme (PROGRESS mostraba mal "Despues" — corregido).
+- Strings del flujo a strings.xml; 32 tests home (7 nuevos), verify.cjs OK.
+- Idea usuario registrada en cola: voice-parte (dictar el parte por voz).
 
 ## Siguiente paso propuesto
-- Cola: ui-jobs (JobCard malva pendiente), ui-clients, db-migration-tests,
-  sync-completa, i18n-domain, cleanup-strings-app (duplicados :app).
+- Merge/push de SPEC-012 si el usuario lo pide tras verla en emulador.
+- Cola: ui-clients (detalle con malva viejo), ui-quotes, ui-invoices,
+  voice-parte, cleanup-job-list-route, db-migration-tests, sync-completa.
 
 ## Decisiones/deuda
-- Emulador TradeJob_Test corre con ventana (host GPU), muestra v2 light.
+- Emulador TradeJob_Test con ventana; app de gimnasio ajena instalada en
+  el AVD (com.aistudio.gymtracker) — no tocar, tampoco desinstalar.
 - emulator-5556 (SocialChef) y 5558 (Samsung ajeno): no tocar.
-- uiautomator dump muere en este emulador; taps por coordenadas.
-- feature/spec-010-ui-login-calido sigue pudiendo borrarse (mergeada).
+- Taps por coordenadas; tutoriales de Gboard/stylus pueden interceptar.
+- feature/spec-010 y spec-011 branches mergeadas, borrables.
 
 ## Retomar
 Lee AGENTS.md y .devin/STATE.md y continua.
