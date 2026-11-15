@@ -1,6 +1,7 @@
 package com.tradejob.pro.home.ui.invoices
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import com.tradejob.pro.home.domain.GenerateInvoicePdfUseCase
 import com.tradejob.pro.home.domain.GetInvoiceByIdUseCase
 import com.tradejob.pro.home.domain.SaveInvoiceUseCase
 import com.tradejob.pro.home.domain.UserRepository
+import com.tradejob.pro.home.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,7 +92,7 @@ class InvoiceFormViewModel @Inject constructor(
                     _isLoading.value = false
                 }
                 is Result.Error -> {
-                    _event.value = InvoiceFormEvent.Error("Error al cargar factura")
+                    _event.value = InvoiceFormEvent.Error(R.string.invoice_error_load)
                     _isLoading.value = false
                 }
                 else -> {}
@@ -136,12 +138,12 @@ class InvoiceFormViewModel @Inject constructor(
                     analyticsHelper.logEvent("invoice_marked_paid", mapOf("invoiceId" to updated.id.toString()))
                     _invoice.value = updated
                     _status.value = InvoiceStatus.PAID
-                    _event.value = InvoiceFormEvent.Success("Factura marcada como pagada")
+                    _event.value = InvoiceFormEvent.Success(R.string.invoice_success_paid)
                     _isLoading.value = false
                 }
                 is Result.Error -> {
                     analyticsHelper.logError(res.exception, "Failed to mark invoice ${current.id} as paid")
-                    _event.value = InvoiceFormEvent.Error("Error al actualizar factura")
+                    _event.value = InvoiceFormEvent.Error(R.string.invoice_error_update)
                     _isLoading.value = false
                 }
                 else -> {}
@@ -161,11 +163,11 @@ class InvoiceFormViewModel @Inject constructor(
             )
             when (saveInvoiceUseCase(updated, isNew = false)) {
                 is Result.Success -> {
-                    _event.value = InvoiceFormEvent.Success("Factura actualizada")
+                    _event.value = InvoiceFormEvent.Success(R.string.invoice_success_updated)
                     _isLoading.value = false
                 }
                 is Result.Error -> {
-                    _event.value = InvoiceFormEvent.Error("Error al guardar factura")
+                    _event.value = InvoiceFormEvent.Error(R.string.invoice_error_save)
                     _isLoading.value = false
                 }
                 else -> {}
@@ -177,8 +179,8 @@ class InvoiceFormViewModel @Inject constructor(
         val current = _invoice.value ?: return
         viewModelScope.launch {
             when (deleteInvoiceUseCase(current)) {
-                is Result.Success -> _event.value = InvoiceFormEvent.Success("Factura eliminada")
-                is Result.Error -> _event.value = InvoiceFormEvent.Error("Error al eliminar factura")
+                is Result.Success -> _event.value = InvoiceFormEvent.Success(R.string.invoice_success_deleted)
+                is Result.Error -> _event.value = InvoiceFormEvent.Error(R.string.invoice_error_delete)
                 else -> {}
             }
         }
@@ -192,9 +194,9 @@ class InvoiceFormViewModel @Inject constructor(
             if (file != null) {
                 analyticsHelper.logEvent("invoice_pdf_exported", mapOf("invoiceId" to invoice.id.toString()))
                 _pdfFile.value = file
-                _event.value = InvoiceFormEvent.Success("PDF generado correctamente")
+                _event.value = InvoiceFormEvent.Success(R.string.invoice_pdf_success)
             } else {
-                _event.value = InvoiceFormEvent.Error("Error al generar PDF")
+                _event.value = InvoiceFormEvent.Error(R.string.invoice_pdf_error)
             }
         }
     }
@@ -206,6 +208,6 @@ class InvoiceFormViewModel @Inject constructor(
 
 sealed class InvoiceFormEvent {
     data object None : InvoiceFormEvent()
-    data class Success(val message: String) : InvoiceFormEvent()
-    data class Error(val message: String) : InvoiceFormEvent()
+    data class Success(@StringRes val messageRes: Int) : InvoiceFormEvent()
+    data class Error(@StringRes val messageRes: Int) : InvoiceFormEvent()
 }

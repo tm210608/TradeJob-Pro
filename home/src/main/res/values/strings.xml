@@ -264,6 +264,14 @@
     <string name="invoice_success_deleted">Factura eliminada</string>
     <string name="invoice_error_load">Error al cargar factura</string>
     <string name="invoice_error_save">Error al guardar factura</string>
+    <string name="invoice_error_update">Error al actualizar factura</string>
+    <string name="invoice_error_delete">Error al eliminar factura</string>
+    <string name="invoice_error_client">Error: cliente no encontrado</string>
+    <string name="invoice_success_paid">Factura marcada como pagada</string>
+    <string name="invoice_pdf_success">PDF generado correctamente</string>
+    <string name="invoice_pdf_success_named">PDF generado: %1$s</string>
+    <string name="invoice_pdf_error">Error al generar PDF</string>
+    <string name="invoice_paid_partial">Pagado: %1$s · Pendiente: %2$s</string>
     <string name="payment_cash">Efectivo</string>
     <string name="payment_card">Tarjeta</string>
     <string name="payment_transfer">Transferencia</string>

@@ -307,6 +307,29 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 - Fix durante verificación: chip "Rechazado" partido en vertical →
   `FlowRow`.
 
+### SPEC-015 — Facturas cálidas: saber de quién es cada factura (15 noviembre 2026)
+
+- Rama: `feature/spec-015-ui-invoices` (sin merge).
+- `InvoiceListScreen` con la piel: fondo hueso/petróleo, TopAppBar
+  transparente "Facturas", `InvoiceCard` con número + **nombre del
+  cliente** (la lista es global y antes no se veía de quién era) +
+  chip de estado + fecha "15 nov" + total "54,45 €", filtros
+  conservados.
+- `InvoiceFormScreen` con la piel: título = número de factura, chips de
+  estado en `FlowRow`, totales en `BoneCard` es-ES (Subtotal/IVA/IRPF/
+  Total/Pagado·Pendiente), fecha "15 nov", borrado con hoja
+  `ConfirmMitoButtonSheet` (antes `AlertDialog` plano).
+- `InvoiceFormatters.kt` + `InvoiceStatus.kt` nuevos (formato es-ES y
+  mapa de colores: pendiente ámbar / pagada lima / vencida roja /
+  cancelada gris). Strings en `:home` y espejo `:app`; eventos del VM
+  a recursos.
+- Tests: 6 nuevos `InvoiceFormattersTest`; `verify.cjs` verde.
+- Verificado en el **Xiaomi físico del usuario**: lista, detalle,
+  marcar pagada, PDF, hoja de borrado (cancelar y confirmar), light y
+  dark. Datos de prueba eliminados al terminar; notas honestas en
+  `EVIDENCE.md` (filtros no ejercitados; vencida/anulada solo en
+  selector).
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
@@ -314,7 +337,8 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   (desde v7 ya quedan guardados en `libs/database/schemas/`).
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
-  Hechas: ui-home (SPEC-011), ui-jobs (012), ui-clients (013), ui-quotes (014).
+  Hechas: ui-home (SPEC-011), ui-jobs (012), ui-clients (013), ui-quotes (014),
+  ui-invoices (015).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
 - `voice-parte`: rellenar la ficha de trabajo dictando por voz o escribiendo
