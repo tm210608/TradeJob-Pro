@@ -3,19 +3,27 @@
 package com.tradejob.pro.home.ui.invoices
 
 import android.content.Context
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
@@ -32,7 +40,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,7 +48,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,36 +60,28 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.tradejob.pro.common.analytics.AnalyticsHelper
 import com.tradejob.pro.common.usecase.Result
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.core.navigation.Screen
 import com.tradejob.pro.database.data.entity.ClientEntity
 import com.tradejob.pro.database.data.entity.InvoiceEntity
 import com.tradejob.pro.database.data.entity.UserEntity
+import com.tradejob.pro.home.R
 import com.tradejob.pro.home.domain.ClientRepository
 import com.tradejob.pro.home.domain.GenerateInvoicePdfUseCase
 import com.tradejob.pro.home.domain.GetAllInvoicesUseCase
 import com.tradejob.pro.home.domain.UserRepository
-import androidx.compose.ui.res.stringResource
-import com.tradejob.pro.home.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
-
-enum class InvoiceStatus(val value: String, val displayRes: Int) {
-    PENDING("PENDING", R.string.invoice_status_pending),
-    PAID("PAID", R.string.invoice_status_paid),
-    OVERDUE("OVERDUE", R.string.invoice_status_overdue),
-    CANCELLED("CANCELLED", R.string.invoice_status_cancelled);
-
-    companion object {
-        fun fromValue(value: String): InvoiceStatus = entries.find { it.value == value } ?: PENDING
-    }
-}
 
 class InvoiceListScreen : Screen {
     override val route: String = "invoice_list"
@@ -87,25 +90,54 @@ class InvoiceListScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: InvoiceListViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val darkTheme = isSystemInDarkTheme()
+
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
+
+        val backgroundModifier = if (darkTheme) {
+            Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+        } else {
+            Modifier.background(BoneLight)
+        }
+        val topBarContentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
 
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.invoice_list_title)) },
+                    title = {
+                        Text(
+                            text = stringResource(R.string.invoice_list_title),
+                            fontWeight = FontWeight.Bold,
+                            color = topBarContentColor
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = topBarContentColor
+                            )
                         }
                     }
                 )
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
-            InvoiceListContent(
-                viewModel = viewModel,
-                navController = navController,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Box(modifier = Modifier.fillMaxSize().then(backgroundModifier)) {
+                InvoiceListContent(
+                    viewModel = viewModel,
+                    navController = navController,
+                    snackbarHostState = snackbarHostState,
+                    darkTheme = darkTheme,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
@@ -130,8 +162,19 @@ class InvoiceListViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _clientNames = MutableStateFlow<Map<Long, String>>(emptyMap())
+    val clientNames: StateFlow<Map<Long, String>> = _clientNames
+
+    private var clientsById: Map<Long, ClientEntity> = emptyMap()
+    private var professional: UserEntity? = null
+
+    private val _pdfEvent = MutableStateFlow<InvoicePdfEvent?>(null)
+    val pdfEvent: StateFlow<InvoicePdfEvent?> = _pdfEvent
+
     init {
         loadInvoices()
+        loadClients()
+        loadProfessional()
     }
 
     private fun loadInvoices() {
@@ -146,18 +189,15 @@ class InvoiceListViewModel @Inject constructor(
         }
     }
 
-    fun onFilterSelected(status: InvoiceStatus?) {
-        _selectedFilter.value = status
-    }
-
-    private val _clients = MutableStateFlow<Map<Long, ClientEntity>>(emptyMap())
-    private var professional: UserEntity? = null
-
-    private val _pdfMessage = MutableStateFlow<String?>(null)
-    val pdfMessage: StateFlow<String?> = _pdfMessage
-
-    init {
-        loadProfessional()
+    private fun loadClients() {
+        viewModelScope.launch {
+            clientRepository.getAllClients().collect { result ->
+                if (result is Result.Success) {
+                    clientsById = result.data.associateBy { it.id }
+                    _clientNames.value = clientsById.mapValues { it.value.name }
+                }
+            }
+        }
     }
 
     private fun loadProfessional() {
@@ -168,53 +208,56 @@ class InvoiceListViewModel @Inject constructor(
         }
     }
 
+    fun onFilterSelected(status: InvoiceStatus?) {
+        _selectedFilter.value = status
+    }
+
     fun exportInvoicePdf(context: Context, invoice: InvoiceEntity) {
         viewModelScope.launch {
-            val client = _clients.value[invoice.clientId] ?: run {
-                when (val r = clientRepository.getClientById(invoice.clientId)) {
-                    is Result.Success -> {
-                        r.data?.let { c ->
-                            _clients.value = _clients.value + (c.id to c)
-                            c
-                        }
-                    }
-                    else -> null
-                }
-            }
+            val client = clientsById[invoice.clientId]
             if (client == null) {
-                _pdfMessage.value = "Error: cliente no encontrado"
+                _pdfEvent.value = InvoicePdfEvent(R.string.invoice_error_client)
                 return@launch
             }
             val file = generateInvoicePdfUseCase(context, client, invoice, professional)
-            _pdfMessage.value = if (file != null) {
+            _pdfEvent.value = if (file != null) {
                 analyticsHelper.logEvent("invoice_pdf_exported", mapOf("invoiceId" to invoice.id.toString()))
-                "PDF generado: ${file.name}"
-            } else "Error al generar PDF"
+                InvoicePdfEvent(R.string.invoice_pdf_success_named, file.name)
+            } else {
+                InvoicePdfEvent(R.string.invoice_pdf_error)
+            }
         }
     }
 
-    fun clearPdfMessage() {
-        _pdfMessage.value = null
+    fun clearPdfEvent() {
+        _pdfEvent.value = null
     }
 }
+
+data class InvoicePdfEvent(@StringRes val messageRes: Int, val arg: String? = null)
 
 @Composable
 fun InvoiceListContent(
     viewModel: InvoiceListViewModel,
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
+    darkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     val invoices by viewModel.invoices.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
-    val pdfMessage by viewModel.pdfMessage.collectAsState()
+    val clientNames by viewModel.clientNames.collectAsState()
+    val pdfEvent by viewModel.pdfEvent.collectAsState()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(pdfMessage) {
-        pdfMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            viewModel.clearPdfMessage()
+    LaunchedEffect(pdfEvent) {
+        pdfEvent?.let {
+            snackbarHostState.showSnackbar(
+                it.arg?.let { arg -> context.getString(it.messageRes, arg) }
+                    ?: context.getString(it.messageRes)
+            )
+            viewModel.clearPdfEvent()
         }
     }
 
@@ -246,7 +289,7 @@ fun InvoiceListContent(
             contentAlignment = Alignment.Center
         ) {
             when {
-                isLoading -> CircularProgressIndicator()
+                isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 invoices.isEmpty() -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -256,13 +299,13 @@ fun InvoiceListContent(
                             imageVector = Icons.Default.Receipt,
                             contentDescription = null,
                             modifier = Modifier.height(64.dp),
-                            tint = MaterialTheme.colorScheme.outline
+                            tint = if (darkTheme) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(R.string.invoice_empty_list),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.outline
+                            color = if (darkTheme) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline
                         )
                     }
                 }
@@ -270,11 +313,12 @@ fun InvoiceListContent(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 80.dp)
+                        contentPadding = PaddingValues(bottom = 80.dp)
                     ) {
                         items(invoices, key = { it.id }) { invoice ->
                             InvoiceCard(
                                 invoice = invoice,
+                                clientName = clientNames[invoice.clientId],
                                 onExportPdf = { viewModel.exportInvoicePdf(context, invoice) },
                                 onClick = { navController.navigate("invoice_form/${invoice.id}") }
                             )
@@ -287,15 +331,40 @@ fun InvoiceListContent(
 }
 
 @Composable
-fun InvoiceCard(invoice: InvoiceEntity, onExportPdf: () -> Unit = {}, onClick: () -> Unit = {}) {
+fun InvoiceCard(
+    invoice: InvoiceEntity,
+    clientName: String?,
+    onExportPdf: () -> Unit = {},
+    onClick: () -> Unit = {}
+) {
+    val darkTheme = isSystemInDarkTheme()
+    val status = InvoiceStatus.fromValue(invoice.status)
+    val contentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.onSurface
+    val subtleColor = if (darkTheme) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant
+
+    val date = formatInvoiceDate(invoice.issuedAt)
+    val amount = formatInvoiceAmount(invoice.total)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = onClick
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(
+            1.dp,
+            if (darkTheme) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard
+        )
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -304,33 +373,40 @@ fun InvoiceCard(invoice: InvoiceEntity, onExportPdf: () -> Unit = {}, onClick: (
                 Text(
                     text = invoice.number,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.ExtraBold,
+                    color = contentColor
                 )
-                val status = InvoiceStatus.fromValue(invoice.status)
                 Text(
                     text = stringResource(status.displayRes),
                     style = MaterialTheme.typography.labelMedium,
-                    color = when (status) {
-                        InvoiceStatus.PAID -> MaterialTheme.colorScheme.primary
-                        InvoiceStatus.OVERDUE -> MaterialTheme.colorScheme.error
-                        InvoiceStatus.PENDING -> MaterialTheme.colorScheme.tertiary
-                        InvoiceStatus.CANCELLED -> MaterialTheme.colorScheme.outline
-                    },
-                    fontWeight = FontWeight.Medium
+                    color = status.displayColor,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            clientName?.let {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Total: ${"%.2f".format(invoice.total)}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
+                text = listOfNotNull(date, amount).joinToString("  ·  "),
+                style = MaterialTheme.typography.bodySmall,
+                color = subtleColor
             )
             if (invoice.paidAmount > 0 && invoice.paidAmount < invoice.total) {
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Pagado: ${"%.2f".format(invoice.paidAmount)} / Pendiente: ${"%.2f".format(invoice.total - invoice.paidAmount)}",
+                    text = stringResource(
+                        R.string.invoice_paid_partial,
+                        formatInvoiceAmount(invoice.paidAmount),
+                        formatInvoiceAmount(invoice.total - invoice.paidAmount)
+                    ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                    color = subtleColor
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -339,7 +415,8 @@ fun InvoiceCard(invoice: InvoiceEntity, onExportPdf: () -> Unit = {}, onClick: (
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.PictureAsPdf, contentDescription = null)
-                Text("  ${stringResource(R.string.btn_export_pdf)}")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.btn_export_pdf))
             }
         }
     }

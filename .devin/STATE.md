@@ -1,28 +1,34 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-15 | Rama: main | Base: merge 6298858
+Fecha: 2026-11-15 | Rama: feature/spec-015-ui-invoices | Base: main 5f40842
 
 ## Hecho hoy
-- SPEC-014 mergeada a main: presupuestos con piel de taller.
-  Lista: nombre del cliente en TopAppBar, QuoteCard con numero + chip de
-  estado + fecha + total "108,9 €", vacio con CTA. Formulario: chips de
-  estado (Borrador/Enviado/Aceptado/Rechazado — por fin cambiable),
-  papelera con confirmacion, "Anadir partida" boton, tarjeta de totales.
-- Desbloqueado: aceptado -> "Convertir en factura" alcanzable (factura
-  F-1794766705 verificada). PDF exportado OK.
-- 7 tests nuevos QuoteFormattersTest; verify.cjs verde; log en
-  .devin/android/artifacts/verify.log.
-- Verificado en el Xiaomi fisico del usuario (autorizado), light+dark.
-  Cuenta demo demo@taller.test; datos de prueba borrados al terminar.
-- Fix en verificacion: chip "Rechazado" partido -> FlowRow.
-- Evidencia: specs/014-ui-quotes/EVIDENCE.md + shots/.
+- SPEC-015 implementada y verificada (sin commit, sin merge): facturas
+  con piel de taller.
+  Lista: InvoiceCard con numero + NOMBRE DEL CLIENTE (lista global,
+  antes invisible) + chip estado + fecha "15 nov" + total "54,45 €";
+  filtros conservados.
+  Detalle: titulo = numero de factura, chips FlowRow, totales BoneCard
+  es-ES, borrado con hoja ConfirmMitoButtonSheet (antes AlertDialog).
+- Nuevos: InvoiceFormatters.kt, InvoiceStatus.kt (pendiente ambar /
+  pagada lima / vencida roja / cancelada gris), 6 tests formatters.
+- verify.cjs verde; verificado en Xiaomi fisico (light+dark): crear
+  via presupuesto, marcar pagada, PDF, borrar con hoja (cancel+confirm).
+- Evidencia: specs/015-ui-invoices/EVIDENCE.md + 5 shots/.
+- Movil limpio: facturas y cliente de prueba borrados, modo claro.
 
 ## Siguiente paso propuesto
-- Cola: ui-invoices, voice-parte (idea usuario), cleanup-job-list-route,
-  db-migration-tests, sync-completa.
+- Merge de spec-015 cuando el usuario lo pida.
+- Cola: sync-completa, voice-parte, cleanup-job-list-route,
+  db-migration-tests, numeracion legible (F-/P-<epoch>), vencimientos.
+
+## Notas honestas
+- Filtros de facturas visibles pero no ejercitados (1 factura a la vez).
+- Vencida/anulada solo vistas en selector; pagado/pendiente tras pago
+  completo. Detalles en EVIDENCE.md.
 
 ## Decisiones/deuda
 - Strings nuevas en :home y espejo :app (duplicacion sin resolver).
-- Tras PDF la app vuelve a la lista (preexistente, anotado en SPEC).
+- Tras PDF la app vuelve a la lista (preexistente).
 - Emuladores ajenos y movil fisico: pedir permiso antes de instalar.
 
 ## Retomar

@@ -93,6 +93,14 @@
     <string name="quote_empty_cta">Crear primer presupuesto</string>
     <string name="quote_delete_title">Eliminar presupuesto</string>
     <string name="quote_delete_msg">¿Estás seguro de que deseas eliminar este presupuesto? Esta acción no se puede deshacer.</string>
+    <string name="invoice_error_update">Error al actualizar factura</string>
+    <string name="invoice_error_delete">Error al eliminar factura</string>
+    <string name="invoice_error_client">Error: cliente no encontrado</string>
+    <string name="invoice_success_paid">Factura marcada como pagada</string>
+    <string name="invoice_pdf_success">PDF generado correctamente</string>
+    <string name="invoice_pdf_success_named">PDF generado: %1$s</string>
+    <string name="invoice_pdf_error">Error al generar PDF</string>
+    <string name="invoice_paid_partial">Pagado: %1$s · Pendiente: %2$s</string>
 
     <!-- Generic -->
     <string name="btn_cancel">Cancelar</string>
