@@ -88,6 +88,12 @@
     <string name="job_delete_title">Eliminar trabajo</string>
     <string name="job_delete_msg">¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer.</string>
 
+    <!-- Quotes (SPEC-014) -->
+    <string name="quote_label_status">Estado</string>
+    <string name="quote_empty_cta">Crear primer presupuesto</string>
+    <string name="quote_delete_title">Eliminar presupuesto</string>
+    <string name="quote_delete_msg">¿Estás seguro de que deseas eliminar este presupuesto? Esta acción no se puede deshacer.</string>
+
     <!-- Generic -->
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_confirm">Confirmar</string>

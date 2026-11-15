@@ -1,32 +1,30 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-13 | Rama: main | Base: main 5f55959
+Fecha: 2026-11-15 | Rama: feature/spec-014-ui-quotes (sin merge)
 
 ## Hecho hoy
-- SPEC-013 mergeada y publicada (merge 5f55959): clientes con piel de
-  taller. Detalle: nombre en TopAppBar, botones Llamar/Email/Ruta
-  (intents reales verificados: Dialer, Maps, Gmail), resumen por estado,
-  tarjeta Ultimo trabajo, lista embebida conservada (decision usuario).
-  ClientListScreen con BoneCard/petroleo. 4 tests nuevos, verify.cjs OK,
-  evidencia en specs/013-ui-clients/ con shots/.
-- Exploracion Stitch en .devin/android/artifacts/stitch/: base,
-  registro, tablon, minimal (direccion aprobada = minimal/zen).
-- TradeJob_Test2 (emulator-5562) con GPU host y datos demo: 6 clientes,
-  12 trabajos, fotos, cuenta carlos@prueba.dev / prueba123.
+- SPEC-014 completada y verificada: presupuestos con piel de taller.
+  Lista: nombre del cliente en TopAppBar, QuoteCard con numero + chip de
+  estado + fecha + total "108,9 €", vacio con CTA. Formulario: chips de
+  estado (Borrador/Enviado/Aceptado/Rechazado — por fin cambiable),
+  papelera con confirmacion, "Anadir partida" boton, tarjeta de totales.
+- Desbloqueado: aceptado -> "Convertir en factura" alcanzable (factura
+  F-1794766705 verificada). PDF exportado OK.
+- 7 tests nuevos QuoteFormattersTest; verify.cjs verde; log en
+  .devin/android/artifacts/verify.log.
+- Verificado en el Xiaomi fisico del usuario (autorizado), light+dark.
+  Cuenta demo demo@taller.test; datos de prueba borrados al terminar.
+- Fix en verificacion: chip "Rechazado" partido -> FlowRow.
+- Evidencia: specs/014-ui-quotes/EVIDENCE.md + shots/.
 
 ## Siguiente paso propuesto
-- El usuario comentara "cosillas" para la siguiente spec.
-- Cola: ui-quotes, ui-invoices, voice-parte (idea usuario),
-  cleanup-job-list-route, db-migration-tests, sync-completa.
-- Ideas Stitch para futuras specs: num. de parte, tecnico asignado,
-  garantia, balance cliente, agrupar por estado.
+- Mergear feature/spec-014-ui-quotes si el usuario aprueba.
+- Cola: ui-invoices, voice-parte (idea usuario), cleanup-job-list-route,
+  db-migration-tests, sync-completa.
 
 ## Decisiones/deuda
-- Lista de trabajos embebida en client_detail; job_list/{clientId}
-  sigue muerta -> spec cleanup-job-list-route.
 - Strings nuevas en :home y espejo :app (duplicacion sin resolver).
-- Emuladores ajenos (5554, 5556, 5558) y movil fisico: no tocar.
-- Taps por coordenadas en resolucion real (1080x2400); captures en
-  read escalan ~1.53x.
+- Tras PDF la app vuelve a la lista (preexistente, anotado en SPEC).
+- Emuladores ajenos y movil fisico: pedir permiso antes de instalar.
 
 ## Retomar
 Lee AGENTS.md y .devin/STATE.md y continua.

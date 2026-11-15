@@ -283,6 +283,30 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   email reales, cliente sin datos (solo Llamar), estado vacío + CTA.
 - Fix durante verificación: "Llamar" partía en dos líneas → `maxLines=1`.
 
+### SPEC-014 — Presupuestos cálidos: estado y borrado (15 noviembre 2026)
+
+- Rama: `feature/spec-014-ui-quotes` (sin merge).
+- `QuoteListScreen` con la piel: fondo hueso/petróleo, TopAppBar con el
+  **nombre del cliente**, `QuoteCard` en `BoneCard` con número + chip de
+  estado coloreado + fecha "15 nov" + total "108,9 €", estado vacío con
+  CTA "Crear primer presupuesto", FAB petróleo.
+- `QuoteFormScreen` con la piel: **chips de estado** (Borrador/Enviado/
+  Aceptado/Rechazado, patrón de facturas — el estado por fin se puede
+  cambiar; `onStatusChanged` existía sin UI), **papelera** en TopAppBar
+  con confirmación `MitoBottomSheet`, "Añadir partida" como botón con
+  icono+texto, totales en tarjeta formateada es-ES.
+- Desbloqueado: presupuesto aceptado → "Convertir en factura" alcanzable
+  por primera vez (verificado: factura `F-1794766705` creada).
+- `QuoteFormatters.kt` nuevo (importe/fecha es-ES); colores de estado
+  junto a `QuoteStatus`. Strings en `:home` y espejo `:app`.
+- Tests: 7 nuevos `QuoteFormattersTest`; `verify.cjs` verde.
+- Verificado en el **Xiaomi físico del usuario** (autorizado): flujo
+  completo light+dark — crear, aceptar, convertir a factura, PDF,
+  borrar con confirmación. Cuenta demo `demo@taller.test`; datos de
+  prueba eliminados al terminar.
+- Fix durante verificación: chip "Rechazado" partido en vertical →
+  `FlowRow`.
+
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente
   según el apartado anterior. Detectado en SPEC-006.
@@ -290,6 +314,7 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   (desde v7 ya quedan guardados en `libs/database/schemas/`).
 - `ui-home`, `ui-clients`, `ui-jobs`, `ui-quotes`, `ui-invoices`: rediseño por flujo
   con componentes Expressive (ButtonGroup, FABMenu, LoadingIndicator, Carousel fotos).
+  Hechas: ui-home (SPEC-011), ui-jobs (012), ui-clients (013), ui-quotes (014).
 - `sync-completa`: quotes/invoices no se sincronizan a Firestore (solo clients/jobs/photos).
 - `i18n-domain`: strings hardcodeados en ViewModels.
 - `voice-parte`: rellenar la ficha de trabajo dictando por voz o escribiendo
