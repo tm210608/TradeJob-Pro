@@ -1,7 +1,10 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 
 package com.tradejob.pro.home.ui.quotes
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,19 +14,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +40,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,19 +52,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.tradejob.pro.components.MitoBottomSheet
+import com.tradejob.pro.components.MitoButtonSheet
 import com.tradejob.pro.components.MitoNumberField
 import com.tradejob.pro.components.MitoTextField
 import com.tradejob.pro.components.PrimaryButton
 import com.tradejob.pro.components.SignaturePad
+import com.tradejob.pro.components.theme.BoneCard
+import com.tradejob.pro.components.theme.BoneLight
+import com.tradejob.pro.components.theme.Petrol20
+import com.tradejob.pro.components.theme.Petrol30
+import com.tradejob.pro.components.theme.SystemBarIconStyle
 import com.tradejob.pro.core.navigation.Screen
-import androidx.compose.ui.res.stringResource
 import com.tradejob.pro.home.R
 
 class QuoteFormScreen : Screen {
@@ -73,28 +92,86 @@ class QuoteFormScreen : Screen {
     override fun Content(navController: NavHostController) {
         val viewModel: QuoteFormViewModel = hiltViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
+        val darkTheme = isSystemInDarkTheme()
+        var showDeleteConfirm by remember { mutableStateOf(false) }
+
+        SystemBarIconStyle(
+            darkIcons = !darkTheme,
+            navigationBarColor = if (darkTheme) Petrol30 else BoneLight
+        )
+
+        val backgroundModifier = if (darkTheme) {
+            Modifier.background(brush = Brush.verticalGradient(colors = listOf(Petrol20, Petrol30)))
+        } else {
+            Modifier.background(BoneLight)
+        }
+        val topBarContentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.primary
+
+        if (showDeleteConfirm) {
+            MitoBottomSheet(
+                mitoButtonSheet = MitoButtonSheet.ConfirmMitoButtonSheet(
+                    title = stringResource(R.string.quote_delete_title),
+                    message = stringResource(R.string.quote_delete_msg),
+                    confirmText = stringResource(R.string.btn_delete),
+                    dismissText = stringResource(R.string.btn_cancel),
+                    onConfirm = {
+                        viewModel.delete()
+                        showDeleteConfirm = false
+                    },
+                    onDismiss = { showDeleteConfirm = false }
+                )
+            )
+        }
 
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(if (viewModel.isEditMode) stringResource(R.string.quote_form_edit) else stringResource(R.string.quote_form_new))
+                        Text(
+                            text = if (viewModel.isEditMode) {
+                                stringResource(R.string.quote_form_edit)
+                            } else {
+                                stringResource(R.string.quote_form_new)
+                            },
+                            fontWeight = FontWeight.Bold,
+                            color = topBarContentColor
+                        )
                     },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.nav_back))
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = topBarContentColor
+                            )
+                        }
+                    },
+                    actions = {
+                        if (viewModel.isEditMode) {
+                            IconButton(onClick = { showDeleteConfirm = true }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.btn_delete),
+                                    tint = topBarContentColor
+                                )
+                            }
                         }
                     }
                 )
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
-            QuoteFormContent(
-                viewModel = viewModel,
-                navController = navController,
-                snackbarHostState = snackbarHostState,
-                modifier = Modifier.padding(paddingValues)
-            )
+            Box(modifier = Modifier.fillMaxSize().then(backgroundModifier)) {
+                QuoteFormContent(
+                    viewModel = viewModel,
+                    navController = navController,
+                    snackbarHostState = snackbarHostState,
+                    darkTheme = darkTheme,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
     }
 }
@@ -104,6 +181,7 @@ fun QuoteFormContent(
     viewModel: QuoteFormViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
+    darkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     val items by viewModel.items.collectAsState()
@@ -113,8 +191,10 @@ fun QuoteFormContent(
     val isLoading by viewModel.isLoading.collectAsState()
     val event by viewModel.event.collectAsState()
     val isConverting by viewModel.isConverting.collectAsState()
-    val pdfFile by viewModel.pdfFile.collectAsState()
     val context = LocalContext.current
+
+    val contentColor = if (darkTheme) Color.White else MaterialTheme.colorScheme.onSurface
+    val subtleColor = if (darkTheme) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant
 
     LaunchedEffect(event) {
         when (val currentEvent = event) {
@@ -148,6 +228,25 @@ fun QuoteFormContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
+            text = stringResource(R.string.quote_label_status),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            QuoteStatus.entries.forEach { s ->
+                FilterChip(
+                    selected = status == s,
+                    onClick = { viewModel.onStatusChanged(s) },
+                    label = { Text(stringResource(s.displayRes)) }
+                )
+            }
+        }
+
+        Text(
             text = stringResource(R.string.quote_section_items),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
@@ -163,14 +262,22 @@ fun QuoteFormContent(
             ) {
                 Text(
                     text = stringResource(R.string.quote_empty_items),
-                    color = MaterialTheme.colorScheme.outline
+                    color = subtleColor
                 )
             }
         } else {
             items.forEachIndexed { index, item ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        1.dp,
+                        if (darkTheme) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard
+                    )
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Row(
@@ -182,24 +289,34 @@ fun QuoteFormContent(
                                 text = item.description,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
+                                color = contentColor,
                                 modifier = Modifier.weight(1f)
                             )
                             IconButton(onClick = { viewModel.removeItem(index) }) {
-                                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.btn_delete_item))
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.btn_delete_item),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
                             }
                         }
                         Text(
-                            text = "${item.quantity} x ${item.unitPrice} = ${item.total}",
+                            text = "${formatQuoteQuantity(item.quantity)} x ${formatQuoteAmount(item.unitPrice)} = ${formatQuoteAmount(item.total)}",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.outline
+                            color = subtleColor
                         )
                     }
                 }
             }
         }
 
-        IconButton(onClick = { showAddItem = true }) {
-            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.quote_btn_add_item))
+        OutlinedButton(
+            onClick = { showAddItem = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.quote_btn_add_item))
         }
 
         if (showAddItem) {
@@ -212,27 +329,44 @@ fun QuoteFormContent(
             )
         }
 
-        HorizontalDivider()
-
-        // Totals
         val subtotal = viewModel.calculateSubtotal()
         val vatAmount = viewModel.calculateVatAmount()
         val total = viewModel.calculateTotal()
 
-        Text(
-            text = "${stringResource(R.string.quote_label_subtotal)}: ${"%.2f".format(subtotal)}",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "${stringResource(R.string.quote_label_vat_amount)} (${vatRate.toInt()}%): ${"%.2f".format(vatAmount)}",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "${stringResource(R.string.quote_label_total)}: ${"%.2f".format(total)}",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(
+                1.dp,
+                if (darkTheme) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = if (darkTheme) MaterialTheme.colorScheme.surface else BoneCard
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "${stringResource(R.string.quote_label_subtotal)}: ${formatQuoteAmount(subtotal)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor
+                )
+                Text(
+                    text = "${stringResource(R.string.quote_label_vat_amount)} (${vatRate.toInt()}%): ${formatQuoteAmount(vatAmount)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor
+                )
+                Text(
+                    text = "${stringResource(R.string.quote_label_total)}: ${formatQuoteAmount(total)}",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
 
         MitoNumberField(
             value = vatRate.toString(),
@@ -254,12 +388,12 @@ fun QuoteFormContent(
         var signaturePath by remember { mutableStateOf<String?>(null) }
 
         if (showSignatureDialog) {
-            androidx.compose.material3.AlertDialog(
+            AlertDialog(
                 onDismissRequest = { showSignatureDialog = false },
                 title = { Text(stringResource(R.string.signature_dialog_title)) },
                 text = {
                     SignaturePad(
-                        context = androidx.compose.ui.platform.LocalContext.current,
+                        context = LocalContext.current,
                         hintText = stringResource(R.string.signature_pad_hint),
                         clearText = stringResource(R.string.signature_btn_clear),
                         saveText = stringResource(R.string.signature_btn_save),
@@ -271,7 +405,7 @@ fun QuoteFormContent(
                 },
                 confirmButton = {},
                 dismissButton = {
-                    androidx.compose.material3.TextButton(onClick = { showSignatureDialog = false }) {
+                    TextButton(onClick = { showSignatureDialog = false }) {
                         Text(stringResource(R.string.btn_cancel))
                     }
                 }
@@ -290,7 +424,13 @@ fun QuoteFormContent(
             onClick = { showSignatureDialog = true },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(if (signaturePath != null) stringResource(R.string.signature_btn_change) else stringResource(R.string.signature_btn_request))
+            Text(
+                if (signaturePath != null) {
+                    stringResource(R.string.signature_btn_change)
+                } else {
+                    stringResource(R.string.signature_btn_request)
+                }
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -310,8 +450,8 @@ fun QuoteFormContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.PictureAsPdf, contentDescription = null)
-                Spacer(modifier = Modifier.height(0.dp))
-                Text("  ${stringResource(R.string.btn_export_pdf)}")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.btn_export_pdf))
             }
 
             if (status == QuoteStatus.ACCEPTED) {
@@ -323,7 +463,8 @@ fun QuoteFormContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Receipt, contentDescription = null)
-                    Text("  ${stringResource(R.string.btn_convert_invoice)}")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.btn_convert_invoice))
                 }
             }
         }
@@ -348,7 +489,7 @@ fun AddItemDialog(
     var quantity by remember { mutableStateOf("1") }
     var unitPrice by remember { mutableStateOf("0") }
 
-    androidx.compose.material3.AlertDialog(
+    AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.quote_dialog_new_item)) },
         text = {
@@ -374,7 +515,7 @@ fun AddItemDialog(
             }
         },
         confirmButton = {
-            androidx.compose.material3.TextButton(onClick = {
+            TextButton(onClick = {
                 if (description.isNotBlank()) {
                     onAdd(description, quantity.toDoubleOrNull() ?: 1.0, unitPrice.toDoubleOrNull() ?: 0.0)
                 }
@@ -383,7 +524,7 @@ fun AddItemDialog(
             }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.btn_cancel))
             }
         }
