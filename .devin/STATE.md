@@ -1,8 +1,8 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-15 | Rama: feature/spec-014-ui-quotes (sin merge)
+Fecha: 2026-11-15 | Rama: main | Base: merge 6298858
 
 ## Hecho hoy
-- SPEC-014 completada y verificada: presupuestos con piel de taller.
+- SPEC-014 mergeada a main: presupuestos con piel de taller.
   Lista: nombre del cliente en TopAppBar, QuoteCard con numero + chip de
   estado + fecha + total "108,9 €", vacio con CTA. Formulario: chips de
   estado (Borrador/Enviado/Aceptado/Rechazado — por fin cambiable),
@@ -17,7 +17,6 @@ Fecha: 2026-11-15 | Rama: feature/spec-014-ui-quotes (sin merge)
 - Evidencia: specs/014-ui-quotes/EVIDENCE.md + shots/.
 
 ## Siguiente paso propuesto
-- Mergear feature/spec-014-ui-quotes si el usuario aprueba.
 - Cola: ui-invoices, voice-parte (idea usuario), cleanup-job-list-route,
   db-migration-tests, sync-completa.
 
