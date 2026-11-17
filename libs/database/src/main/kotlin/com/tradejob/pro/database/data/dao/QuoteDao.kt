@@ -18,6 +18,9 @@ interface QuoteDao {
     @Query("SELECT * FROM quotes WHERE status = :status ORDER BY createdAt DESC")
     fun getQuotesByStatus(status: String): Flow<List<QuoteEntity>>
 
+    @Query("SELECT number FROM quotes WHERE number LIKE :pattern")
+    suspend fun getNumbersLike(pattern: String): List<String>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(quote: QuoteEntity): Long
 

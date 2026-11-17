@@ -74,3 +74,21 @@ class GetQuoteItemsSyncUseCase @Inject constructor(
         return repository.getItemsByQuoteSync(quoteId)
     }
 }
+
+class NextQuoteNumberUseCase @Inject constructor(
+    private val repository: QuoteRepository,
+    private val numberStore: DocumentNumberStore
+) {
+    suspend operator fun invoke(): Result<String> {
+        val year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+        return when (val result = repository.getQuoteNumbersLike(DocumentNumber.likePattern("P", year))) {
+            is Result.Success -> {
+                val sequence = DocumentNumber.nextSequence("P", year, result.data, numberStore.lastIssued("P", year))
+                numberStore.recordIssued("P", year, sequence)
+                Result.Success(DocumentNumber.format("P", year, sequence))
+            }
+            is Result.Error -> result
+            else -> Result.Error(IllegalStateException("Estado inesperado"))
+        }
+    }
+}

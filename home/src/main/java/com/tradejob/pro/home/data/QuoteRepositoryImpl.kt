@@ -71,6 +71,14 @@ class QuoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getQuoteNumbersLike(pattern: String): Result<List<String>> {
+        return try {
+            Result.Success(quoteDao.getNumbersLike(pattern))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override fun getItemsByQuote(quoteId: Long): Flow<Result<List<QuoteItemEntity>>> = flow {
         emit(Result.Loading)
         try {

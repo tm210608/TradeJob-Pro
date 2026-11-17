@@ -18,6 +18,9 @@ interface InvoiceDao {
     @Query("SELECT * FROM invoices WHERE id = :id")
     suspend fun getInvoiceById(id: Long): InvoiceEntity?
 
+    @Query("SELECT number FROM invoices WHERE number LIKE :pattern")
+    suspend fun getNumbersLike(pattern: String): List<String>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(invoice: InvoiceEntity): Long
 

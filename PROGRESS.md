@@ -309,7 +309,7 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
 
 ### SPEC-015 — Facturas cálidas: saber de quién es cada factura (15 noviembre 2026)
 
-- Rama: `feature/spec-015-ui-invoices` (sin merge).
+- Rama: `feature/spec-015-ui-invoices` → main (merge `e0ea92c`).
 - `InvoiceListScreen` con la piel: fondo hueso/petróleo, TopAppBar
   transparente "Facturas", `InvoiceCard` con número + **nombre del
   cliente** (la lista es global y antes no se veía de quién era) +
@@ -329,6 +329,26 @@ ejecución en dispositivo + `EVIDENCE.md`. Ver `AGENTS.md` y `specs/README.md`.
   dark. Datos de prueba eliminados al terminar; notas honestas en
   `EVIDENCE.md` (filtros no ejercitados; vencida/anulada solo en
   selector).
+
+### SPEC-016 — Números de documento legibles (17 noviembre 2026)
+
+- Rama: `feature/spec-016-numeracion-legible` (sin merge).
+- Presupuestos y facturas nuevos con número `P-AAAA-NNNN` / `F-AAAA-NNNN`
+  (prefijo + año + correlativo de 4 dígitos, contadores independientes)
+  en lugar de `P-<epoch>` / `F-<epoch>`. Documentos viejos intactos.
+- Nuevos: `DocumentNumber.kt` (helper puro format/parseSequence/
+  nextSequence) y `DocumentNumberStore.kt` (SharedPreferences, último
+  correlativo emitido por prefijo-año). Queries `LIKE 'P-AAAA-%'` /
+  `'F-AAAA-%'` en `QuoteDao`/`InvoiceDao`, expuestas vía repositorios y
+  casos de uso `NextQuote/InvoiceNumberUseCase`.
+- Bug hallado en verificación: solo con el máximo existente, borrar el
+  último reutilizaba su número → `next = max(máximo existente, último
+  emitido) + 1` con el store. Sin migración Room.
+- Tests: 11 `DocumentNumberTest`; `verify.cjs` verde.
+- Verificado en emulador `TradeJob_Test`: `P-2026-0001…0004`,
+  `F-2026-0001/0002`, factura semilla `2026-001` intacta, PDF
+  `Factura_F-2026-0002_….pdf`, borrado sin reutilizar. Datos de prueba
+  eliminados al terminar. Notas honestas en `EVIDENCE.md`.
 
 ### 🔭 Cola de specs detectadas
 - `sync-worker-hilt`: arranque corregido en la rama de SPEC-007; cierre pendiente

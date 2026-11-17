@@ -16,6 +16,7 @@ import com.tradejob.pro.home.domain.DeleteQuoteUseCase
 import com.tradejob.pro.home.domain.GenerateQuotePdfUseCase
 import com.tradejob.pro.home.domain.GetQuoteByIdUseCase
 import com.tradejob.pro.home.domain.GetQuoteItemsSyncUseCase
+import com.tradejob.pro.home.domain.NextQuoteNumberUseCase
 import com.tradejob.pro.home.domain.SaveQuoteUseCase
 import com.tradejob.pro.home.domain.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,6 +36,7 @@ class QuoteFormViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val generateQuotePdfUseCase: GenerateQuotePdfUseCase,
     private val createInvoiceFromQuoteUseCase: CreateInvoiceFromQuoteUseCase,
+    private val nextQuoteNumberUseCase: NextQuoteNumberUseCase,
     private val analyticsHelper: AnalyticsHelper,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -184,10 +186,15 @@ class QuoteFormViewModel @Inject constructor(
             val vatAmount = calculateVatAmount()
             val total = calculateTotal()
 
+            val number = loadedQuote?.number ?: when (val numberResult = nextQuoteNumberUseCase()) {
+                is Result.Success -> numberResult.data
+                else -> "P-${System.currentTimeMillis() / 1000}"
+            }
+
             val quote = QuoteEntity(
                 id = if (isEditMode) quoteId ?: 0L else 0L,
                 clientId = clientId,
-                number = loadedQuote?.number ?: "P-${System.currentTimeMillis() / 1000}",
+                number = number,
                 status = _status.value.value,
                 vatRate = _vatRate.value,
                 subtotal = subtotal,
