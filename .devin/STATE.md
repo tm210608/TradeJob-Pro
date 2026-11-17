@@ -1,34 +1,37 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-15 | Rama: main | Base: merge SPEC-015
+Fecha: 2026-11-17 | Rama: feature/spec-016-numeracion-legible | Base: main
 
 ## Hecho hoy
-- SPEC-015 mergeada a main: facturas con piel de taller.
-  Lista: InvoiceCard con numero + NOMBRE DEL CLIENTE (lista global,
-  antes invisible) + chip estado + fecha "15 nov" + total "54,45 €";
-  filtros conservados.
-  Detalle: titulo = numero de factura, chips FlowRow, totales BoneCard
-  es-ES, borrado con hoja ConfirmMitoButtonSheet (antes AlertDialog).
-- Nuevos: InvoiceFormatters.kt, InvoiceStatus.kt (pendiente ambar /
-  pagada lima / vencida roja / cancelada gris), 6 tests formatters.
-- verify.cjs verde; verificado en Xiaomi fisico (light+dark): crear
-  via presupuesto, marcar pagada, PDF, borrar con hoja (cancel+confirm).
-- Evidencia: specs/015-ui-invoices/EVIDENCE.md + 5 shots/.
-- Movil limpio: datos de prueba borrados, modo claro.
+- SPEC-016 implementada y verificada: numeración legible.
+  Presupuestos nuevos `P-AAAA-NNNN`, facturas `F-AAAA-NNNN`
+  (contadores independientes que se reinician por año).
+  Documentos viejos (P-<epoch>, semilla "2026-001") intactos.
+- Nuevos: DocumentNumber.kt (helper puro) + DocumentNumberStore.kt
+  (SharedPreferences: último correlativo emitido por prefijo-año).
+  Queries LIKE en QuoteDao/InvoiceDao + Next*NumberUseCase.
+- Bug hallado en dispositivo: solo con máximo existente, borrar el
+  último reutilizaba el número → corregido combinando con el store
+  (next = max(existente, emitido) + 1). Sin migración Room.
+- verify.cjs verde (build OK, 11 DocumentNumberTest nuevos).
+- Verificado en TradeJob_Test: P-2026-0001..0004, F-2026-0001/0002,
+  PDF Factura_F-2026-0002_*.pdf, borrado sin reutilizar, limpieza.
+- Evidencia: specs/016-numeracion-legible/EVIDENCE.md + 5 shots/.
 
 ## Siguiente paso propuesto
+- Mergear SPEC-016 a main (pendiente aprobación del usuario).
 - Cola: sync-completa, voice-parte, cleanup-job-list-route,
-  db-migration-tests, numeracion legible (F-/P-<epoch>), vencimientos.
-- Serie "piel de taller" completa: login, dashboard, trabajos,
-  clientes, presupuestos, facturas.
+  db-migration-tests, vencimientos automáticos.
 
 ## Notas honestas
-- Filtros de facturas visibles pero no ejercitados (1 factura a la vez).
-- Vencida/anulada solo vistas en selector. Detalles en EVIDENCE.md.
+- Reinicio anual no ejercitado en dispositivo (cubierto por tests).
+- Concurrencia simultánea no garantizada (mono-usuario local).
 
 ## Decisiones/deuda
-- Strings nuevas en :home y espejo :app (duplicacion sin resolver).
+- Strings :home ↔ :app duplicadas (sin resolver).
 - Tras PDF la app vuelve a la lista (preexistente).
-- Emuladores ajenos y movil fisico: pedir permiso antes de instalar.
+- Contador en SharedPreferences: si se borran datos de la app sin
+  borrar la BD (imposible en la práctica) podría repetir sufijos;
+  max() con existentes lo cubre.
 
 ## Retomar
 Lee AGENTS.md y .devin/STATE.md y continua.

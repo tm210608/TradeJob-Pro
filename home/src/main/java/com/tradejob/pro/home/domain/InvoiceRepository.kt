@@ -12,4 +12,5 @@ interface InvoiceRepository {
     suspend fun insertInvoice(invoice: InvoiceEntity): Result<Long>
     suspend fun updateInvoice(invoice: InvoiceEntity): Result<Unit>
     suspend fun deleteInvoice(invoice: InvoiceEntity): Result<Unit>
+    suspend fun getInvoiceNumbersLike(pattern: String): Result<List<String>>
 }

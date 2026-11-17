@@ -54,4 +54,8 @@ class InvoiceRepositoryImpl @Inject constructor(
     override suspend fun deleteInvoice(invoice: InvoiceEntity): Result<Unit> {
         return try { invoiceDao.delete(invoice); Result.Success(Unit) } catch (e: Exception) { Result.Error(e) }
     }
+
+    override suspend fun getInvoiceNumbersLike(pattern: String): Result<List<String>> {
+        return try { Result.Success(invoiceDao.getNumbersLike(pattern)) } catch (e: Exception) { Result.Error(e) }
+    }
 }

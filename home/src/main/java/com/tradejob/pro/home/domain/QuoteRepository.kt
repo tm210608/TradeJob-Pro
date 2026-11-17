@@ -12,6 +12,7 @@ interface QuoteRepository {
     suspend fun insertQuote(quote: QuoteEntity): Result<Long>
     suspend fun updateQuote(quote: QuoteEntity): Result<Unit>
     suspend fun deleteQuote(quote: QuoteEntity): Result<Unit>
+    suspend fun getQuoteNumbersLike(pattern: String): Result<List<String>>
 
     fun getItemsByQuote(quoteId: Long): Flow<Result<List<QuoteItemEntity>>>
     suspend fun getItemsByQuoteSync(quoteId: Long): Result<List<QuoteItemEntity>>
