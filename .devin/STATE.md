@@ -1,8 +1,8 @@
 # STATE — TradeJob Pro
-Fecha: 2026-11-17 | Rama: feature/spec-016-numeracion-legible | Base: main
+Fecha: 2026-11-17 | Rama: main | Base: merge SPEC-016
 
 ## Hecho hoy
-- SPEC-016 implementada y verificada: numeración legible.
+- SPEC-016 mergeada a main: numeración legible.
   Presupuestos nuevos `P-AAAA-NNNN`, facturas `F-AAAA-NNNN`
   (contadores independientes que se reinician por año).
   Documentos viejos (P-<epoch>, semilla "2026-001") intactos.
@@ -18,9 +18,9 @@ Fecha: 2026-11-17 | Rama: feature/spec-016-numeracion-legible | Base: main
 - Evidencia: specs/016-numeracion-legible/EVIDENCE.md + 5 shots/.
 
 ## Siguiente paso propuesto
-- Mergear SPEC-016 a main (pendiente aprobación del usuario).
 - Cola: sync-completa, voice-parte, cleanup-job-list-route,
   db-migration-tests, vencimientos automáticos.
+- main 8 commits por delante de origin/main (push pendiente).
 
 ## Notas honestas
 - Reinicio anual no ejercitado en dispositivo (cubierto por tests).
